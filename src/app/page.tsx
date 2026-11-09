@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import HeroCarousel from "./HeroCarousel";
+import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
 import {
   ArrowRightIcon,
-  CheckBadgeIcon,
   InstagramIcon,
   MailIcon,
   SparkIcon,
@@ -17,194 +16,107 @@ import { products } from "@/lib/products";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <>
       <HeroCarousel slides={heroSlides} />
-      <TrustBar />
-      <CategoryStrip />
-      <DealOfTheDay />
-      <PromoBanners />
-      <BestSellers />
-      <ShopTheLook />
-      <BrandStrip />
-      <HealthTips />
-      <TestimonialAndReviews />
-      <InstagramGrid />
-      <Newsletter />
-    </main>
+      <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <TrustBar />
+        <CategoryStrip />
+        <DealOfTheDay />
+        <PromoBanners />
+        <BestSellers />
+        <ShopTheLook />
+        <BrandStrip />
+        <HealthTips />
+        <TestimonialAndReviews />
+        <InstagramGrid />
+        <Newsletter />
+      </main>
+    </>
   );
 }
 
 /* ---------- Hero slides ---------- */
 
-function HeroImage({
-  model,
-  modelAlt,
-  product,
-  productAlt,
-  accent,
-  objectPosition = "center",
-}: {
-  model: string;
-  modelAlt: string;
-  product: string;
-  productAlt: string;
-  accent: "emerald" | "blue" | "mixed";
-  objectPosition?: string;
-}) {
-  const borderGrad =
-    accent === "blue"
-      ? "from-sky-400 via-brand-blue to-brand"
-      : accent === "emerald"
-      ? "from-brand via-emerald-400 to-sky-400"
-      : "from-rose-400 via-brand to-brand-blue";
-
-  return (
-    <div className="relative mx-auto h-[26rem] w-full max-w-md sm:h-[30rem]">
-      <div className="pointer-events-none absolute -top-10 -right-10 h-56 w-56 animate-blob rounded-full bg-rose-300/45 blur-3xl" />
-      <div className="pointer-events-none absolute top-16 -left-14 h-60 w-60 animate-blob rounded-full bg-emerald-300/50 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-6 right-12 h-52 w-52 animate-blob rounded-full bg-sky-300/50 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-16 -left-6 h-44 w-44 animate-blob rounded-full bg-amber-200/60 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 right-0 h-40 w-40 animate-blob rounded-full bg-violet-200/50 blur-3xl" />
-
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 animate-spin-slow rounded-full border border-dashed border-emerald-300/50" />
-
-      <div
-        className={`relative mx-auto h-full w-[86%] overflow-hidden rounded-[2.5rem] bg-gradient-to-br ${borderGrad} p-[3px] shadow-2xl shadow-emerald-300/50`}
-      >
-        <div className="relative h-full w-full overflow-hidden rounded-[2.3rem] bg-white">
-          <Image
-            src={model}
-            alt={modelAlt}
-            fill
-            priority
-            sizes="(min-width: 768px) 420px, 85vw"
-            className="object-cover"
-            style={{ objectPosition }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand/30 via-transparent to-brand-blue/10" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-rose-200/20" />
-        </div>
-      </div>
-
-      <SparkIcon className="pointer-events-none absolute right-6 top-8 h-6 w-6 animate-pulse text-amber-400 drop-shadow" />
-      <SparkIcon className="pointer-events-none absolute left-4 top-24 h-4 w-4 animate-pulse text-brand-blue drop-shadow" />
-      <SparkIcon className="pointer-events-none absolute right-10 bottom-32 h-5 w-5 animate-pulse text-rose-400 drop-shadow" />
-      <SparkIcon className="pointer-events-none absolute left-10 bottom-12 h-4 w-4 animate-pulse text-brand drop-shadow" />
-
-      <div className="absolute -right-2 bottom-24 z-20 animate-float sm:right-0">
-        <div className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-white/85 p-2 shadow-2xl shadow-emerald-300/50 ring-1 ring-white/60 backdrop-blur-md sm:h-36 sm:w-36">
-          <Image
-            src={product}
-            alt={productAlt}
-            width={144}
-            height={144}
-            className="h-full w-full object-contain"
-            style={{ mixBlendMode: "multiply" }}
-          />
-          <span className="absolute -top-2 -right-2 flex h-10 w-10 animate-pulse-ring items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-brand text-[10px] font-bold text-white shadow-lg">
-            NEW
-          </span>
-        </div>
-      </div>
-
-      <div className="absolute -left-2 top-10 z-20 flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-xl shadow-emerald-200/50 ring-1 ring-white/60 backdrop-blur-md">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white">
-          <CheckBadgeIcon className="h-5 w-5" />
-        </span>
-        <div className="text-left leading-tight">
-          <div className="text-[12px] font-bold text-slate-900">Dentist Approved</div>
-          <div className="text-[10px] text-slate-500">Expert certified</div>
-        </div>
-      </div>
-
-      <div className="absolute left-4 bottom-6 z-20 flex items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-xl shadow-emerald-200/50 ring-1 ring-white/60 backdrop-blur-md">
-        <Stars value={5} />
-        <div className="text-[11px] font-bold text-slate-900">4.9/5</div>
-      </div>
-
-      <div className="absolute right-4 top-28 z-20 flex flex-col items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-rose-500 p-3 text-center text-white shadow-xl">
-        <span className="text-[10px] font-bold uppercase tracking-wider">Save</span>
-        <span className="text-xl font-extrabold leading-none">25%</span>
-      </div>
-    </div>
-  );
-}
-
-const heroSlides = [
+const heroSlides: HeroSlide[] = [
   {
+    img: "https://images.unsplash.com/photo-1654373535457-383a0a4d00f9?w=1920&q=80",
+    alt: "Bright confident smile with white teeth",
+    tag: "Signature Smiles",
+    objectPosition: "60% center",
+    title: (
+      <>
+        Your Smile Is <br />
+        <span className="text-brand">Our Priority</span>
+      </>
+    ),
+    description:
+      "From gentle whitening to sensitivity relief — professional-grade oral care that lets your smile speak first.",
+    cta: { label: "Shop Whitening", href: "/shop?category=teeth-whitening" },
+    secondary: { label: "See Bestsellers", href: "/shop" },
+  },
+  {
+    img: "/images/models/dentist.jpg",
+    alt: "Dentist examining patient in modern clinic",
     tag: "Trusted by Dental Experts",
+    objectPosition: "center 40%",
     title: (
       <>
         Dentist-Approved Care,{" "}
-        <br />
-        <span className="shimmer-text">Delivered to Your Door</span>
+        <span className="text-brand">Delivered</span> to Your Door
       </>
     ),
     description:
       "Every product on our shelves is recommended by dental professionals — authentic, enamel-safe and sourced directly from Australia.",
-    cta: "Shop Genuine Products",
-    secondary: "Meet the Experts",
-    bg: "bg-gradient-to-br from-emerald-100 via-rose-50 to-sky-100",
-    products: (
-      <HeroImage
-        model="/images/hero/hero-2.png"
-        modelAlt="Dr. Farhana Islam - BDS, Oral Health Specialist"
-        product="/images/products/p04.png"
-        productAlt="White Glo Professional White Whitening Toothpaste"
-        accent="emerald"
-        objectPosition="center top"
-      />
-    ),
+    cta: { label: "Shop Genuine Products", href: "/shop" },
+    secondary: { label: "Browse Categories", href: "/categories" },
   },
   {
-    tag: "Expert Dental Care",
+    img: "https://images.unsplash.com/photo-1777446523856-e7acffa844a7?w=1920&q=80",
+    alt: "Bamboo toothbrushes with eucalyptus leaves",
+    tag: "Clean Every Day",
+    objectPosition: "70% center",
     title: (
       <>
-        Professional Products{" "}
-        <br />
-        <span className="shimmer-text">From the Dentist&apos;s Chair</span>
+        Clean Rituals, <br />
+        <span className="text-brand">Fresh</span> Results
       </>
     ),
     description:
-      "The same whitening and sensitivity ranges your dentist reaches for - now delivered straight to your door.",
-    cta: "Shop Dental Care",
-    secondary: "Browse Categories",
-    bg: "bg-gradient-to-br from-sky-100 via-amber-50 to-emerald-100",
-    products: (
-      <HeroImage
-        model="/images/models/dentist.jpg"
-        modelAlt="Dental professional with patient in clinic"
-        product="/images/products/p03.png"
-        productAlt="White Glo Purple Toothpaste"
-        accent="blue"
-        objectPosition="70% center"
-      />
-    ),
+      "Build a routine you look forward to — brushes, pastes and rinses picked for everyday enamel-safe freshness.",
+    cta: { label: "Shop Daily Care", href: "/shop?category=toothpaste" },
+    secondary: { label: "Browse Brushes", href: "/shop?category=toothbrushes" },
   },
   {
-    tag: "Daily Freshness",
+    img: "/images/models/model-2.jpg",
+    alt: "Confident smile with white teeth",
+    tag: "Everyday Confidence",
+    objectPosition: "70% 35%",
     title: (
       <>
-        Fresh Breath,{" "}
-        <br />
-        <span className="shimmer-text">Confident Smiles</span>
+        Confidence in <br />
+        <span className="text-brand">Every Smile</span>
+      </>
+    ),
+    description:
+      "Simple routines, serious science. Build the smile you love with products you can trust every day.",
+    cta: { label: "Build My Routine", href: "/shop" },
+    secondary: { label: "Smile Tips", href: "/blog" },
+  },
+  {
+    img: "/images/models/model-1.jpg",
+    alt: "Serene smile portrait",
+    tag: "Daily Freshness",
+    objectPosition: "70% 30%",
+    title: (
+      <>
+        Fresh Breath, <br />
+        <span className="text-brand">All Day Long</span>
       </>
     ),
     description:
       "Dentist-formulated rinses, whitening pastes and daily care that keep every smile its brightest.",
-    cta: "Shop Best Sellers",
-    secondary: "Explore Offers",
-    bg: "bg-gradient-to-br from-violet-100 via-emerald-50 to-sky-100",
-    products: (
-      <HeroImage
-        model="/images/models/model-2.jpg"
-        modelAlt="Joyful woman laughing with white teeth"
-        product="/images/products/p11.png"
-        productAlt="TheraBreath Icy Mint Mouthwash"
-        accent="mixed"
-        objectPosition="center top"
-      />
-    ),
+    cta: { label: "Shop Best Sellers", href: "/shop" },
+    secondary: { label: "Explore Offers", href: "/shop?category=specials" },
   },
 ];
 
