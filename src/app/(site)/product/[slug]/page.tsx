@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/SiteShell";
-import { ProductCard, Stars } from "@/app/page";
+import { ProductCard } from "@/components/ProductCard";
+import { Stars } from "@/components/Stars";
 import { products, getProductBySlug, categoryLabels } from "@/lib/products";
 import {
   ArrowRightIcon,

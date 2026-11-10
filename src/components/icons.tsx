@@ -115,9 +115,6 @@ export function HeadsetIcon(props: SVGProps) {
     </svg>
   );
 }
-export function DotIcon() {
-  return <span className="inline-block h-1 w-1 rounded-full bg-slate-400" />;
-}
 export function SparkIcon(props: SVGProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>

@@ -7,7 +7,7 @@ import {
   CartIcon,
   HeartIcon,
 } from "@/components/icons";
-import { Stars } from "@/app/page";
+import { Stars } from "@/components/Stars";
 
 export const metadata = {
   title: "My Wishlist - OralCareBD",
