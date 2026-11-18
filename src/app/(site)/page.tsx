@@ -11,7 +11,7 @@ import {
 } from "@/components/icons";
 import { ProductCard } from "@/components/ProductCard";
 import { Stars } from "@/components/Stars";
-import { categories, brands, trustItems } from "@/lib/site-data";
+import { categories, brands } from "@/lib/site-data";
 import { products } from "@/lib/products";
 
 export default function Home() {
@@ -19,7 +19,6 @@ export default function Home() {
     <>
       <HeroCarousel slides={heroSlides} />
       <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <TrustBar />
         <CategoryStrip />
         <DealOfTheDay />
         <PromoBanners />
@@ -39,7 +38,7 @@ export default function Home() {
 
 const heroSlides: HeroSlide[] = [
   {
-    img: "https://images.unsplash.com/photo-1654373535457-383a0a4d00f9?w=1920&q=80",
+    img: "/images/hero/hero-1.jpg",
     alt: "Bright confident smile with white teeth",
     tag: "Signature Smiles",
     objectPosition: "60% center",
@@ -55,24 +54,24 @@ const heroSlides: HeroSlide[] = [
     secondary: { label: "See Bestsellers", href: "/shop" },
   },
   {
-    img: "/images/models/dentist.jpg",
-    alt: "Dentist examining patient in modern clinic",
-    tag: "Trusted by Dental Experts",
-    objectPosition: "center 40%",
+    img: "/images/hero/hero-2.jpg",
+    alt: "Modern dental clinic with chair and equipment",
+    tag: "Clinic-Grade Quality",
+    objectPosition: "center 60%",
     title: (
       <>
-        Dentist-Approved Care,{" "}
-        <span className="text-brand">Delivered</span> to Your Door
+        Clinic-Grade Care,{" "}
+        <span className="text-brand">At Home</span>
       </>
     ),
     description:
-      "Every product on our shelves is recommended by dental professionals — authentic, enamel-safe and sourced directly from Australia.",
-    cta: { label: "Shop Genuine Products", href: "/shop" },
+      "Formulas trusted by dental clinics across Australia — now part of your daily routine in Bangladesh.",
+    cta: { label: "Shop Clinic Picks", href: "/shop" },
     secondary: { label: "Browse Categories", href: "/categories" },
   },
   {
-    img: "https://images.unsplash.com/photo-1777446523856-e7acffa844a7?w=1920&q=80",
-    alt: "Bamboo toothbrushes with eucalyptus leaves",
+    img: "/images/hero/hero-3.jpg",
+    alt: "Bamboo toothbrushes in a glass jar with eucalyptus leaves",
     tag: "Clean Every Day",
     objectPosition: "70% center",
     title: (
@@ -87,137 +86,22 @@ const heroSlides: HeroSlide[] = [
     secondary: { label: "Browse Brushes", href: "/shop?category=toothbrushes" },
   },
   {
-    img: "/images/models/model-2.jpg",
-    alt: "Confident smile with white teeth",
-    tag: "Everyday Confidence",
-    objectPosition: "70% 35%",
+    img: "/images/hero/hero-4.jpg",
+    alt: "Dentist talking to patient in a modern dental office",
+    tag: "Trusted by Dental Experts",
+    objectPosition: "center 40%",
     title: (
       <>
-        Confidence in <br />
-        <span className="text-brand">Every Smile</span>
+        Dentist-Approved Care,{" "}
+        <span className="text-brand">Delivered</span> to Your Door
       </>
     ),
     description:
-      "Simple routines, serious science. Build the smile you love with products you can trust every day.",
-    cta: { label: "Build My Routine", href: "/shop" },
-    secondary: { label: "Smile Tips", href: "/blog" },
-  },
-  {
-    img: "/images/models/model-1.jpg",
-    alt: "Serene smile portrait",
-    tag: "Daily Freshness",
-    objectPosition: "70% 30%",
-    title: (
-      <>
-        Fresh Breath, <br />
-        <span className="text-brand">All Day Long</span>
-      </>
-    ),
-    description:
-      "Dentist-formulated rinses, whitening pastes and daily care that keep every smile its brightest.",
-    cta: { label: "Shop Best Sellers", href: "/shop" },
-    secondary: { label: "Explore Offers", href: "/shop?category=specials" },
+      "Every product on our shelves is recommended by dental professionals — authentic, enamel-safe and sourced directly from Australia.",
+    cta: { label: "Shop Genuine Products", href: "/shop" },
+    secondary: { label: "Meet the Experts", href: "/about-us" },
   },
 ];
-
-/* ---------- Stats Bento (By the Numbers) ---------- */
-
-function TrustBar() {
-  return (
-    <section className="mt-8">
-      <div className="grid gap-4 md:grid-cols-4">
-        {/* Big headline card */}
-        <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white ring-1 ring-slate-800 md:row-span-2">
-          <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 animate-blob rounded-full bg-brand/30 blur-3xl" />
-          <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 animate-blob rounded-full bg-brand/30 blur-3xl" />
-          <div className="relative">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
-              By the Numbers
-            </span>
-            <h3 className="mt-5 text-3xl font-black leading-tight">
-              Dentist-approved <br /> care at{" "}
-              <span className="rainbow-text">every price point</span>
-            </h3>
-            <p className="mt-4 text-sm text-slate-300">
-              Built on trust — see why thousands of families in Bangladesh pick OralCareBD.
-            </p>
-          </div>
-          <div className="relative mt-16 flex items-end gap-2">
-            {[8, 14, 10, 16, 12, 20, 18, 24, 20].map((h, i) => (
-              <span
-                key={i}
-                className="w-3 rounded-t bg-gradient-to-t from-brand to-brand-blue"
-                style={{ height: `${h * 3}px` }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Metric tiles */}
-        <StatTile number="10K+" label="Happy Customers" tone="emerald" />
-        <StatTile number="100+" label="Authentic Products" tone="blue" />
-        <StatTile number="4.9" label="Average Rating" tone="emerald" suffix="★" />
-        <StatTile number="24/7" label="Expert Support" tone="blue" />
-      </div>
-
-      {/* Quick trust bullets */}
-      <div className="mt-4 grid gap-3 rounded-2xl bg-gradient-to-r from-brand-soft via-white to-brand-soft p-4 ring-1 ring-brand/15 sm:grid-cols-5">
-        {trustItems.map((t, i) => {
-          const isBlue = i % 2 === 1;
-          const bubble = isBlue
-            ? "bg-brand-blue-soft text-brand-blue-dark"
-            : "bg-brand-soft text-brand-dark";
-          return (
-            <div key={t.title} className="flex items-center gap-2.5">
-              <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${bubble}`}>
-                {t.icon}
-              </span>
-              <div className="leading-tight">
-                <div className="text-xs font-bold text-slate-800">{t.title}</div>
-                <div className="text-[10px] text-slate-500">{t.sub}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function StatTile({
-  number,
-  label,
-  tone,
-  suffix,
-}: {
-  number: string;
-  label: string;
-  tone: "emerald" | "blue";
-  suffix?: string;
-}) {
-  const bg =
-    tone === "blue"
-      ? "bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft"
-      : "bg-gradient-to-br from-brand-soft via-white to-brand-soft";
-  const num = tone === "blue" ? "text-brand-blue-dark" : "text-brand-dark";
-  return (
-    <div
-      className={`relative overflow-hidden rounded-3xl ${bg} p-6 ring-1 ring-brand/15 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
-    >
-      <div className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 animate-blob rounded-full bg-white/60 blur-2xl" />
-      <div className="relative">
-        <div className={`display-font text-5xl font-black ${num}`}>
-          {number}
-          {suffix && <span className="ml-1 text-amber-400">{suffix}</span>}
-        </div>
-        <div className="mt-2 text-xs font-bold uppercase tracking-[0.15em] text-slate-700">
-          {label}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ---------- Category strip ---------- */
 
@@ -238,7 +122,7 @@ function CategoryStrip() {
               alt={c.label}
               width={96}
               height={96}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+              className="h-20 w-20 object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
             />
           </span>
           <span className="mt-3 text-sm font-semibold text-slate-800">{c.label}</span>
@@ -732,16 +616,15 @@ function HealthTips() {
                 0{i + 1}
               </span>
 
-              <div className="relative h-56 overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft">
-                <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-slate-300/40 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 animate-blob rounded-full bg-slate-300/40 blur-3xl" />
+              <div className="relative h-56 overflow-hidden bg-[#c9dde4]">
+                <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-brand/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 animate-blob rounded-full bg-white/50 blur-3xl" />
                 <Image
                   src={t.img}
                   alt=""
                   fill
                   sizes="(min-width: 768px) 33vw, 100vw"
                   className="object-contain p-8 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2"
-                  style={{ mixBlendMode: "multiply" }}
                 />
                 <span
                   className={`absolute right-4 top-4 inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] shadow-sm ${tagCls}`}

@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
 
       <Link
         href={href}
-        className="relative block overflow-hidden rounded-xl bg-white"
+        className="relative block overflow-hidden rounded-xl bg-brand-soft"
       >
         <div className="relative aspect-square">
           <Image
@@ -45,18 +45,12 @@ export function ProductCard({ product }: { product: Product }) {
             alt={name}
             fill
             sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
-            className="object-contain p-5 transition-transform duration-500 group-hover:scale-110"
+            className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
           />
-        </div>
-        <div className="absolute inset-x-3 bottom-3 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <button className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-dark">
-            <CartIcon className="h-3.5 w-3.5" />
-            Add to Cart
-          </button>
         </div>
       </Link>
 
-      <div className="mt-3 px-1">
+      <div className="mt-3 flex flex-1 flex-col px-1">
         <div className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-dark">
           {brand}
         </div>
@@ -69,15 +63,24 @@ export function ProductCard({ product }: { product: Product }) {
           <Stars value={rating} />
           <span className="text-[11px]">({reviews.toLocaleString()})</span>
         </div>
-        <div className="mt-3 flex items-end justify-between border-t border-slate-100 pt-3">
-          <div>
-            <div className="text-lg font-black text-slate-900">{price}</div>
-          </div>
+        <div className="mt-3 border-t border-slate-100 pt-3">
+          <div className="text-lg font-black text-slate-900">{price}</div>
+        </div>
+
+        {/* Always-visible action buttons */}
+        <div className="mt-3 grid grid-cols-2 gap-2">
           <button
-            aria-label="Add to cart"
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-lg"
+            type="button"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-3 py-2 text-[11px] font-bold text-brand-dark transition hover:bg-brand-soft"
           >
-            <CartIcon className="h-4 w-4" />
+            <CartIcon className="h-3.5 w-3.5" />
+            Add to Cart
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-3 py-2 text-[11px] font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+          >
+            Buy Now
           </button>
         </div>
       </div>

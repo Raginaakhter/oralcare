@@ -3,13 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #1f2937;
-  /* Two-tone palette: steel-teal + white */
-  --brand: #5f8fa0;
-  --brand-dark: #476d7c;
-  --brand-soft: #eef4f6;
-  --brand-blue: #5f8fa0;
-  --brand-blue-dark: #476d7c;
-  --brand-blue-soft: #eef4f6;
+  /* Two-tone palette: deep steel-teal + white */
+  --brand: #3d5c6e;
+  --brand-dark: #2a4252;
+  --brand-soft: #e6ecef;
+  --brand-blue: #3d5c6e;
+  --brand-blue-dark: #2a4252;
+  --brand-blue-soft: #e6ecef;
 }
 
 @theme inline {
@@ -109,11 +109,11 @@ body {
 .shimmer-text {
   background: linear-gradient(
     90deg,
-    #476d7c 0%,
-    #5f8fa0 25%,
-    #8cafbc 50%,
-    #5f8fa0 75%,
-    #476d7c 100%
+    #2a4252 0%,
+    #3d5c6e 25%,
+    #5d7d90 50%,
+    #3d5c6e 75%,
+    #2a4252 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -154,9 +154,9 @@ body {
 .rainbow-text {
   background: linear-gradient(
     90deg,
-    #476d7c 0%,
-    #5f8fa0 50%,
-    #476d7c 100%
+    #2a4252 0%,
+    #3d5c6e 50%,
+    #2a4252 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;

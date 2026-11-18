@@ -1,19 +1,11 @@
-import {
-  ShieldIcon,
-  WalletIcon,
-  TruckIcon,
-  ReturnIcon,
-  HeadsetIcon,
-} from "@/components/icons";
-
 export const categories = [
-  { label: "Toothbrushes", img: "/images/cat-toothbrush.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=toothbrushes" },
-  { label: "Toothpaste", img: "/images/cat-toothpaste.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=toothpaste" },
-  { label: "Teeth Whitening", img: "/images/cat-whitening.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=teeth-whitening" },
-  { label: "Floss & Mouthwash", img: "/images/cat-mouthwash.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=floss-mouthwash" },
-  { label: "Electric Brushes", img: "/images/cat-electric-brush.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=toothbrushes" },
-  { label: "Dental Floss", img: "/images/cat-floss.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=floss-mouthwash" },
-  { label: "Kids Oral Care", img: "/images/cat-kids.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop" },
+  { label: "Toothbrushes", img: "/images/cat-toothbrush.png", bg: "bg-[#c9dde4]", ring: "ring-brand/60", href: "/shop?category=toothbrushes" },
+  { label: "Toothpaste", img: "/images/cat-toothpaste.png", bg: "bg-slate-200", ring: "ring-slate-400", href: "/shop?category=toothpaste" },
+  { label: "Teeth Whitening", img: "/images/cat-whitening.png", bg: "bg-[#c9dde4]", ring: "ring-brand/60", href: "/shop?category=teeth-whitening" },
+  { label: "Floss & Mouthwash", img: "/images/cat-mouthwash.png", bg: "bg-slate-200", ring: "ring-slate-400", href: "/shop?category=floss-mouthwash" },
+  { label: "Electric Brushes", img: "/images/cat-electric-brush.png", bg: "bg-[#c9dde4]", ring: "ring-brand/60", href: "/shop?category=toothbrushes" },
+  { label: "Dental Floss", img: "/images/cat-floss.png", bg: "bg-slate-200", ring: "ring-slate-400", href: "/shop?category=floss-mouthwash" },
+  { label: "Kids Oral Care", img: "/images/cat-kids.png", bg: "bg-[#c9dde4]", ring: "ring-brand/60", href: "/shop" },
 ];
 
 export const brands = [
@@ -25,14 +17,6 @@ export const brands = [
   { name: "Colgate", className: "text-red-600" },
   { name: "Oral-B", className: "text-brand-dark italic" },
   { name: "LISTERINE", className: "text-brand-dark" },
-];
-
-export const trustItems = [
-  { title: "100% Authentic", sub: "Original Products", icon: <ShieldIcon /> },
-  { title: "Secure Payment", sub: "100% Safe & Secure", icon: <WalletIcon /> },
-  { title: "Fast Delivery", sub: "All Over Bangladesh", icon: <TruckIcon /> },
-  { title: "Easy Returns", sub: "7 Days Return Policy", icon: <ReturnIcon /> },
-  { title: "Expert Support", sub: "24/7 Customer Service", icon: <HeadsetIcon /> },
 ];
 
 export const footerCols = [
