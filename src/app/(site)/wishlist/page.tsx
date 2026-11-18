@@ -1,7 +1,10 @@
+"use client";
+
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/SiteShell";
-import { products } from "@/lib/products";
+import { useStore } from "@/context/StoreContext";
 import {
   ArrowRightIcon,
   CartIcon,
@@ -9,129 +12,246 @@ import {
 } from "@/components/icons";
 import { Stars } from "@/components/Stars";
 
-export const metadata = {
-  title: "My Wishlist - OralCareBD",
-};
-
-const saved = [products[0], products[8], products[10], products[14]];
-
 export default function WishlistPage() {
+  const {
+    wishlist,
+    removeFromWishlist,
+    clearWishlist,
+    addToCart,
+    wishlistCount,
+    showToast,
+  } = useStore();
+
+  const handleAddAllToCart = () => {
+    wishlist.forEach((p) => {
+      addToCart(p, 1, false);
+    });
+    showToast("All wishlist items moved to cart!", "success");
+  };
+
   return (
     <>
       <PageHero
         title="My Wishlist"
-        subtitle={`${saved.length} saved item${saved.length === 1 ? "" : "s"} waiting for you.`}
+        subtitle={
+          wishlistCount > 0
+            ? `${wishlistCount} saved item${wishlistCount === 1 ? "" : "s"} waiting for you.`
+            : "Save your favorite oral care products for later."
+        }
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Wishlist" }]}
       />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-slate-100">
-          <table className="hidden w-full md:table">
-            <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
-              <tr>
-                <th className="px-6 py-4 text-left">Product</th>
-                <th className="px-6 py-4 text-left">Rating</th>
-                <th className="px-6 py-4 text-left">Price</th>
-                <th className="px-6 py-4 text-left">Status</th>
-                <th className="px-6 py-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {saved.map((p) => (
-                <tr key={p.slug} className="border-t border-slate-100">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <Link href={p.href} className="relative h-16 w-16 overflow-hidden rounded-lg bg-slate-50">
-                        <Image src={p.img} alt={p.name} fill sizes="64px" className="object-contain p-1" />
+        {wishlist.length === 0 ? (
+          <div className="mx-auto max-w-md rounded-3xl bg-white p-12 text-center ring-1 ring-slate-100 shadow-sm">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+              <HeartIcon className="h-10 w-10" />
+            </div>
+            <h3 className="mt-5 text-xl font-extrabold text-slate-900">
+              Your wishlist is empty
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Explore our store and tap the heart icon on any product to save it here.
+            </p>
+            <Link
+              href="/shop"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white hover:bg-brand-dark shadow-md"
+            >
+              Explore Products <ArrowRightIcon className="h-4 w-4" />
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Header action bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-4 ring-1 ring-slate-100 shadow-sm">
+              <div className="text-sm text-slate-600">
+                You have <strong className="text-slate-900">{wishlistCount}</strong> items saved
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleAddAllToCart}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-bold text-white hover:bg-brand-dark"
+                >
+                  <CartIcon className="h-3.5 w-3.5" />
+                  Add All to Cart
+                </button>
+                <button
+                  type="button"
+                  onClick={clearWishlist}
+                  className="text-xs font-semibold text-slate-400 hover:text-rose-600"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-slate-100 shadow-sm">
+              <table className="hidden w-full md:table">
+                <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <tr>
+                    <th className="px-6 py-4 text-left">Product</th>
+                    <th className="px-6 py-4 text-left">Rating</th>
+                    <th className="px-6 py-4 text-left">Price</th>
+                    <th className="px-6 py-4 text-left">Status</th>
+                    <th className="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {wishlist.map((p) => (
+                    <tr key={p.slug} className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <Link
+                            href={p.href}
+                            className="relative h-16 w-16 overflow-hidden rounded-xl bg-brand-soft"
+                          >
+                            <Image
+                              src={p.img}
+                              alt={p.name}
+                              fill
+                              sizes="64px"
+                              className="object-contain p-1"
+                            />
+                          </Link>
+                          <div>
+                            <div className="text-[10px] font-bold uppercase text-brand-dark">
+                              {p.brand}
+                            </div>
+                            <Link
+                              href={p.href}
+                              className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-dark"
+                            >
+                              {p.name}
+                            </Link>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                          <Stars value={p.rating} />
+                          <span>({p.reviews})</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-extrabold text-slate-900">
+                        {p.price}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200">
+                          In Stock
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => addToCart(p, 1, true)}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-semibold text-white hover:bg-brand-dark"
+                          >
+                            <CartIcon className="h-3.5 w-3.5" />
+                            Add to Cart
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFromWishlist(p.slug)}
+                            aria-label="Remove"
+                            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Mobile Card List */}
+              <div className="divide-y divide-slate-100 md:hidden">
+                {wishlist.map((p) => (
+                  <div key={p.slug} className="flex items-center gap-4 p-4">
+                    <Link
+                      href={p.href}
+                      className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-soft"
+                    >
+                      <Image
+                        src={p.img}
+                        alt={p.name}
+                        fill
+                        sizes="80px"
+                        className="object-contain p-2"
+                      />
+                    </Link>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-bold uppercase text-brand-dark">
+                        {p.brand}
+                      </div>
+                      <Link
+                        href={p.href}
+                        className="line-clamp-2 text-xs font-bold text-slate-900"
+                      >
+                        {p.name}
                       </Link>
-                      <div>
-                        <Link href={p.href} className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-dark">
-                          {p.name}
-                        </Link>
-                        <div className="mt-0.5 text-xs text-slate-500">{p.brand}</div>
+                      <div className="mt-1 text-xs font-black text-slate-900">{p.price}</div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => addToCart(p, 1, true)}
+                          className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-[11px] font-bold text-white"
+                        >
+                          <CartIcon className="h-3 w-3" />
+                          Add to Cart
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeFromWishlist(p.slug)}
+                          className="text-[11px] font-semibold text-rose-500 hover:underline"
+                        >
+                          Remove
+                        </button>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                      <Stars value={p.rating} />
-                      <span>({p.reviews})</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm font-extrabold text-slate-900">{p.price}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-dark">
-                      In Stock
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-semibold text-white hover:bg-brand-dark">
-                        <CartIcon className="h-3.5 w-3.5" />
-                        Add
-                      </button>
-                      <button
-                        aria-label="Remove"
-                        className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500"
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-          {/* Mobile list */}
-          <div className="divide-y divide-slate-100 md:hidden">
-            {saved.map((p) => (
-              <div key={p.slug} className="flex items-center gap-4 p-4">
-                <Link href={p.href} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-50">
-                  <Image src={p.img} alt={p.name} fill sizes="80px" className="object-contain p-2" />
-                </Link>
+            {/* Bottom info banner */}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-6 ring-1 ring-brand/15">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-brand shadow-sm">
+                  <HeartIcon className="h-5 w-5 fill-current text-brand" />
+                </span>
                 <div className="flex-1">
-                  <Link href={p.href} className="line-clamp-2 text-sm font-semibold text-slate-900">
-                    {p.name}
-                  </Link>
-                  <div className="mt-1 text-sm font-bold text-brand-dark">{p.price}</div>
-                  <button className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1.5 text-xs font-semibold text-white">
-                    <CartIcon className="h-3.5 w-3.5" />
-                    Add to Cart
-                  </button>
+                  <h3 className="text-sm font-extrabold text-slate-900">
+                    Saved For Later
+                  </h3>
+                  <p className="mt-0.5 text-xs text-slate-600">
+                    Your wishlist is saved on your device and will be waiting when you return.
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Empty state demo card */}
-        <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <div className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-6 ring-1 ring-brand/15">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand ring-1 ring-brand/15">
-              <HeartIcon className="h-6 w-6" />
-            </span>
-            <div className="flex-1">
-              <h3 className="text-base font-extrabold text-slate-900">Share Your Wishlist</h3>
-              <p className="mt-1 text-sm text-slate-600">Send your list to friends and family.</p>
+              <Link
+                href="/shop"
+                className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft p-6 ring-1 ring-slate-200 transition hover:-translate-y-0.5"
+              >
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-brand-blue-dark shadow-sm">
+                  <ArrowRightIcon className="h-5 w-5" />
+                </span>
+                <div className="flex-1">
+                  <h3 className="text-sm font-extrabold text-slate-900">
+                    Browse More Products
+                  </h3>
+                  <p className="mt-0.5 text-xs text-slate-600">
+                    Check out new arrivals and special whitening offers.
+                  </p>
+                </div>
+              </Link>
             </div>
-            <button className="rounded-full bg-brand px-4 py-2 text-xs font-semibold text-white hover:bg-brand-dark">
-              Share
-            </button>
           </div>
-          <Link
-            href="/shop"
-            className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft p-6 ring-1 ring-slate-200"
-          >
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand-blue-dark ring-1 ring-slate-200">
-              <ArrowRightIcon className="h-6 w-6" />
-            </span>
-            <div className="flex-1">
-              <h3 className="text-base font-extrabold text-slate-900">Continue Shopping</h3>
-              <p className="mt-1 text-sm text-slate-600">Find more products to love.</p>
-            </div>
-          </Link>
-        </div>
+        )}
       </main>
     </>
   );

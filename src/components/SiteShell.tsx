@@ -21,6 +21,7 @@ import {
   ArrowRightIcon,
 } from "@/components/icons";
 import { categories, footerCols, site } from "@/lib/site-data";
+import { HeaderNavActions } from "@/components/HeaderNavActions";
 
 export function AnnouncementBar() {
   const ticker = [
@@ -128,22 +129,7 @@ export function Header() {
             <SearchIcon className="h-5 w-5" />
           </Link>
 
-          <AccountMenu />
-          <IconButton
-            href="/wishlist"
-            label="Wishlist"
-            icon={<HeartIcon className="h-5 w-5" />}
-            count={0}
-            badgeTone="rose"
-          />
-          <IconButton
-            href="/cart"
-            label="Cart"
-            icon={<CartIcon className="h-5 w-5" />}
-            count={0}
-            badgeTone="brand"
-            sub="৳0"
-          />
+          <HeaderNavActions />
         </div>
       </div>
     </header>

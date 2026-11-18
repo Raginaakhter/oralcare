@@ -5,16 +5,21 @@ import {
   Footer,
   FloatingWhatsapp,
 } from "@/components/SiteShell";
+import { StoreProvider } from "@/context/StoreContext";
+import { CartDrawer } from "@/components/CartDrawer";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-full flex-col">
-      <AnnouncementBar />
-      <Header />
-      <MainNav />
-      <div className="flex-1">{children}</div>
-      <Footer />
-      <FloatingWhatsapp />
-    </div>
+    <StoreProvider>
+      <div className="flex min-h-full flex-col">
+        <AnnouncementBar />
+        <Header />
+        <MainNav />
+        <div className="flex-1">{children}</div>
+        <Footer />
+        <FloatingWhatsapp />
+        <CartDrawer />
+      </div>
+    </StoreProvider>
   );
 }

@@ -569,7 +569,7 @@ const healthTips = [
     excerpt: "Twice a day, two minutes each - a gentle 45° angle protects enamel and gums.",
     accent: "emerald",
     img: "/images/products/p04.png",
-    href: "/blog",
+    href: "/blog/brushing-right",
   },
   {
     tag: "Whitening",
@@ -577,7 +577,7 @@ const healthTips = [
     excerpt: "How purple toothpastes neutralise yellow tones and when to switch to a kit.",
     accent: "blue",
     img: "/images/products/p03.png",
-    href: "/blog",
+    href: "/blog/whitening-sensitivity",
   },
   {
     tag: "Fresh Breath",
@@ -585,7 +585,7 @@ const healthTips = [
     excerpt: "Alcohol-free formulas for sensitive mouths, antiseptic rinses for deep clean.",
     accent: "emerald",
     img: "/images/products/p11.png",
-    href: "/blog",
+    href: "/blog/right-mouthwash",
   },
 ];
 

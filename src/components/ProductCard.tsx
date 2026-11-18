@@ -1,89 +1,208 @@
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   CartIcon,
   HeartIcon,
   SparkIcon,
+  CheckBadgeIcon,
+  ArrowRightIcon,
 } from "@/components/icons";
 import { Stars } from "@/components/Stars";
 import type { Product } from "@/lib/products";
+import { useStore } from "@/context/StoreContext";
 
 export function ProductCard({ product }: { product: Product }) {
-  const { name, price, rating, reviews, badge, badgeColor, img, href, brand } = product;
+  const { name, price, rating, reviews, badge, badgeColor, img, href, brand, description } = product;
+  const { addToCart, buyNow, toggleWishlist, isInWishlist } = useStore();
+  const inWishlist = isInWishlist(product.slug);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    addToCart(product, 1, true);
+    setTimeout(() => setIsAdding(false), 500);
+  };
+
+  const handleBuyNow = () => {
+    buyNow(product, 1);
+  };
+
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-slate-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 hover:ring-brand/30">
-      {badge && (
-        <span
-          className={`absolute left-4 top-4 z-10 rounded-full ${badgeColor} px-3 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-md`}
-        >
-          {badge}
-        </span>
-      )}
+    <>
+      <article className="group relative flex flex-col overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-slate-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 hover:ring-brand/30">
+        {badge && (
+          <span
+            className={`absolute left-4 top-4 z-10 rounded-full ${badgeColor} px-3 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-md`}
+          >
+            {badge}
+          </span>
+        )}
 
-      <div className="absolute right-4 top-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2">
-        <button
-          aria-label="Add to wishlist"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-rose-50 hover:text-rose-500"
-        >
-          <HeartIcon className="h-4 w-4" />
-        </button>
-        <button
-          aria-label="Quick view"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-brand-soft hover:text-brand-dark"
-        >
-          <SparkIcon className="h-4 w-4" />
-        </button>
-      </div>
-
-      <Link
-        href={href}
-        className="relative block overflow-hidden rounded-xl bg-brand-soft"
-      >
-        <div className="relative aspect-square">
-          <Image
-            src={img}
-            alt={name}
-            fill
-            sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
-            className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
-          />
+        <div className="absolute right-4 top-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2">
+          <button
+            onClick={() => toggleWishlist(product)}
+            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md ring-1 transition ${
+              inWishlist
+                ? "bg-rose-50 text-rose-500 ring-rose-200"
+                : "bg-white text-slate-500 ring-slate-100 hover:bg-rose-50 hover:text-rose-500"
+            }`}
+          >
+            <HeartIcon
+              className={`h-4 w-4 ${inWishlist ? "fill-current text-rose-500" : ""}`}
+            />
+          </button>
+          <button
+            onClick={() => setQuickViewOpen(true)}
+            aria-label="Quick view"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-brand-soft hover:text-brand-dark"
+          >
+            <SparkIcon className="h-4 w-4" />
+          </button>
         </div>
-      </Link>
 
-      <div className="mt-3 flex flex-1 flex-col px-1">
-        <div className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-dark">
-          {brand}
-        </div>
-        <Link href={href}>
-          <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-slate-900 hover:text-brand-dark">
-            {name}
-          </h3>
+        <Link
+          href={href}
+          className="relative block overflow-hidden rounded-xl bg-brand-soft"
+        >
+          <div className="relative aspect-square">
+            <Image
+              src={img}
+              alt={name}
+              fill
+              sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
+              className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
         </Link>
-        <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
-          <Stars value={rating} />
-          <span className="text-[11px]">({reviews.toLocaleString()})</span>
-        </div>
-        <div className="mt-3 border-t border-slate-100 pt-3">
-          <div className="text-lg font-black text-slate-900">{price}</div>
-        </div>
 
-        {/* Always-visible action buttons */}
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-3 py-2 text-[11px] font-bold text-brand-dark transition hover:bg-brand-soft"
-          >
-            <CartIcon className="h-3.5 w-3.5" />
-            Add to Cart
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-3 py-2 text-[11px] font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
-          >
-            Buy Now
-          </button>
+        <div className="mt-3 flex flex-1 flex-col px-1">
+          <div className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-dark">
+            {brand}
+          </div>
+          <Link href={href}>
+            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-slate-900 hover:text-brand-dark">
+              {name}
+            </h3>
+          </Link>
+          <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+            <Stars value={rating} />
+            <span className="text-[11px]">({reviews.toLocaleString()})</span>
+          </div>
+          <div className="mt-3 border-t border-slate-100 pt-3">
+            <div className="text-lg font-black text-slate-900">{price}</div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAdding}
+              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-3 py-2 text-[11px] font-bold text-brand-dark transition hover:bg-brand-soft active:scale-95"
+            >
+              <CartIcon className="h-3.5 w-3.5" />
+              {isAdding ? "Adding..." : "Add to Cart"}
+            </button>
+            <button
+              type="button"
+              onClick={handleBuyNow}
+              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-3 py-2 text-[11px] font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-95"
+            >
+              Buy Now
+            </button>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+
+      {/* Quick View Modal */}
+      {quickViewOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-fade-in">
+          <div
+            className="fixed inset-0"
+            onClick={() => setQuickViewOpen(false)}
+          />
+          <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-100 sm:p-8 animate-scale-up">
+            <button
+              onClick={() => setQuickViewOpen(false)}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            >
+              &times;
+            </button>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-brand-soft">
+                <Image
+                  src={img}
+                  alt={name}
+                  fill
+                  sizes="300px"
+                  className="object-contain p-6"
+                />
+              </div>
+              <div className="flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-brand-dark">
+                    {brand}
+                  </span>
+                  <h3 className="mt-1 text-xl font-extrabold text-slate-900">
+                    {name}
+                  </h3>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Stars value={rating} />
+                    <span className="text-xs text-slate-500">
+                      ({reviews} reviews)
+                    </span>
+                  </div>
+                  <div className="mt-3 text-2xl font-black text-brand-dark">
+                    {price}
+                  </div>
+                  <p className="mt-3 text-xs text-slate-600 line-clamp-3">
+                    {description}
+                  </p>
+                  <div className="mt-3 flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
+                    <CheckBadgeIcon className="h-4 w-4" /> In Stock · Australian Import
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        addToCart(product, 1, true);
+                        setQuickViewOpen(false);
+                      }}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-4 py-2.5 text-xs font-bold text-brand-dark hover:bg-brand-soft"
+                    >
+                      <CartIcon className="h-4 w-4" /> Add to Cart
+                    </button>
+                    <button
+                      onClick={() => {
+                        setQuickViewOpen(false);
+                        buyNow(product, 1);
+                      }}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-dark"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                  <Link
+                    href={href}
+                    onClick={() => setQuickViewOpen(false)}
+                    className="inline-flex w-full items-center justify-center gap-1 text-xs font-semibold text-slate-500 hover:text-brand-dark"
+                  >
+                    View Full Product Details <ArrowRightIcon className="h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -24,7 +24,9 @@ const categoryFilters = [
 
 export default async function ShopPage({
   searchParams,
-}: PageProps<"/shop">) {
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const params = await searchParams;
   const activeCat =
     typeof params.category === "string" ? params.category : "";
