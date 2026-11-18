@@ -118,7 +118,7 @@ export default function InventoryPage() {
                     ? "bg-rose-500"
                     : p.stock <= p.reorder
                     ? "bg-amber-500"
-                    : "bg-emerald-500";
+                    : "bg-brand";
                 return (
                   <tr key={p.slug} className="transition hover:bg-slate-50">
                     <td className="px-6 py-4">
@@ -180,8 +180,8 @@ function InfoCard({
   accent: "emerald" | "blue" | "amber" | "rose";
 }) {
   const bg = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-sky-50 text-sky-600",
+    emerald: "bg-brand-soft text-brand-dark",
+    blue: "bg-brand-soft text-brand-dark",
     amber: "bg-amber-50 text-amber-600",
     rose: "bg-rose-50 text-rose-600",
   }[accent];

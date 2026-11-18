@@ -51,9 +51,9 @@ export default function AccountPage() {
           {/* Sign In card */}
           <Link
             href="/signin"
-            className="group relative overflow-hidden rounded-3xl bg-white p-8 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+            className="group relative overflow-hidden rounded-3xl bg-white p-8 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
           >
-            <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-emerald-100/60 blur-3xl" />
+            <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
             <div className="relative">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft text-brand-dark">
                 <UserIcon className="h-6 w-6" />
@@ -74,9 +74,9 @@ export default function AccountPage() {
           {/* Create Account card */}
           <Link
             href="/create-account"
-            className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-8 ring-1 ring-emerald-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+            className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-8 ring-1 ring-brand/15 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
           >
-            <div className="pointer-events-none absolute -bottom-10 -right-10 h-40 w-40 animate-blob rounded-full bg-sky-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -right-10 h-40 w-40 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
             <div className="relative">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-white text-brand-blue-dark shadow-sm">
                 <MailIcon className="h-6 w-6" />
@@ -114,7 +114,7 @@ export default function AccountPage() {
               return (
                 <div
                   key={p.title}
-                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
                 >
                   <span
                     className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${bubble}`}

@@ -11,7 +11,7 @@ import type { Product } from "@/lib/products";
 export function ProductCard({ product }: { product: Product }) {
   const { name, price, rating, reviews, badge, badgeColor, img, href, brand } = product;
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-3 ring-1 ring-slate-100 transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-100/80 hover:ring-emerald-200">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-slate-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 hover:ring-brand/30">
       {badge && (
         <span
           className={`absolute left-4 top-4 z-10 rounded-full ${badgeColor} px-3 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-md`}
@@ -29,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
         </button>
         <button
           aria-label="Quick view"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-sky-50 hover:text-brand-blue-dark"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-brand-soft hover:text-brand-dark"
         >
           <SparkIcon className="h-4 w-4" />
         </button>
@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
 
       <Link
         href={href}
-        className="relative block overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-sky-50/70"
+        className="relative block overflow-hidden rounded-xl bg-white"
       >
         <div className="relative aspect-square">
           <Image
@@ -45,18 +45,18 @@ export function ProductCard({ product }: { product: Product }) {
             alt={name}
             fill
             sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
-            className="object-contain p-4 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2"
+            className="object-contain p-5 transition-transform duration-500 group-hover:scale-110"
           />
         </div>
         <div className="absolute inset-x-3 bottom-3 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <button className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-dark">
+          <button className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-brand-dark">
             <CartIcon className="h-3.5 w-3.5" />
             Add to Cart
           </button>
         </div>
       </Link>
 
-      <div className="mt-4 px-1">
+      <div className="mt-3 px-1">
         <div className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-dark">
           {brand}
         </div>
@@ -75,7 +75,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <button
             aria-label="Add to cart"
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-dark text-white shadow-md shadow-emerald-200/60 transition hover:-translate-y-0.5 hover:shadow-lg"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-lg"
           >
             <CartIcon className="h-4 w-4" />
           </button>

@@ -203,7 +203,7 @@ function StatCard({
   const borderCls = active ? "border-brand bg-brand-soft" : "border-slate-200 bg-white";
   const accent = {
     slate: "text-slate-900",
-    emerald: "text-emerald-600",
+    emerald: "text-brand-dark",
     amber: "text-amber-600",
     rose: "text-rose-600",
   }[tone];

@@ -94,9 +94,9 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="relative mx-auto h-80 w-full max-w-md sm:h-96">
-            <div className="pointer-events-none absolute -top-6 -right-6 h-48 w-48 animate-blob rounded-full bg-emerald-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-0 -left-6 h-48 w-48 animate-blob rounded-full bg-sky-200/60 blur-3xl" />
-            <div className="relative h-full w-full overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-emerald-400 via-emerald-500 to-brand-blue p-[3px] shadow-2xl">
+            <div className="pointer-events-none absolute -top-6 -right-6 h-48 w-48 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 -left-6 h-48 w-48 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
+            <div className="relative h-full w-full overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand via-brand to-brand-blue p-[3px] shadow-2xl">
               <div className="relative h-full w-full overflow-hidden rounded-[2.3rem] bg-white">
                 <Image
                   src="/images/models/dentist.jpg"
@@ -112,7 +112,7 @@ export default function AboutPage() {
         </section>
 
         {/* Stats */}
-        <section className="mt-16 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-emerald-500 to-brand-blue p-8 text-white">
+        <section className="mt-16 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-brand to-brand-blue p-8 text-white">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((s) => (
               <div key={s.l} className="text-center">
@@ -142,7 +142,7 @@ export default function AboutPage() {
               return (
                 <div
                   key={v.title}
-                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
                 >
                   <span
                     className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${bubble}`}
@@ -158,7 +158,7 @@ export default function AboutPage() {
         </section>
 
         {/* Mission */}
-        <section className="mt-16 overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-8 ring-1 ring-emerald-100 sm:p-12">
+        <section className="mt-16 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15 sm:p-12">
           <div className="mx-auto max-w-3xl text-center">
             <SparkIcon className="mx-auto h-8 w-8 text-brand" />
             <h2 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">

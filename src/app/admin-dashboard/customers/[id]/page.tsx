@@ -185,7 +185,7 @@ function TimelineItem({
     brand: "bg-brand text-white",
     amber: "bg-amber-400 text-white",
     rose: "bg-rose-400 text-white",
-    emerald: "bg-emerald-500 text-white",
+    emerald: "bg-brand text-white",
   }[tone];
   return (
     <li className="flex items-start gap-3">

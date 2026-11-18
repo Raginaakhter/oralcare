@@ -79,7 +79,7 @@ export default function ContactPage() {
               <a
                 key={c.label}
                 href={c.href}
-                className="group rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                className="group rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
               >
                 {inner}
               </a>
@@ -97,8 +97,8 @@ export default function ContactPage() {
         {/* Form + Map */}
         <section className="mt-12 grid gap-10 lg:grid-cols-2">
           <div className="relative overflow-hidden rounded-3xl bg-white p-8 ring-1 ring-slate-100">
-            <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 animate-blob rounded-full bg-emerald-100/60 blur-3xl" />
-            <div className="pointer-events-none absolute -left-10 bottom-0 h-40 w-40 animate-blob rounded-full bg-sky-100/60 blur-3xl" />
+            <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
+            <div className="pointer-events-none absolute -left-10 bottom-0 h-40 w-40 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
             <div className="relative">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-dark">
                 <SparkIcon className="h-3.5 w-3.5" />
@@ -140,7 +140,7 @@ export default function ContactPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-emerald-500 to-brand-blue p-8 text-white">
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-8 text-white">
               <h3 className="text-xl font-extrabold">Prefer to Chat?</h3>
               <p className="mt-2 text-sm opacity-90">
                 Our customer care team is online all day — tap to start a WhatsApp chat.

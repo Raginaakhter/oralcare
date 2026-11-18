@@ -88,7 +88,7 @@ export function AdminNav() {
                     <span
                       className={`flex h-7 w-7 items-center justify-center rounded-lg ${
                         active
-                          ? "bg-brand text-white shadow-sm shadow-emerald-500/30"
+                          ? "bg-brand text-white shadow-sm shadow-brand/30"
                           : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-slate-900"
                       }`}
                     >

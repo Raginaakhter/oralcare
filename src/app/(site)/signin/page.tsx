@@ -20,8 +20,8 @@ export default function SignInPage() {
       />
 
       <main className="mx-auto w-full max-w-md px-4 py-12 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-white p-8 ring-1 ring-slate-100 shadow-xl shadow-emerald-50">
-          <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-emerald-100/60 blur-3xl" />
+        <div className="relative overflow-hidden rounded-3xl bg-white p-8 ring-1 ring-slate-100 shadow-xl shadow-brand/15">
+          <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
           <div className="relative">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-dark">
               <UserIcon className="h-3.5 w-3.5" />

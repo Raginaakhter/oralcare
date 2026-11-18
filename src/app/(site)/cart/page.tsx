@@ -97,7 +97,7 @@ export default function CartPage() {
             ))}
 
             {/* Coupon */}
-            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-sky-50 p-4 ring-1 ring-emerald-100">
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-gradient-to-r from-brand-soft to-brand-soft p-4 ring-1 ring-brand/15">
               <span className="text-sm font-semibold text-slate-700">Have a coupon?</span>
               <form className="flex flex-1 gap-2">
                 <input
@@ -169,21 +169,21 @@ export default function CartPage() {
               </div>
             </div>
 
-            <div className="space-y-3 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 ring-1 ring-emerald-100">
+            <div className="space-y-3 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-6 ring-1 ring-brand/15">
               <div className="flex items-center gap-3 text-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand ring-1 ring-emerald-100">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">
                   <TruckIcon className="h-4 w-4" />
                 </span>
                 Free delivery on orders over ৳1,500
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-blue-dark ring-1 ring-blue-100">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-blue-dark ring-1 ring-slate-200">
                   <ShieldIcon className="h-4 w-4" />
                 </span>
                 100% authentic products
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand ring-1 ring-emerald-100">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">
                   <CheckBadgeIcon className="h-4 w-4" />
                 </span>
                 7-day easy return

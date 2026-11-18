@@ -107,8 +107,8 @@ export default function WishlistPage() {
 
         {/* Empty state demo card */}
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <div className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-sky-50 p-6 ring-1 ring-emerald-100">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand ring-1 ring-emerald-100">
+          <div className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-6 ring-1 ring-brand/15">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand ring-1 ring-brand/15">
               <HeartIcon className="h-6 w-6" />
             </span>
             <div className="flex-1">
@@ -121,9 +121,9 @@ export default function WishlistPage() {
           </div>
           <Link
             href="/shop"
-            className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-sky-50 p-6 ring-1 ring-blue-100"
+            className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft p-6 ring-1 ring-slate-200"
           >
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand-blue-dark ring-1 ring-blue-100">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand-blue-dark ring-1 ring-slate-200">
               <ArrowRightIcon className="h-6 w-6" />
             </span>
             <div className="flex-1">

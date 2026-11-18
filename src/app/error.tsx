@@ -41,7 +41,7 @@ export default function GlobalError({
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-300/40 transition hover:-translate-y-0.5 hover:bg-brand-dark"
+            className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-300/40 transition hover:-translate-y-0.5 hover:bg-brand-dark"
           >
             Try Again
           </button>

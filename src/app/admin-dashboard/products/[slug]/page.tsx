@@ -64,7 +64,7 @@ export default async function ProductDetailPage({
         {/* Image + meta */}
         <div className="space-y-6">
           <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200/70">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-sky-50/70">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gradient-to-br from-brand-soft/70 via-white to-brand-soft/70">
               <Image
                 src={product.img}
                 alt={product.name}

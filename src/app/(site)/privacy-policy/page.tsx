@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
 
       <main className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Intro card */}
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-emerald-500 to-brand-blue p-8 text-white">
+        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-8 text-white">
           <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
             <ShieldIcon className="h-6 w-6" />
           </span>
@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* Contact */}
-        <div className="mt-10 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-8 ring-1 ring-emerald-100">
+        <div className="mt-10 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-extrabold text-slate-900">Questions about your data?</h3>

@@ -25,12 +25,12 @@ const reviews: {
   date: string;
 }[] = [
   { author: "Afsana Rahman", avatarColor: "from-rose-400 to-pink-500", rating: 5, title: "Game-changing whitening results!", body: "Used this for 2 weeks and the difference is visible. My dentist even complimented me. The LED accelerator is powerful and no sensitivity at all.", product: products[0], verified: true, helpful: 24, status: "published", date: "Nov 9, 2026" },
-  { author: "Tanvir Islam", avatarColor: "from-sky-400 to-brand-blue", rating: 4, title: "Great freshness, lasts all day", body: "The icy mint flavor is strong but not overwhelming. Lasts about 6-8 hours of fresh breath. Would buy again.", product: products[10], verified: true, helpful: 12, status: "published", date: "Nov 8, 2026" },
-  { author: "Nusrat Jahan", avatarColor: "from-emerald-400 to-brand", rating: 5, title: "Purple toothpaste is magic", body: "I was skeptical about purple toothpaste but it really does neutralise yellow tones. Instant brighter smile after one use!", product: products[2], verified: true, helpful: 18, status: "published", date: "Nov 7, 2026" },
+  { author: "Tanvir Islam", avatarColor: "from-brand to-brand-blue", rating: 4, title: "Great freshness, lasts all day", body: "The icy mint flavor is strong but not overwhelming. Lasts about 6-8 hours of fresh breath. Would buy again.", product: products[10], verified: true, helpful: 12, status: "published", date: "Nov 8, 2026" },
+  { author: "Nusrat Jahan", avatarColor: "from-brand to-brand", rating: 5, title: "Purple toothpaste is magic", body: "I was skeptical about purple toothpaste but it really does neutralise yellow tones. Instant brighter smile after one use!", product: products[2], verified: true, helpful: 18, status: "published", date: "Nov 7, 2026" },
   { author: "Anonymous User", avatarColor: "from-slate-400 to-slate-600", rating: 1, title: "Not what I expected at all!!!", body: "Completely useless product do not buy spam spam click here for free stuff visit my-sketchy-site.com for discount lmao", product: products[4], verified: false, helpful: 0, status: "flagged", date: "Nov 7, 2026" },
   { author: "Rafiq Ahmed", avatarColor: "from-amber-400 to-orange-500", rating: 4, title: "Solid everyday whitening", body: "Not dramatic results but gentle enough for daily use. My teeth feel cleaner and look a shade brighter after a month.", product: products[3], verified: true, helpful: 8, status: "pending", date: "Nov 6, 2026" },
   { author: "Sabrina Akter", avatarColor: "from-violet-400 to-fuchsia-500", rating: 5, title: "Perfect for sensitive teeth", body: "Sensodyne has been a lifesaver. No more wincing when I eat ice cream. The daily care formula is gentle and effective.", product: products[13], verified: true, helpful: 31, status: "published", date: "Nov 5, 2026" },
-  { author: "Mehedi Hasan", avatarColor: "from-indigo-400 to-blue-500", rating: 3, title: "Decent but overpriced", body: "The product works as advertised but feels a bit expensive for the amount you get. Would consider cheaper alternatives.", product: products[8], verified: true, helpful: 4, status: "pending", date: "Nov 4, 2026" },
+  { author: "Mehedi Hasan", avatarColor: "from-indigo-400 to-brand", rating: 3, title: "Decent but overpriced", body: "The product works as advertised but feels a bit expensive for the amount you get. Would consider cheaper alternatives.", product: products[8], verified: true, helpful: 4, status: "pending", date: "Nov 4, 2026" },
 ];
 
 const statusTone: Record<ReviewStatus, "success" | "warning" | "danger"> = {
@@ -103,7 +103,7 @@ export default function ReviewsPage() {
           <StatusKpi label="Published" value={published} accent="emerald" />
           <StatusKpi label="Pending" value={pending} accent="amber" />
           <StatusKpi label="Flagged" value={flagged} accent="rose" />
-          <div className="sm:col-span-3 rounded-2xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-5 ring-1 ring-emerald-100">
+          <div className="sm:col-span-3 rounded-2xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-5 ring-1 ring-brand/15">
             <div className="text-xs font-semibold uppercase tracking-wider text-brand-dark">
               Moderation Guideline
             </div>
@@ -160,7 +160,7 @@ export default function ReviewsPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-bold text-slate-900">{r.author}</span>
                     {r.verified && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                         ✓ Verified Buyer
                       </span>
                     )}
@@ -196,7 +196,7 @@ export default function ReviewsPage() {
               <div className="flex items-center gap-2">
                 {r.status === "pending" && (
                   <>
-                    <button className="rounded-lg bg-emerald-500 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-600">
+                    <button className="rounded-lg bg-brand px-3 py-1.5 text-[11px] font-bold text-white hover:bg-brand-dark">
                       Approve
                     </button>
                     <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-rose-300 hover:text-rose-600">
@@ -209,7 +209,7 @@ export default function ReviewsPage() {
                     <button className="rounded-lg bg-rose-500 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-rose-600">
                       Delete
                     </button>
-                    <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-emerald-300 hover:text-emerald-600">
+                    <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-slate-300 hover:text-brand-dark">
                       Restore
                     </button>
                   </>
@@ -241,7 +241,7 @@ function StatusKpi({
   accent: "emerald" | "amber" | "rose";
 }) {
   const color = {
-    emerald: "text-emerald-600 bg-emerald-50",
+    emerald: "text-brand-dark bg-brand-soft",
     amber: "text-amber-600 bg-amber-50",
     rose: "text-rose-600 bg-rose-50",
   }[accent];

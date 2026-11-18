@@ -51,9 +51,9 @@ export default async function ProductPage({
         <section className="grid gap-10 lg:grid-cols-2">
           {/* Image */}
           <div className="relative">
-            <div className="pointer-events-none absolute -top-10 -right-10 h-56 w-56 animate-blob rounded-full bg-emerald-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-10 -left-10 h-56 w-56 animate-blob rounded-full bg-sky-200/60 blur-3xl" />
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 ring-1 ring-emerald-100">
+            <div className="pointer-events-none absolute -top-10 -right-10 h-56 w-56 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -left-10 h-56 w-56 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
+            <div className="relative aspect-square overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft ring-1 ring-brand/15">
               <Image
                 src={product.img}
                 alt={product.name}

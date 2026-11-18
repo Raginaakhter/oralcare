@@ -14,8 +14,8 @@ export const adminCategories: Category[] = [
     label: "Toothbrushes",
     description: "Manual and electric toothbrushes for every mouth.",
     img: "/images/cat-toothbrush.png",
-    bg: "bg-emerald-50",
-    ring: "ring-emerald-100",
+    bg: "bg-brand-soft",
+    ring: "ring-brand/15",
     featured: true,
   },
   {
@@ -24,7 +24,7 @@ export const adminCategories: Category[] = [
     description: "Daily whitening, sensitivity and gum-health pastes.",
     img: "/images/cat-toothpaste.png",
     bg: "bg-brand-blue-soft",
-    ring: "ring-blue-100",
+    ring: "ring-slate-200",
     featured: true,
   },
   {
@@ -32,8 +32,8 @@ export const adminCategories: Category[] = [
     label: "Teeth Whitening",
     description: "Professional kits, purple pastes and charcoal formulas.",
     img: "/images/cat-whitening.png",
-    bg: "bg-emerald-50",
-    ring: "ring-emerald-100",
+    bg: "bg-brand-soft",
+    ring: "ring-brand/15",
     featured: true,
   },
   {
@@ -42,7 +42,7 @@ export const adminCategories: Category[] = [
     description: "Dentist-formulated rinses and flosses for freshness.",
     img: "/images/cat-mouthwash.png",
     bg: "bg-brand-blue-soft",
-    ring: "ring-blue-100",
+    ring: "ring-slate-200",
     featured: true,
   },
   {
@@ -50,8 +50,8 @@ export const adminCategories: Category[] = [
     label: "Electric Brushes",
     description: "Oscillating and sonic brushes for a deeper clean.",
     img: "/images/cat-electric-brush.png",
-    bg: "bg-emerald-50",
-    ring: "ring-emerald-100",
+    bg: "bg-brand-soft",
+    ring: "ring-brand/15",
   },
   {
     slug: "dental-floss",
@@ -59,15 +59,15 @@ export const adminCategories: Category[] = [
     description: "Waxed, unwaxed and tape-style floss options.",
     img: "/images/cat-floss.png",
     bg: "bg-brand-blue-soft",
-    ring: "ring-blue-100",
+    ring: "ring-slate-200",
   },
   {
     slug: "kids-oral-care",
     label: "Kids Oral Care",
     description: "Gentle brushes, fruity pastes and fun routines for kids.",
     img: "/images/cat-kids.png",
-    bg: "bg-emerald-50",
-    ring: "ring-emerald-100",
+    bg: "bg-brand-soft",
+    ring: "ring-brand/15",
   },
 ];
 

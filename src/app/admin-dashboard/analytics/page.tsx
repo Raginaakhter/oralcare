@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
                 48,284 visitors · last 30 days
               </div>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-bold text-brand-dark">
               ↑ 18.2%
             </span>
           </div>
@@ -87,7 +87,7 @@ function MetricCard({
   change: string;
   tone: "emerald" | "rose";
 }) {
-  const toneCls = tone === "emerald" ? "text-emerald-700 bg-emerald-50" : "text-rose-700 bg-rose-50";
+  const toneCls = tone === "emerald" ? "text-brand-dark bg-brand-soft" : "text-rose-700 bg-rose-50";
   return (
     <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200/70">
       <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</div>

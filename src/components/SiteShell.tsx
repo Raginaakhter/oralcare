@@ -33,8 +33,8 @@ export function AnnouncementBar() {
   ];
   const loop = [...ticker, ...ticker];
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 text-white">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-sky-500/10 to-emerald-500/20" />
+    <div className="relative w-full overflow-hidden bg-gradient-to-r from-slate-900 via-slate-900 to-slate-900 text-white">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand/20 via-brand/10 to-brand/20" />
       <div className="pointer-events-none absolute inset-0 animated-stripes opacity-50" />
 
       <div className="relative mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-2 text-[12px] sm:px-6 lg:px-8">
@@ -97,7 +97,7 @@ export function Header() {
           action="/shop"
           className="group relative hidden flex-1 md:block"
         >
-          <div className="relative flex items-center overflow-hidden rounded-full border border-slate-200 bg-slate-50/60 transition group-focus-within:border-brand group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-emerald-100">
+          <div className="relative flex items-center overflow-hidden rounded-full border border-slate-200 bg-slate-50/60 transition group-focus-within:border-brand group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-brand/15">
             <span className="pointer-events-none flex h-11 w-11 shrink-0 items-center justify-center text-slate-400">
               <SearchIcon className="h-4 w-4" />
             </span>
@@ -264,7 +264,7 @@ export function MainNav() {
         {/* Shop All mega button */}
         <Link
           href="/shop"
-          className="group inline-flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-blue-900 to-brand-blue-dark px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-900/30 ring-1 ring-blue-800 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/40"
+          className="group inline-flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-slate-900 to-brand-blue-dark px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-900/30 ring-1 ring-slate-800 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/40"
         >
           <span className="flex h-5 w-5 flex-col items-center justify-center gap-[3px] transition group-hover:gap-[2px]">
             <span className="h-[2px] w-4 rounded-full bg-brand" />
@@ -349,7 +349,7 @@ function CategoriesDropdown() {
 
       {/* Mega menu panel */}
       <div className="invisible absolute left-0 top-full z-50 mt-2 w-[min(760px,92vw)] translate-y-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="overflow-hidden rounded-3xl bg-white p-6 shadow-2xl shadow-emerald-100/50 ring-1 ring-emerald-100">
+        <div className="overflow-hidden rounded-3xl bg-white p-6 shadow-2xl shadow-brand/10 ring-1 ring-brand/15">
           {/* Header */}
           <div className="mb-5 flex items-end justify-between border-b border-slate-100 pb-4">
             <div>
@@ -507,7 +507,7 @@ function SocialLink({ icon, href }: { icon: React.ReactNode; href: string }) {
   return (
     <a
       href={href}
-      className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark ring-1 ring-emerald-100 transition hover:bg-brand hover:text-white"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-brand-dark ring-1 ring-brand/15 transition hover:bg-brand hover:text-white"
     >
       {icon}
     </a>
@@ -520,7 +520,7 @@ export function FloatingWhatsapp() {
     <a
       href={site.phoneHref}
       aria-label="Chat on WhatsApp"
-      className="animate-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-brand-dark text-white shadow-2xl shadow-emerald-500/40 ring-4 ring-white transition hover:scale-110"
+      className="animate-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-2xl shadow-brand/40 ring-4 ring-white transition hover:scale-110"
     >
       <WhatsappIcon className="h-6 w-6" />
       <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold">
@@ -541,9 +541,9 @@ export function PageHero({
   breadcrumbs?: { label: string; href?: string }[];
 }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-sky-50 ring-1 ring-emerald-100">
-      <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 animate-blob rounded-full bg-emerald-200/50 blur-3xl" />
-      <div className="pointer-events-none absolute -left-10 bottom-0 h-56 w-56 animate-blob rounded-full bg-sky-200/50 blur-3xl" />
+    <section className="relative overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft ring-1 ring-brand/15">
+      <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
+      <div className="pointer-events-none absolute -left-10 bottom-0 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
       <div className="pointer-events-none absolute right-1/3 top-1/2 h-32 w-32 animate-blob rounded-full bg-rose-200/40 blur-3xl" />
       <div className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         {breadcrumbs && (

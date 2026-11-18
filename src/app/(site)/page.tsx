@@ -129,7 +129,7 @@ function TrustBar() {
         {/* Big headline card */}
         <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white ring-1 ring-slate-800 md:row-span-2">
           <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 animate-blob rounded-full bg-brand/30 blur-3xl" />
-          <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 animate-blob rounded-full bg-sky-400/30 blur-3xl" />
+          <div className="pointer-events-none absolute -left-10 -top-10 h-32 w-32 animate-blob rounded-full bg-brand/30 blur-3xl" />
           <div className="relative">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
@@ -162,7 +162,7 @@ function TrustBar() {
       </div>
 
       {/* Quick trust bullets */}
-      <div className="mt-4 grid gap-3 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-sky-50 p-4 ring-1 ring-emerald-100 sm:grid-cols-5">
+      <div className="mt-4 grid gap-3 rounded-2xl bg-gradient-to-r from-brand-soft via-white to-brand-soft p-4 ring-1 ring-brand/15 sm:grid-cols-5">
         {trustItems.map((t, i) => {
           const isBlue = i % 2 === 1;
           const bubble = isBlue
@@ -198,12 +198,12 @@ function StatTile({
 }) {
   const bg =
     tone === "blue"
-      ? "bg-gradient-to-br from-brand-blue-soft via-white to-sky-100"
-      : "bg-gradient-to-br from-brand-soft via-white to-emerald-100";
+      ? "bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft"
+      : "bg-gradient-to-br from-brand-soft via-white to-brand-soft";
   const num = tone === "blue" ? "text-brand-blue-dark" : "text-brand-dark";
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl ${bg} p-6 ring-1 ring-emerald-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100`}
+      className={`relative overflow-hidden rounded-3xl ${bg} p-6 ring-1 ring-brand/15 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
     >
       <div className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 animate-blob rounded-full bg-white/60 blur-2xl" />
       <div className="relative">
@@ -231,7 +231,7 @@ function CategoryStrip() {
           className="group flex flex-col items-center text-center"
         >
           <span
-            className={`flex h-24 w-24 items-center justify-center overflow-hidden rounded-full ${c.bg} ring-2 ${c.ring} transition duration-500 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-emerald-100`}
+            className={`flex h-24 w-24 items-center justify-center overflow-hidden rounded-full ${c.bg} ring-2 ${c.ring} transition duration-500 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-brand/15`}
           >
             <Image
               src={c.img}
@@ -259,10 +259,10 @@ function CategoryStrip() {
 
 function DealOfTheDay() {
   return (
-    <section className="mt-12 overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-brand-blue-dark p-1 shadow-xl shadow-emerald-100">
+    <section className="mt-12 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-brand-dark to-brand-blue-dark p-1 shadow-xl shadow-brand/15">
       <div className="relative grid gap-6 rounded-[20px] bg-white p-6 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-10 md:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 animate-blob rounded-full bg-emerald-100/60 blur-3xl" />
-        <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 animate-blob rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
+        <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
 
         <div className="relative z-10">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-dark">
@@ -299,7 +299,7 @@ function DealOfTheDay() {
         </div>
 
         <div className="relative z-10 flex h-56 w-full items-center justify-center md:h-64">
-          <div className="pointer-events-none absolute h-56 w-56 animate-spin-slow rounded-full border border-dashed border-emerald-300/60" />
+          <div className="pointer-events-none absolute h-56 w-56 animate-spin-slow rounded-full border border-dashed border-slate-300/60" />
           <div className="relative h-full w-full animate-float">
             <Image
               src="/images/products/p01.png"
@@ -327,8 +327,8 @@ function Countdown({
 }) {
   const cls =
     accent === "blue"
-      ? "bg-brand-blue-soft text-brand-blue-dark ring-blue-100"
-      : "bg-brand-soft text-brand-dark ring-emerald-100";
+      ? "bg-brand-blue-soft text-brand-blue-dark ring-slate-200"
+      : "bg-brand-soft text-brand-dark ring-brand/15";
   return (
     <div className={`flex h-14 w-14 flex-col items-center justify-center rounded-xl ring-1 ${cls}`}>
       <span className="text-lg font-extrabold leading-none">{value}</span>
@@ -347,7 +347,7 @@ function PromoBanners() {
         tagColor="text-brand-dark"
         title={<>Purple Power<br />Whitening</>}
         cta="Shop Whitening"
-        gradient="from-emerald-50 via-white to-emerald-50"
+        gradient="from-brand-soft via-white to-brand-soft"
         accent="emerald"
         image="/images/products/p03.png"
         href="/shop?category=teeth-whitening"
@@ -357,7 +357,7 @@ function PromoBanners() {
         tagColor="text-brand-blue-dark"
         title={<>Confidence,<br />All Day Long</>}
         cta="Shop Mouthwash"
-        gradient="from-brand-blue-soft via-white to-sky-50"
+        gradient="from-brand-blue-soft via-white to-brand-soft"
         accent="blue"
         image="/images/products/p11.png"
         href="/shop?category=floss-mouthwash"
@@ -367,7 +367,7 @@ function PromoBanners() {
         tagColor="text-brand-dark"
         title={<>Save More on<br />Top Brands</>}
         cta="Explore Offers"
-        gradient="from-emerald-50 via-emerald-100/40 to-white"
+        gradient="from-brand-soft via-brand-soft/40 to-white"
         accent="emerald"
         image="/images/products/p09.png"
         href="/shop?category=specials"
@@ -398,13 +398,13 @@ function PromoCard({
   href: string;
   rightBadge?: boolean;
 }) {
-  const ringCls = accent === "blue" ? "ring-blue-100" : "ring-emerald-100";
+  const ringCls = accent === "blue" ? "ring-slate-200" : "ring-brand/15";
   const btnCls =
     accent === "blue" ? "hover:text-brand-blue-dark" : "hover:text-brand-dark";
   return (
     <Link
       href={href}
-      className={`group relative flex items-center justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${gradient} p-6 ring-1 ${ringCls} transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100`}
+      className={`group relative flex items-center justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${gradient} p-6 ring-1 ${ringCls} transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
     >
       <div className="relative z-10 max-w-[55%]">
         <div className={`text-xs font-bold uppercase tracking-wider ${tagColor}`}>
@@ -521,7 +521,7 @@ function ShopTheLook() {
           href="/shop?category=teeth-whitening"
           className="group relative col-span-6 row-span-2 overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white ring-1 ring-slate-800 lg:col-span-3"
         >
-          <div className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 animate-blob rounded-full bg-emerald-500/40 blur-3xl" />
+          <div className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 animate-blob rounded-full bg-brand/40 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 animate-blob rounded-full bg-brand-blue/40 blur-3xl" />
           <div className="relative flex h-full flex-col">
             <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur">
@@ -564,7 +564,7 @@ function ShopTheLook() {
           title="Daily Brush + Rinse"
           desc="Start the day fresh."
           img="/images/products/p13.png"
-          tint="from-emerald-100 via-white to-emerald-50"
+          tint="from-brand-soft via-white to-brand-soft"
           accent="emerald"
           href="/shop?category=toothpaste"
         />
@@ -573,7 +573,7 @@ function ShopTheLook() {
           title="Deep Sensitivity Care"
           desc="Protect while you sleep."
           img="/images/products/p14.png"
-          tint="from-brand-blue-soft via-white to-sky-100"
+          tint="from-brand-blue-soft via-white to-brand-soft"
           accent="blue"
           href="/shop?category=toothpaste"
         />
@@ -582,7 +582,7 @@ function ShopTheLook() {
           title="Cool Mint Spray"
           desc="Instant fresh breath."
           img="/images/products/p10.png"
-          tint="from-rose-50 via-white to-amber-50"
+          tint="from-brand-soft via-white to-brand-soft"
           accent="emerald"
           href="/product/ultrafresh-mint-spray"
         />
@@ -591,7 +591,7 @@ function ShopTheLook() {
           title="Charcoal Deep Clean"
           desc="Lift stubborn stains."
           img="/images/products/p08.png"
-          tint="from-violet-100 via-white to-sky-50"
+          tint="from-brand-soft via-white to-brand-soft"
           accent="blue"
           href="/product/white-glo-charcoal"
         />
@@ -624,7 +624,7 @@ function BentoTile({
   return (
     <Link
       href={href}
-      className={`group relative col-span-6 overflow-hidden rounded-3xl bg-gradient-to-br ${tint} p-5 ring-1 ring-emerald-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100 sm:col-span-3 lg:col-span-3 xl:col-span-3`}
+      className={`group relative col-span-6 overflow-hidden rounded-3xl bg-gradient-to-br ${tint} p-5 ring-1 ring-brand/15 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15 sm:col-span-3 lg:col-span-3 xl:col-span-3`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
@@ -725,16 +725,16 @@ function HealthTips() {
             <Link
               key={t.title}
               href={t.href}
-              className="group relative overflow-hidden rounded-3xl bg-white ring-1 ring-slate-100 transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-100"
+              className="group relative overflow-hidden rounded-3xl bg-white ring-1 ring-slate-100 transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand/15"
             >
               {/* Number stamp */}
               <span className="absolute left-5 top-5 z-10 display-font text-6xl font-black text-white/70 mix-blend-overlay">
                 0{i + 1}
               </span>
 
-              <div className="relative h-56 overflow-hidden bg-gradient-to-br from-emerald-100 via-white to-sky-100">
-                <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-emerald-300/40 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 animate-blob rounded-full bg-sky-300/40 blur-3xl" />
+              <div className="relative h-56 overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft">
+                <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-slate-300/40 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 animate-blob rounded-full bg-slate-300/40 blur-3xl" />
                 <Image
                   src={t.img}
                   alt=""
@@ -793,7 +793,7 @@ function TestimonialAndReviews() {
           <QuoteIcon className="pointer-events-none absolute right-10 top-8 h-40 w-40 text-white/5" />
 
           <div className="relative grid gap-8 md:grid-cols-[auto_1fr] md:items-center">
-            <div className="relative h-40 w-32 shrink-0 overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-emerald-400 to-brand-blue p-[3px] shadow-2xl sm:h-48 sm:w-40">
+            <div className="relative h-40 w-32 shrink-0 overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-[3px] shadow-2xl sm:h-48 sm:w-40">
               <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-white">
                 <Image
                   src="/images/doctor.png"
@@ -832,8 +832,8 @@ function TestimonialAndReviews() {
         </div>
 
         {/* Customer review panel */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-8 ring-1 ring-emerald-100 sm:p-10">
-          <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-emerald-200/60 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15 sm:p-10">
+          <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
           <div className="relative">
             <div className="flex items-start justify-between">
               <div>
@@ -883,7 +883,7 @@ function TestimonialAndReviews() {
             {/* Latest review */}
             <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-slate-100">
               <div className="flex items-center gap-3">
-                <span className="h-11 w-11 overflow-hidden rounded-full ring-2 ring-emerald-100">
+                <span className="h-11 w-11 overflow-hidden rounded-full ring-2 ring-brand/15">
                   <Image
                     src="/images/customer.png"
                     alt="Afsana Rahman"
@@ -914,12 +914,12 @@ function TestimonialAndReviews() {
 /* ---------- Instagram grid ---------- */
 
 const instagramPosts = [
-  { img: "/images/products/p01.png", tint: "from-emerald-100/70 to-white" },
-  { img: "/images/products/p03.png", tint: "from-sky-100/70 to-white" },
-  { img: "/images/products/p11.png", tint: "from-emerald-100/70 to-white" },
-  { img: "/images/products/p08.png", tint: "from-blue-100/70 to-white" },
-  { img: "/images/products/p12.png", tint: "from-emerald-100/70 to-white" },
-  { img: "/images/products/p09.png", tint: "from-sky-100/70 to-white" },
+  { img: "/images/products/p01.png", tint: "from-brand-soft/70 to-white" },
+  { img: "/images/products/p03.png", tint: "from-brand-soft/70 to-white" },
+  { img: "/images/products/p11.png", tint: "from-brand-soft/70 to-white" },
+  { img: "/images/products/p08.png", tint: "from-slate-200/70 to-white" },
+  { img: "/images/products/p12.png", tint: "from-brand-soft/70 to-white" },
+  { img: "/images/products/p09.png", tint: "from-brand-soft/70 to-white" },
 ];
 
 function InstagramGrid() {
@@ -971,13 +971,13 @@ function InstagramGrid() {
 
 function Newsletter() {
   return (
-    <section className="relative mt-10 overflow-hidden rounded-2xl bg-emerald-50 p-6 sm:p-8">
+    <section className="relative mt-10 overflow-hidden rounded-2xl bg-brand-soft p-6 sm:p-8">
       <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 sm:block">
         <Image src="/images/plant.png" alt="" width={85} height={125} className="h-28 w-auto" />
       </div>
       <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand ring-1 ring-emerald-100">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">
             <MailIcon className="h-5 w-5" />
           </span>
           <div>
@@ -987,7 +987,7 @@ function Newsletter() {
             </p>
           </div>
         </div>
-        <form action="#" className="flex w-full max-w-md rounded-full bg-white p-1 ring-1 ring-emerald-100">
+        <form action="#" className="flex w-full max-w-md rounded-full bg-white p-1 ring-1 ring-brand/15">
           <input
             type="email"
             placeholder="Enter your email address"

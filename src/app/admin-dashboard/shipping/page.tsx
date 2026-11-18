@@ -132,8 +132,8 @@ function StatCard({
   accent: "emerald" | "blue" | "amber" | "rose";
 }) {
   const colorMap = {
-    emerald: "text-emerald-600 bg-emerald-50",
-    blue: "text-sky-600 bg-sky-50",
+    emerald: "text-brand-dark bg-brand-soft",
+    blue: "text-brand-dark bg-brand-soft",
     amber: "text-amber-600 bg-amber-50",
     rose: "text-rose-600 bg-rose-50",
   };
@@ -167,8 +167,8 @@ function CarrierCard({
   color: "emerald" | "blue" | "rose";
 }) {
   const colorMap = {
-    emerald: "from-emerald-400 to-emerald-600",
-    blue: "from-sky-400 to-brand-blue",
+    emerald: "from-brand to-brand-dark",
+    blue: "from-brand to-brand-blue",
     rose: "from-rose-400 to-pink-500",
   };
   return (
@@ -186,11 +186,11 @@ function CarrierCard({
       </div>
       <div className="mt-4 flex items-center justify-between text-xs">
         <span className="text-slate-500">Success rate</span>
-        <span className="font-black text-emerald-600">{successRate}%</span>
+        <span className="font-black text-brand-dark">{successRate}%</span>
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-brand"
+          className="h-full rounded-full bg-gradient-to-r from-brand to-brand"
           style={{ width: `${successRate}%` }}
         />
       </div>

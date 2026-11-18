@@ -147,7 +147,7 @@ export default async function OrderDetailPage({
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500">Discount</dt>
-                <dd className="font-semibold text-emerald-600">- {order.discount}</dd>
+                <dd className="font-semibold text-brand-dark">- {order.discount}</dd>
               </div>
               <div className="flex justify-between border-t border-slate-100 pt-3 text-base">
                 <dt className="font-black text-slate-900">Total</dt>

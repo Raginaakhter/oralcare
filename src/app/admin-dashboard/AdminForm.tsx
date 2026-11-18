@@ -145,7 +145,7 @@ export function FormActions({
       )}
       <button
         type="submit"
-        className="rounded-xl bg-brand px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-0.5 hover:bg-brand-dark"
+        className="rounded-xl bg-brand px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-dark"
       >
         {submitLabel}
       </button>

@@ -152,7 +152,7 @@ export default function FAQPage() {
           </div>
 
           <aside className="space-y-5 lg:sticky lg:top-6 lg:self-start">
-            <div className="rounded-3xl bg-gradient-to-br from-brand via-emerald-500 to-brand-blue p-6 text-white">
+            <div className="rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-6 text-white">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
                 <HeadsetIcon className="h-5 w-5" />
               </span>

@@ -165,8 +165,8 @@ function KpiCard({
   accent: "emerald" | "blue" | "violet" | "amber";
 }) {
   const bg = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-sky-50 text-sky-600",
+    emerald: "bg-brand-soft text-brand-dark",
+    blue: "bg-brand-soft text-brand-dark",
     violet: "bg-violet-50 text-violet-600",
     amber: "bg-amber-50 text-amber-600",
   }[accent];

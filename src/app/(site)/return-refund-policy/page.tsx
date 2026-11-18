@@ -70,7 +70,7 @@ export default function ReturnPolicyPage() {
 
       <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Hero card */}
-        <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-100 via-white to-sky-100 p-8 ring-1 ring-emerald-100 sm:p-10">
+        <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15 sm:p-10">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-dark shadow-sm">
@@ -108,7 +108,7 @@ export default function ReturnPolicyPage() {
               return (
                 <div
                   key={s.n}
-                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                  className="rounded-2xl bg-white p-6 ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
                 >
                   <span
                     className={`inline-flex h-12 w-12 items-center justify-center rounded-xl text-sm font-extrabold ${bubble}`}
@@ -125,7 +125,7 @@ export default function ReturnPolicyPage() {
 
         {/* Eligible / Non-eligible */}
         <section className="mt-12 grid gap-5 md:grid-cols-2">
-          <div className="rounded-3xl bg-white p-8 ring-1 ring-emerald-100">
+          <div className="rounded-3xl bg-white p-8 ring-1 ring-brand/15">
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-brand-dark">
               <CheckBadgeIcon className="h-5 w-5" />
             </span>
@@ -162,8 +162,8 @@ export default function ReturnPolicyPage() {
 
         {/* Refund timeline + delivery */}
         <section className="mt-12 grid gap-5 md:grid-cols-2">
-          <div className="rounded-3xl bg-gradient-to-br from-brand-soft via-white to-sky-50 p-8 ring-1 ring-emerald-100">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand ring-1 ring-emerald-100">
+          <div className="rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand ring-1 ring-brand/15">
               <TruckIcon className="h-5 w-5" />
             </span>
             <h3 className="mt-4 text-lg font-extrabold text-slate-900">
@@ -182,8 +182,8 @@ export default function ReturnPolicyPage() {
             </ul>
           </div>
 
-          <div className="rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-emerald-50 p-8 ring-1 ring-blue-100">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand-blue-dark ring-1 ring-blue-100">
+          <div className="rounded-3xl bg-gradient-to-br from-brand-blue-soft via-white to-brand-soft p-8 ring-1 ring-slate-200">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand-blue-dark ring-1 ring-slate-200">
               <ShieldIcon className="h-5 w-5" />
             </span>
             <h3 className="mt-4 text-lg font-extrabold text-slate-900">
@@ -196,7 +196,7 @@ export default function ReturnPolicyPage() {
         </section>
 
         {/* CTA */}
-        <div className="mt-12 rounded-3xl bg-gradient-to-r from-brand via-emerald-500 to-brand-blue p-8 text-center text-white">
+        <div className="mt-12 rounded-3xl bg-gradient-to-r from-brand via-brand to-brand-blue p-8 text-center text-white">
           <h3 className="text-2xl font-extrabold">Need to return something?</h3>
           <p className="mx-auto mt-2 max-w-md text-sm opacity-90">
             Our care team handles returns personally — tap below and we&apos;ll take care of the rest.

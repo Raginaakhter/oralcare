@@ -62,9 +62,9 @@ export function CategoryForm({
           <Select
             label="Background Color"
             name="bg"
-            defaultValue={category?.bg ?? "bg-emerald-50"}
+            defaultValue={category?.bg ?? "bg-brand-soft"}
             options={[
-              { value: "bg-emerald-50", label: "Emerald (soft green)" },
+              { value: "bg-brand-soft", label: "Emerald (soft green)" },
               { value: "bg-brand-blue-soft", label: "Blue" },
               { value: "bg-amber-50", label: "Amber" },
               { value: "bg-rose-50", label: "Rose" },

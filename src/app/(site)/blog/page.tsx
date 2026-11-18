@@ -62,11 +62,11 @@ export default function BlogPage() {
         {/* Featured post */}
         <Link
           href={`/blog/${featured.slug}`}
-          className="group mt-8 grid overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 ring-1 ring-emerald-100 transition hover:shadow-xl hover:shadow-emerald-100 md:grid-cols-2"
+          className="group mt-8 grid overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft ring-1 ring-brand/15 transition hover:shadow-xl hover:shadow-brand/15 md:grid-cols-2"
         >
-          <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-100 via-white to-sky-100 p-8">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 animate-blob rounded-full bg-emerald-300/50 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 animate-blob rounded-full bg-sky-300/50 blur-3xl" />
+          <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8">
+            <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 animate-blob rounded-full bg-slate-300/50 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 animate-blob rounded-full bg-slate-300/50 blur-3xl" />
             <div className="relative h-64 w-64">
               <Image
                 src={featured.img}
@@ -111,9 +111,9 @@ export default function BlogPage() {
               <Link
                 key={p.slug}
                 href={`/blog/${p.slug}`}
-                className="group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                className="group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
               >
-                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-sky-50">
+                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft">
                   <Image
                     src={p.img}
                     alt=""
@@ -142,7 +142,7 @@ export default function BlogPage() {
         </div>
 
         {/* Newsletter CTA */}
-        <section className="mt-14 rounded-3xl bg-gradient-to-r from-brand via-emerald-500 to-brand-blue p-8 text-center text-white">
+        <section className="mt-14 rounded-3xl bg-gradient-to-r from-brand via-brand to-brand-blue p-8 text-center text-white">
           <h3 className="text-2xl font-extrabold">Never Miss a Smile Tip</h3>
           <p className="mx-auto mt-2 max-w-md text-sm opacity-90">
             Get our weekly dental care newsletter delivered to your inbox.
@@ -155,7 +155,7 @@ export default function BlogPage() {
             />
             <button
               type="submit"
-              className="rounded-full bg-brand-dark px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="rounded-full bg-brand-dark px-5 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
             >
               Subscribe
             </button>

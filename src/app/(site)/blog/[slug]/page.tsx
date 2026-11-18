@@ -63,9 +63,9 @@ export default async function BlogPostPage({
         </div>
 
         {/* Hero image */}
-        <div className="relative mb-10 h-72 overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 ring-1 ring-emerald-100 sm:h-96">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 animate-blob rounded-full bg-emerald-200/50 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-10 -left-10 h-56 w-56 animate-blob rounded-full bg-sky-200/50 blur-3xl" />
+        <div className="relative mb-10 h-72 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft ring-1 ring-brand/15 sm:h-96">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-10 -left-10 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
           <Image
             src={post.img}
             alt={post.title}
@@ -85,8 +85,8 @@ export default async function BlogPostPage({
         </article>
 
         {/* Author card */}
-        <div className="mt-12 flex flex-wrap items-center gap-4 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 ring-1 ring-emerald-100">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand-dark ring-1 ring-emerald-100">
+        <div className="mt-12 flex flex-wrap items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-6 ring-1 ring-brand/15">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand-dark ring-1 ring-brand/15">
             <SparkIcon className="h-5 w-5" />
           </span>
           <div className="flex-1">
@@ -97,7 +97,7 @@ export default async function BlogPostPage({
           </div>
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 text-xs font-semibold text-brand-dark ring-1 ring-emerald-100 hover:bg-brand-soft"
+            className="inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 text-xs font-semibold text-brand-dark ring-1 ring-brand/15 hover:bg-brand-soft"
           >
             <ArrowRightIcon className="h-3.5 w-3.5 rotate-180" />
             All Articles
@@ -120,9 +120,9 @@ export default async function BlogPostPage({
                   <Link
                     key={r.slug}
                     href={`/blog/${r.slug}`}
-                    className="group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100"
+                    className="group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15"
                   >
-                    <div className="relative h-36 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-sky-50">
+                    <div className="relative h-36 overflow-hidden bg-gradient-to-br from-brand-soft via-white to-brand-soft">
                       <Image
                         src={r.img}
                         alt=""

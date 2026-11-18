@@ -7,24 +7,24 @@ import {
 } from "@/components/icons";
 
 export const categories = [
-  { label: "Toothbrushes", img: "/images/cat-toothbrush.png", bg: "bg-emerald-50", ring: "ring-emerald-100", href: "/shop?category=toothbrushes" },
-  { label: "Toothpaste", img: "/images/cat-toothpaste.png", bg: "bg-brand-blue-soft", ring: "ring-blue-100", href: "/shop?category=toothpaste" },
-  { label: "Teeth Whitening", img: "/images/cat-whitening.png", bg: "bg-emerald-50", ring: "ring-emerald-100", href: "/shop?category=teeth-whitening" },
-  { label: "Floss & Mouthwash", img: "/images/cat-mouthwash.png", bg: "bg-brand-blue-soft", ring: "ring-blue-100", href: "/shop?category=floss-mouthwash" },
-  { label: "Electric Brushes", img: "/images/cat-electric-brush.png", bg: "bg-emerald-50", ring: "ring-emerald-100", href: "/shop?category=toothbrushes" },
-  { label: "Dental Floss", img: "/images/cat-floss.png", bg: "bg-brand-blue-soft", ring: "ring-blue-100", href: "/shop?category=floss-mouthwash" },
-  { label: "Kids Oral Care", img: "/images/cat-kids.png", bg: "bg-emerald-50", ring: "ring-emerald-100", href: "/shop" },
+  { label: "Toothbrushes", img: "/images/cat-toothbrush.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=toothbrushes" },
+  { label: "Toothpaste", img: "/images/cat-toothpaste.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=toothpaste" },
+  { label: "Teeth Whitening", img: "/images/cat-whitening.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=teeth-whitening" },
+  { label: "Floss & Mouthwash", img: "/images/cat-mouthwash.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=floss-mouthwash" },
+  { label: "Electric Brushes", img: "/images/cat-electric-brush.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop?category=toothbrushes" },
+  { label: "Dental Floss", img: "/images/cat-floss.png", bg: "bg-brand-blue-soft", ring: "ring-slate-200", href: "/shop?category=floss-mouthwash" },
+  { label: "Kids Oral Care", img: "/images/cat-kids.png", bg: "bg-brand-soft", ring: "ring-brand/15", href: "/shop" },
 ];
 
 export const brands = [
   { name: "White Glo", className: "text-slate-800 italic" },
   { name: "SENSODYNE", className: "text-teal-700" },
-  { name: "TheraBreath", className: "text-emerald-700" },
+  { name: "TheraBreath", className: "text-brand-dark" },
   { name: "Steradent", className: "text-indigo-700" },
   { name: "Ultrafresh", className: "text-sky-700" },
   { name: "Colgate", className: "text-red-600" },
-  { name: "Oral-B", className: "text-blue-700 italic" },
-  { name: "LISTERINE", className: "text-emerald-800" },
+  { name: "Oral-B", className: "text-brand-dark italic" },
+  { name: "LISTERINE", className: "text-brand-dark" },
 ];
 
 export const trustItems = [

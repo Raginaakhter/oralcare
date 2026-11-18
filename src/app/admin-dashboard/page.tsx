@@ -126,8 +126,8 @@ function StatCard({
   spark: number[];
 }) {
   const accentCls = {
-    emerald: { bg: "bg-emerald-50", text: "text-emerald-600", stroke: "#10b981" },
-    blue: { bg: "bg-sky-50", text: "text-sky-600", stroke: "#0ea5e9" },
+    emerald: { bg: "bg-brand-soft", text: "text-brand-dark", stroke: "#10b981" },
+    blue: { bg: "bg-brand-soft", text: "text-brand-dark", stroke: "#0ea5e9" },
     violet: { bg: "bg-violet-50", text: "text-violet-600", stroke: "#8b5cf6" },
     amber: { bg: "bg-amber-50", text: "text-amber-600", stroke: "#f59e0b" },
   }[accent];
@@ -162,7 +162,7 @@ function TrendPill({ value, positive }: { value: number; positive: boolean }) {
     <span
       className={`inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-[11px] font-bold ${
         positive
-          ? "bg-emerald-50 text-emerald-700"
+          ? "bg-brand-soft text-brand-dark"
           : "bg-rose-50 text-rose-700"
       }`}
     >
@@ -242,7 +242,7 @@ function SalesChart() {
             <span className="text-2xl font-black text-slate-900">
               ৳{totalThis.toLocaleString("en-IN")}
             </span>
-            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+            <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-bold text-brand-dark">
               +18.4%
             </span>
           </div>
@@ -517,8 +517,8 @@ const orders: {
 ];
 
 const statusStyles: Record<OrderStatus, string> = {
-  paid: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-  processing: "bg-sky-50 text-sky-700 ring-sky-100",
+  paid: "bg-brand-soft text-brand-dark ring-brand/15",
+  processing: "bg-brand-soft text-sky-700 ring-brand/15",
   shipped: "bg-violet-50 text-violet-700 ring-violet-100",
   pending: "bg-amber-50 text-amber-700 ring-amber-100",
   cancelled: "bg-rose-50 text-rose-700 ring-rose-100",
@@ -604,8 +604,8 @@ function RecentOrders() {
 
 const topCustomers = [
   { name: "Afsana Rahman", email: "afsana@example.com", orders: 24, spent: "৳48,200", color: "from-rose-400 to-pink-500" },
-  { name: "Tanvir Islam", email: "tanvir@example.com", orders: 19, spent: "৳36,900", color: "from-sky-400 to-brand-blue" },
-  { name: "Nusrat Jahan", email: "nusrat@example.com", orders: 17, spent: "৳32,100", color: "from-emerald-400 to-brand" },
+  { name: "Tanvir Islam", email: "tanvir@example.com", orders: 19, spent: "৳36,900", color: "from-brand to-brand-blue" },
+  { name: "Nusrat Jahan", email: "nusrat@example.com", orders: 17, spent: "৳32,100", color: "from-brand to-brand" },
   { name: "Rafiq Ahmed", email: "rafiq@example.com", orders: 14, spent: "৳28,700", color: "from-amber-400 to-orange-500" },
   { name: "Sabrina Akter", email: "sabrina@example.com", orders: 12, spent: "৳24,400", color: "from-violet-400 to-fuchsia-500" },
 ];
@@ -622,7 +622,7 @@ function TopCustomers() {
             This month
           </div>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
+        <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-bold text-brand-dark">
           <SparkIcon className="h-3 w-3" />
           Active
         </span>

@@ -39,7 +39,7 @@ export default function BannerPage() {
       />
 
       {/* Carousel settings card */}
-      <div className="mb-6 rounded-2xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-6 ring-1 ring-emerald-100">
+      <div className="mb-6 rounded-2xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-6 ring-1 ring-brand/15">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-brand-dark">

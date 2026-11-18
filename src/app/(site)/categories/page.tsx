@@ -16,28 +16,28 @@ const bigCards = [
     title: "Teeth Whitening",
     desc: "Professional whitening kits, purple pastes and charcoal formulas for a brighter smile.",
     img: "/images/products/p01.png",
-    bg: "from-emerald-100 via-emerald-50 to-white",
+    bg: "from-brand-soft via-brand-soft to-white",
   },
   {
     slug: "toothpaste",
     title: "Toothpaste",
     desc: "Daily sensitivity care, whitening and gum-health pastes from trusted brands.",
     img: "/images/products/p04.png",
-    bg: "from-sky-100 via-blue-50 to-white",
+    bg: "from-brand-soft via-blue-50 to-white",
   },
   {
     slug: "floss-mouthwash",
     title: "Floss & Mouthwash",
     desc: "Dentist-formulated rinses and flosses for all-day freshness.",
     img: "/images/products/p11.png",
-    bg: "from-violet-100 via-emerald-50 to-white",
+    bg: "from-brand-soft via-white to-brand-soft",
   },
   {
     slug: "toothbrushes",
     title: "Toothbrushes",
     desc: "Manual and electric brushes for every mouth and every smile.",
     img: "/images/products/p02.png",
-    bg: "from-rose-100 via-amber-50 to-white",
+    bg: "from-brand-soft via-white to-brand-soft",
   },
 ];
 
@@ -62,7 +62,7 @@ export default function CategoriesPage() {
               <Link
                 key={c.slug}
                 href={`/shop?category=${c.slug}`}
-                className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-gradient-to-br ${c.bg} p-6 ring-1 ring-emerald-100 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100`}
+                className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-gradient-to-br ${c.bg} p-6 ring-1 ring-brand/15 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
               >
                 <div className="flex-1">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-dark backdrop-blur-md">
@@ -126,7 +126,7 @@ export default function CategoriesPage() {
         </div>
 
         {/* CTA banner */}
-        <div className="mt-14 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-emerald-500 to-brand-blue p-10 text-center text-white">
+        <div className="mt-14 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-brand to-brand-blue p-10 text-center text-white">
           <h2 className="text-3xl font-extrabold">Not Sure What You Need?</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/90">
             Our customer care team can recommend the right products for your daily routine.
