@@ -22,6 +22,7 @@ import {
 } from "@/components/icons";
 import { categories, footerCols, site } from "@/lib/site-data";
 import { HeaderNavActions } from "@/components/HeaderNavActions";
+import { MobileMenuDrawer } from "@/components/MobileMenuDrawer";
 
 export function AnnouncementBar() {
   const ticker = [
@@ -79,7 +80,10 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
       <div className="h-[2px] bg-gradient-to-r from-brand via-brand-blue to-brand" />
 
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-6 px-4 py-3.5 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-2 sm:gap-6 px-3 py-2.5 sm:px-6 sm:py-3.5 lg:px-8">
+        {/* Mobile Hamburger menu */}
+        <MobileMenuDrawer />
+
         {/* Logo */}
         <Link href="/" className="group relative flex shrink-0 items-center">
           <Image
@@ -88,7 +92,7 @@ export function Header() {
             width={200}
             height={62}
             priority
-            className="h-11 w-auto transition group-hover:scale-105"
+            className="h-8 sm:h-11 w-auto transition group-hover:scale-105"
           />
         </Link>
 
@@ -124,9 +128,9 @@ export function Header() {
           <Link
             href="/shop"
             aria-label="Search"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 md:hidden"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 md:hidden"
           >
-            <SearchIcon className="h-5 w-5" />
+            <SearchIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
 
           <HeaderNavActions />
@@ -246,16 +250,16 @@ function AccountMenu() {
 export function MainNav() {
   return (
     <nav className="relative w-full border-b border-slate-100 bg-white">
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar px-3 py-2 sm:px-6 lg:px-8 sm:py-3">
         {/* Shop All mega button */}
         <Link
           href="/shop"
-          className="group inline-flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-slate-900 to-brand-blue-dark px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-900/30 ring-1 ring-slate-800 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/40"
+          className="group inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-900 to-brand-blue-dark px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-bold text-white shadow-md sm:shadow-lg shadow-slate-900/30 ring-1 ring-slate-800 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/40"
         >
-          <span className="flex h-5 w-5 flex-col items-center justify-center gap-[3px] transition group-hover:gap-[2px]">
-            <span className="h-[2px] w-4 rounded-full bg-brand" />
-            <span className="h-[2px] w-4 rounded-full bg-brand" />
-            <span className="h-[2px] w-4 rounded-full bg-brand" />
+          <span className="flex h-4 w-4 sm:h-5 sm:w-5 flex-col items-center justify-center gap-[2.5px] sm:gap-[3px] transition group-hover:gap-[2px]">
+            <span className="h-[2px] w-3.5 sm:w-4 rounded-full bg-brand" />
+            <span className="h-[2px] w-3.5 sm:w-4 rounded-full bg-brand" />
+            <span className="h-[2px] w-3.5 sm:w-4 rounded-full bg-brand" />
           </span>
           Shop All
           <span className="ml-1 hidden rounded-full bg-brand/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-brand sm:inline">
@@ -263,11 +267,11 @@ export function MainNav() {
           </span>
         </Link>
 
-        {/* Shop by Category — single dropdown */}
+        {/* Shop by Category — dropdown */}
         <CategoriesDropdown />
 
         {/* Quick nav links */}
-        <ul className="hidden items-center gap-1 text-sm font-semibold text-slate-700 lg:flex">
+        <ul className="hidden items-center gap-1 text-sm font-semibold text-slate-700 lg:flex shrink-0">
           <li>
             <Link
               href="/blog"
@@ -303,11 +307,11 @@ export function MainNav() {
           </li>
         </ul>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2 pl-2">
           {/* Offers pulse pill */}
           <Link
             href="/shop?category=specials"
-            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-r from-rose-500 via-brand to-brand-blue px-4 py-1.5 text-xs font-black text-white shadow-md transition hover:shadow-lg"
+            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-r from-rose-500 via-brand to-brand-blue px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-black text-white shadow-md transition hover:shadow-lg shrink-0 whitespace-nowrap"
           >
             <span className="relative z-10 flex items-center gap-1.5">
               <TagIcon className="h-3.5 w-3.5" />
@@ -323,26 +327,26 @@ export function MainNav() {
 
 function CategoriesDropdown() {
   return (
-    <div className="group relative">
+    <div className="group relative shrink-0">
       <button
         type="button"
-        className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-900 transition hover:border-brand hover:bg-brand-soft hover:text-brand-dark group-hover:border-brand group-hover:bg-brand-soft group-hover:text-brand-dark"
+        className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border border-slate-200 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-900 transition hover:border-brand hover:bg-brand-soft hover:text-brand-dark group-hover:border-brand group-hover:bg-brand-soft group-hover:text-brand-dark whitespace-nowrap"
       >
-        <GridIcon className="h-4 w-4 text-brand" />
-        Shop by Category
-        <ChevronDownIcon className="h-3.5 w-3.5 text-slate-400 transition group-hover:rotate-180 group-hover:text-brand-dark" />
+        <GridIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand" />
+        <span className="hidden xs:inline">Shop by </span>Category
+        <ChevronDownIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 transition group-hover:rotate-180 group-hover:text-brand-dark" />
       </button>
 
       {/* Mega menu panel */}
-      <div className="invisible absolute left-0 top-full z-50 mt-2 w-[min(760px,92vw)] translate-y-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="overflow-hidden rounded-3xl bg-white p-6 shadow-2xl shadow-brand/10 ring-1 ring-brand/15">
+      <div className="invisible absolute left-0 top-full z-50 mt-2 w-[min(760px,calc(100vw-24px))] translate-y-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-6 shadow-2xl shadow-brand/10 ring-1 ring-brand/15">
           {/* Header */}
-          <div className="mb-5 flex items-end justify-between border-b border-slate-100 pb-4">
+          <div className="mb-4 sm:mb-5 flex items-end justify-between border-b border-slate-100 pb-3 sm:pb-4">
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark">
                 Browse Catalog
               </span>
-              <h3 className="mt-1 text-xl font-black text-slate-900">
+              <h3 className="mt-1 text-lg sm:text-xl font-black text-slate-900">
                 Shop by Category
               </h3>
             </div>
@@ -355,14 +359,14 @@ function CategoriesDropdown() {
           </div>
 
           {/* Category grid */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 max-h-[60vh] overflow-y-auto">
             {categories.map((c) => (
               <Link
                 key={c.label}
                 href={c.href}
-                className={`group/item flex items-center gap-3 rounded-2xl ${c.bg} p-3 ring-1 ${c.ring} transition hover:-translate-y-0.5 hover:shadow-md`}
+                className={`group/item flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl ${c.bg} p-2 sm:p-3 ring-1 ${c.ring} transition hover:-translate-y-0.5 hover:shadow-md`}
               >
-                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/70">
+                <span className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/70">
                   <Image
                     src={c.img}
                     alt={c.label}
@@ -371,11 +375,11 @@ function CategoriesDropdown() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover/item:scale-110"
                   />
                 </span>
-                <div className="leading-tight">
-                  <div className="text-xs font-black text-slate-900">
+                <div className="leading-tight min-w-0">
+                  <div className="text-[11px] sm:text-xs font-black text-slate-900 truncate">
                     {c.label}
                   </div>
-                  <div className="text-[10px] font-semibold text-brand-dark">
+                  <div className="text-[9px] sm:text-[10px] font-semibold text-brand-dark">
                     Shop Now →
                   </div>
                 </div>
@@ -384,20 +388,20 @@ function CategoriesDropdown() {
           </div>
 
           {/* Footer promo strip */}
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-3 text-white">
+          <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-between gap-2 sm:gap-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-2.5 sm:px-5 sm:py-3 text-white">
             <div className="flex items-center gap-2 text-xs">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand">
-                <SparkIcon className="h-3.5 w-3.5" />
+              <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-brand">
+                <SparkIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </span>
-              <span>
+              <span className="text-[11px] sm:text-xs">
                 Up to <span className="font-black text-brand">25% OFF</span> on Whitening Kits
               </span>
             </div>
             <Link
               href="/shop?category=specials"
-              className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1.5 text-[11px] font-black text-white hover:bg-brand-dark"
+              className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-[10px] sm:text-[11px] font-black text-white hover:bg-brand-dark shrink-0"
             >
-              Grab the Deal <ArrowRightIcon className="h-3 w-3" />
+              Grab Deal <ArrowRightIcon className="h-3 w-3" />
             </Link>
           </div>
         </div>
@@ -405,6 +409,13 @@ function CategoriesDropdown() {
     </div>
   );
 }
+//           </Link>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
+
 
 export function Footer() {
   return (
@@ -500,15 +511,15 @@ function SocialLink({ icon, href }: { icon: React.ReactNode; href: string }) {
   );
 }
 
-/* Floating WhatsApp FAB - sticky bottom-right */
+/* Floating WhatsApp FAB - sticky bottom-right (above mobile bottom nav) */
 export function FloatingWhatsapp() {
   return (
     <a
       href={site.phoneHref}
       aria-label="Chat on WhatsApp"
-      className="animate-glow fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-2xl shadow-brand/40 ring-4 ring-white transition hover:scale-110"
+      className="animate-glow fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-2xl shadow-brand/40 ring-4 ring-white transition hover:scale-110"
     >
-      <WhatsappIcon className="h-6 w-6" />
+      <WhatsappIcon className="h-5 w-5 sm:h-6 sm:w-6" />
       <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold">
         1
       </span>
@@ -531,9 +542,9 @@ export function PageHero({
       <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
       <div className="pointer-events-none absolute -left-10 bottom-0 h-56 w-56 animate-blob rounded-full bg-slate-200/50 blur-3xl" />
       <div className="pointer-events-none absolute right-1/3 top-1/2 h-32 w-32 animate-blob rounded-full bg-rose-200/40 blur-3xl" />
-      <div className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-8 sm:py-14 sm:px-6 lg:px-8">
         {breadcrumbs && (
-          <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-500">
+          <div className="mb-3 sm:mb-4 flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-500">
             {breadcrumbs.map((b, i) => (
               <span key={b.label} className="inline-flex items-center gap-1.5">
                 {i > 0 && <span className="text-slate-300">/</span>}
@@ -548,10 +559,10 @@ export function PageHero({
             ))}
           </div>
         )}
-        <h1 className="text-3xl font-extrabold text-slate-900 sm:text-4xl">
+        <h1 className="text-2xl font-black text-slate-900 sm:text-4xl break-words">
           {title}
         </h1>
-        {subtitle && <p className="mt-3 max-w-2xl text-slate-600">{subtitle}</p>}
+        {subtitle && <p className="mt-2 sm:mt-3 max-w-2xl text-xs sm:text-base text-slate-600">{subtitle}</p>}
       </div>
     </section>
   );

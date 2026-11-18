@@ -119,11 +119,11 @@ export default function CartPage() {
                 return (
                   <div
                     key={item.product.slug}
-                    className="flex items-center gap-4 rounded-2xl bg-white p-4 ring-1 ring-slate-100 sm:gap-6 shadow-sm"
+                    className="flex items-start sm:items-center gap-3 sm:gap-6 rounded-2xl bg-white p-3.5 sm:p-4 ring-1 ring-slate-100 shadow-sm"
                   >
                     <Link
                       href={item.product.href}
-                      className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-brand-soft sm:h-28 sm:w-28"
+                      className="relative h-20 w-20 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-xl bg-brand-soft"
                     >
                       <Image
                         src={item.product.img}
@@ -135,31 +135,40 @@ export default function CartPage() {
                     </Link>
 
                     <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-brand-dark">
-                        {item.product.brand}
-                      </div>
-                      <Link
-                        href={item.product.href}
-                        className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-dark sm:text-base"
-                      >
-                        {item.product.name}
-                      </Link>
-                      <div className="mt-1 text-xs text-slate-500">
-                        Price: <span className="font-semibold text-slate-700">{item.product.price}</span>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-brand-dark">
+                            {item.product.brand}
+                          </div>
+                          <Link
+                            href={item.product.href}
+                            className="line-clamp-2 text-xs sm:text-base font-semibold text-slate-900 hover:text-brand-dark"
+                          >
+                            {item.product.name}
+                          </Link>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm sm:text-base font-extrabold text-slate-900">
+                            {formatPriceBDT(lineTotal)}
+                          </div>
+                          <div className="text-[10px] sm:text-xs text-slate-400">
+                            {item.qty} × {item.product.price}
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="mt-3 flex items-center gap-4">
+                      <div className="mt-2.5 flex items-center justify-between gap-2">
                         <div className="inline-flex items-center rounded-full border border-slate-200 bg-white">
                           <button
                             type="button"
                             onClick={() =>
                               updateCartQty(item.product.slug, item.qty - 1)
                             }
-                            className="h-8 w-8 rounded-l-full text-slate-500 hover:bg-slate-50 text-sm"
+                            className="h-7 w-7 sm:h-8 sm:w-8 rounded-l-full text-slate-500 hover:bg-slate-50 text-xs sm:text-sm font-bold"
                           >
                             -
                           </button>
-                          <span className="w-8 text-center text-sm font-semibold text-slate-800">
+                          <span className="w-7 sm:w-8 text-center text-xs sm:text-sm font-semibold text-slate-800">
                             {item.qty}
                           </span>
                           <button
@@ -167,7 +176,7 @@ export default function CartPage() {
                             onClick={() =>
                               updateCartQty(item.product.slug, item.qty + 1)
                             }
-                            className="h-8 w-8 rounded-r-full text-slate-500 hover:bg-slate-50 text-sm"
+                            className="h-7 w-7 sm:h-8 sm:w-8 rounded-r-full text-slate-500 hover:bg-slate-50 text-xs sm:text-sm font-bold"
                           >
                             +
                           </button>
@@ -176,19 +185,10 @@ export default function CartPage() {
                         <button
                           type="button"
                           onClick={() => removeFromCart(item.product.slug)}
-                          className="text-xs font-semibold text-rose-500 hover:underline"
+                          className="text-[11px] sm:text-xs font-semibold text-rose-500 hover:underline"
                         >
                           Remove
                         </button>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-base font-extrabold text-slate-900">
-                        {formatPriceBDT(lineTotal)}
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        {item.qty} × {item.product.price}
                       </div>
                     </div>
                   </div>

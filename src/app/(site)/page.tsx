@@ -107,34 +107,38 @@ const heroSlides: HeroSlide[] = [
 
 function CategoryStrip() {
   return (
-    <section className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-7">
-      {categories.map((c, i) => (
-        <Link
-          key={c.label}
-          href={c.href}
-          className="group flex flex-col items-center text-center"
-        >
-          <span
-            className={`flex h-24 w-24 items-center justify-center overflow-hidden rounded-full ${c.bg} ring-2 ${c.ring} transition duration-500 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-brand/15`}
+    <section className="mt-8 sm:mt-12">
+      <div className="flex gap-3 overflow-x-auto pb-4 pt-1 no-scrollbar sm:grid sm:grid-cols-4 lg:grid-cols-7 sm:gap-6 sm:overflow-visible">
+        {categories.map((c, i) => (
+          <Link
+            key={c.label}
+            href={c.href}
+            className="group flex shrink-0 w-24 sm:w-auto flex-col items-center text-center"
           >
-            <Image
-              src={c.img}
-              alt={c.label}
-              width={96}
-              height={96}
-              className="h-20 w-20 object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
-            />
-          </span>
-          <span className="mt-3 text-sm font-semibold text-slate-800">{c.label}</span>
-          <span
-            className={`mt-1 inline-flex items-center gap-1 text-xs font-medium ${
-              i % 2 === 0 ? "text-brand-dark" : "text-brand-blue-dark"
-            }`}
-          >
-            Shop Now <ArrowRightIcon className="h-3 w-3" />
-          </span>
-        </Link>
-      ))}
+            <span
+              className={`flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-full ${c.bg} ring-2 ${c.ring} transition duration-500 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-brand/15`}
+            >
+              <Image
+                src={c.img}
+                alt={c.label}
+                width={96}
+                height={96}
+                className="h-16 w-16 sm:h-20 sm:w-20 object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+              />
+            </span>
+            <span className="mt-2 text-xs sm:text-sm font-semibold text-slate-800 line-clamp-1 sm:line-clamp-none">
+              {c.label}
+            </span>
+            <span
+              className={`mt-0.5 inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium ${
+                i % 2 === 0 ? "text-brand-dark" : "text-brand-blue-dark"
+              }`}
+            >
+              Shop <ArrowRightIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            </span>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }
@@ -143,8 +147,8 @@ function CategoryStrip() {
 
 function DealOfTheDay() {
   return (
-    <section className="mt-12 overflow-hidden rounded-3xl bg-gradient-to-r from-brand via-brand-dark to-brand-blue-dark p-1 shadow-xl shadow-brand/15">
-      <div className="relative grid gap-6 rounded-[20px] bg-white p-6 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-10 md:p-8">
+    <section className="mt-10 sm:mt-12 overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-brand via-brand-dark to-brand-blue-dark p-1 shadow-xl shadow-brand/15">
+      <div className="relative grid gap-6 rounded-[20px] bg-white p-4 sm:p-6 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-10 md:p-8">
         <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 animate-blob rounded-full bg-brand-soft/60 blur-3xl" />
         <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
 
@@ -153,37 +157,37 @@ function DealOfTheDay() {
             <SparkIcon className="h-3.5 w-3.5" />
             Deal of the Day
           </span>
-          <h3 className="mt-3 text-2xl font-extrabold leading-tight text-slate-900 sm:text-3xl">
-            Advanced Whitening Kit <br />
+          <h3 className="mt-3 text-xl font-extrabold leading-tight text-slate-900 sm:text-3xl">
+            Advanced Whitening Kit <br className="hidden sm:inline" />
             <span className="text-brand-blue-dark">Up to 25% Off Today</span>
           </h3>
-          <p className="mt-3 max-w-md text-sm text-slate-600">
+          <p className="mt-2 sm:mt-3 max-w-md text-xs sm:text-sm text-slate-600">
             Remove deep-set stains and achieve a brighter smile with the
             professional-grade whitening kit.
           </p>
-          <div className="mt-5 flex flex-wrap items-center gap-4">
+          <div className="mt-4 sm:mt-5 flex flex-wrap items-center gap-3 sm:gap-4">
             <Link
               href="/product/white-glo-whitening-kit"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-brand-dark"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md hover:bg-brand-dark"
             >
               Grab This Deal <ArrowRightIcon className="h-4 w-4" />
             </Link>
-            <div className="text-sm text-slate-500">
+            <div className="text-xs sm:text-sm text-slate-500">
               <span className="font-bold text-slate-900">৳5,499</span>{" "}
               <span className="text-brand-dark">· Limited stock</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex justify-center gap-3 md:flex-col md:items-center md:gap-2">
+        <div className="relative z-10 flex justify-center gap-2 sm:gap-3 md:flex-col md:items-center">
           <Countdown value="02" label="Days" accent="emerald" />
           <Countdown value="14" label="Hrs" accent="blue" />
           <Countdown value="38" label="Min" accent="emerald" />
           <Countdown value="52" label="Sec" accent="blue" />
         </div>
 
-        <div className="relative z-10 flex h-56 w-full items-center justify-center md:h-64">
-          <div className="pointer-events-none absolute h-56 w-56 animate-spin-slow rounded-full border border-dashed border-slate-300/60" />
+        <div className="relative z-10 flex h-48 w-full items-center justify-center sm:h-56 md:h-64">
+          <div className="pointer-events-none absolute h-48 w-48 sm:h-56 sm:w-56 animate-spin-slow rounded-full border border-dashed border-slate-300/60" />
           <div className="relative h-full w-full animate-float">
             <Image
               src="/images/products/p01.png"
@@ -288,23 +292,23 @@ function PromoCard({
   return (
     <Link
       href={href}
-      className={`group relative flex items-center justify-between overflow-hidden rounded-3xl bg-gradient-to-br ${gradient} p-6 ring-1 ${ringCls} transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
+      className={`group relative flex items-center justify-between overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br ${gradient} p-4 sm:p-6 ring-1 ${ringCls} transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/15`}
     >
-      <div className="relative z-10 max-w-[55%]">
-        <div className={`text-xs font-bold uppercase tracking-wider ${tagColor}`}>
+      <div className="relative z-10 max-w-[62%] sm:max-w-[55%]">
+        <div className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider ${tagColor}`}>
           {tag}
         </div>
-        <h3 className="mt-2 text-xl font-extrabold leading-snug text-slate-900">
+        <h3 className="mt-1 sm:mt-2 text-base sm:text-xl font-extrabold leading-snug text-slate-900 break-words">
           {title}
         </h3>
         <span
-          className={`mt-4 inline-flex items-center gap-1 text-sm font-semibold text-slate-800 ${btnCls}`}
+          className={`mt-2 sm:mt-4 inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-slate-800 ${btnCls}`}
         >
           {cta}
-          <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+          <ArrowRightIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform group-hover:translate-x-1" />
         </span>
       </div>
-      <div className="relative h-32 w-36 shrink-0">
+      <div className="relative h-24 w-24 sm:h-32 sm:w-36 shrink-0">
         <Image
           src={image}
           alt=""
@@ -314,7 +318,7 @@ function PromoCard({
           style={{ mixBlendMode: "multiply" }}
         />
         {rightBadge && (
-          <span className="absolute -right-2 -top-2 flex h-14 w-14 animate-pulse-ring items-center justify-center rounded-full bg-brand text-center text-[10px] font-bold leading-tight text-white shadow-md">
+          <span className="absolute -right-1 -top-1 sm:-right-2 sm:-top-2 flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-brand text-center text-[8px] sm:text-[10px] font-bold leading-tight text-white shadow-md">
             UP TO<br />30%<br />OFF
           </span>
         )}
@@ -327,7 +331,7 @@ function PromoCard({
 
 function BestSellers() {
   return (
-    <section className="mt-20">
+    <section className="mt-14 sm:mt-20">
       <SectionHeading
         eyebrow="Featured"
         title={<>Our <span className="rainbow-text">Hand-Picked</span> Favourites</>}
@@ -335,7 +339,7 @@ function BestSellers() {
         cta={{ label: "View All Products", href: "/shop" }}
       />
 
-      <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      <div className="mt-8 sm:mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
         {products.map((p) => (
           <ProductCard key={p.slug} product={p} />
         ))}
@@ -360,28 +364,28 @@ function SectionHeading({
 }) {
   const alignCls = align === "center" ? "text-center mx-auto" : "";
   return (
-    <div className={`flex flex-wrap items-end justify-between gap-4 ${align === "center" ? "flex-col" : ""}`}>
+    <div className={`flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 ${align === "center" ? "text-center mx-auto" : ""}`}>
       <div className={`max-w-2xl ${alignCls}`}>
         {eyebrow && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-brand-dark">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-brand-dark">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
             {eyebrow}
           </span>
         )}
-        <h2 className="mt-3 text-3xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl">
+        <h2 className="mt-2 sm:mt-3 text-2xl font-black leading-tight text-slate-900 sm:text-4xl md:text-5xl break-words">
           {title}
         </h2>
         {description && (
-          <p className="mt-3 max-w-xl text-slate-600">{description}</p>
+          <p className="mt-2 sm:mt-3 max-w-xl text-xs sm:text-sm text-slate-600">{description}</p>
         )}
       </div>
       {cta && (
         <Link
           href={cta.href}
-          className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark"
+          className="group inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-full bg-slate-900 px-4 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark"
         >
           {cta.label}
-          <ArrowRightIcon className="h-4 w-4 transition group-hover:translate-x-1" />
+          <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition group-hover:translate-x-1" />
         </Link>
       )}
     </div>
@@ -392,18 +396,18 @@ function SectionHeading({
 
 function ShopTheLook() {
   return (
-    <section className="mt-20">
+    <section className="mt-14 sm:mt-20">
       <SectionHeading
         eyebrow="Shop The Look"
         title={<>Build Your <span className="rainbow-text">Dream Routine</span></>}
         description="Mix and match to create the oral care routine that fits your life."
       />
 
-      <div className="mt-10 grid gap-5 lg:grid-cols-6 lg:grid-rows-2">
+      <div className="mt-8 sm:mt-10 grid gap-4 sm:gap-5 lg:grid-cols-6 lg:grid-rows-2">
         {/* Big feature card */}
         <Link
           href="/shop?category=teeth-whitening"
-          className="group relative col-span-6 row-span-2 overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white ring-1 ring-slate-800 lg:col-span-3"
+          className="group relative col-span-6 row-span-2 overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-5 sm:p-8 text-white ring-1 ring-slate-800 lg:col-span-3"
         >
           <div className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 animate-blob rounded-full bg-brand/40 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 animate-blob rounded-full bg-brand-blue/40 blur-3xl" />
@@ -412,24 +416,24 @@ function ShopTheLook() {
               <SparkIcon className="h-3 w-3 text-amber-400" />
               Editor&apos;s Pick
             </span>
-            <h3 className="mt-6 text-4xl font-black leading-tight sm:text-5xl">
+            <h3 className="mt-4 sm:mt-6 text-2xl sm:text-4xl lg:text-5xl font-black leading-tight break-words">
               The <span className="rainbow-text">Whitening</span>
               <br /> Starter Edit
             </h3>
-            <p className="mt-4 max-w-sm text-sm text-slate-300">
+            <p className="mt-2 sm:mt-4 max-w-sm text-xs sm:text-sm text-slate-300">
               Three items. Fourteen days. A visibly brighter smile.
             </p>
-            <div className="mt-auto flex items-end justify-between pt-8">
+            <div className="mt-auto flex items-end justify-between pt-6 sm:pt-8">
               <div>
-                <div className="text-xs opacity-75">From</div>
-                <div className="display-font text-4xl font-black">৳749</div>
+                <div className="text-[11px] sm:text-xs opacity-75">From</div>
+                <div className="display-font text-3xl sm:text-4xl font-black">৳749</div>
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-white px-5 py-3 text-xs font-bold text-slate-900 transition group-hover:gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 sm:px-5 sm:py-3 text-xs font-bold text-slate-900 transition group-hover:gap-2">
                 Shop Edit <ArrowRightIcon className="h-3.5 w-3.5" />
               </span>
             </div>
             {/* Floating product */}
-            <div className="pointer-events-none absolute right-6 top-20 h-48 w-48 animate-big-float">
+            <div className="pointer-events-none absolute right-2 bottom-16 sm:right-6 sm:top-20 h-28 w-28 sm:h-48 sm:w-48 opacity-40 sm:opacity-100 animate-big-float">
               <Image
                 src="/images/products/p04.png"
                 alt="Whitening toothpaste"
@@ -665,19 +669,19 @@ function HealthTips() {
 
 function TestimonialAndReviews() {
   return (
-    <section className="mt-20">
+    <section className="mt-14 sm:mt-20">
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         {/* Big expert quote card */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white ring-1 ring-slate-800 sm:p-12">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-5 sm:p-10 text-white ring-1 ring-slate-800">
           <div className="pointer-events-none absolute -top-10 -right-10 h-72 w-72 animate-blob rounded-full bg-brand/30 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-10 -left-10 h-72 w-72 animate-blob rounded-full bg-brand-blue/30 blur-3xl" />
 
           {/* Huge quote mark */}
           <QuoteIcon className="pointer-events-none absolute right-10 top-8 h-40 w-40 text-white/5" />
 
-          <div className="relative grid gap-8 md:grid-cols-[auto_1fr] md:items-center">
-            <div className="relative h-40 w-32 shrink-0 overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-[3px] shadow-2xl sm:h-48 sm:w-40">
-              <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-white">
+          <div className="relative grid gap-6 sm:gap-8 sm:grid-cols-[auto_1fr] items-center">
+            <div className="relative h-32 w-28 sm:h-48 sm:w-40 shrink-0 mx-auto sm:mx-0 overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-brand via-brand to-brand-blue p-[3px] shadow-2xl">
+              <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-white">
                 <Image
                   src="/images/doctor.png"
                   alt="Dr. Farhana Islam"
@@ -686,27 +690,27 @@ function TestimonialAndReviews() {
                   className="object-cover object-top"
                 />
               </div>
-              <span className="absolute -right-2 -bottom-2 inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-black uppercase text-slate-900 shadow-lg">
+              <span className="absolute -right-1 -bottom-1 sm:-right-2 sm:-bottom-2 inline-flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-[10px] font-black uppercase text-slate-900 shadow-lg">
                 Verified
               </span>
             </div>
 
-            <div>
+            <div className="text-center sm:text-left">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur">
                 Expert Voice
               </span>
-              <blockquote className="mt-4 text-2xl font-black leading-tight sm:text-3xl md:text-4xl">
+              <blockquote className="mt-3 sm:mt-4 text-lg sm:text-2xl lg:text-3xl font-black leading-snug">
                 &ldquo;Oral health is the foundation of{" "}
                 <span className="rainbow-text">overall well-being</span>. Choose the right care, for a lifetime of healthy smiles.&rdquo;
               </blockquote>
-              <div className="mt-6 flex items-center gap-4">
+              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-4">
                 <div>
-                  <div className="text-lg font-bold">Dr. Farhana Islam</div>
+                  <div className="text-base sm:text-lg font-bold">Dr. Farhana Islam</div>
                   <div className="text-xs text-slate-300">BDS · Oral Health Specialist</div>
                 </div>
                 <div className="flex -space-x-1 text-amber-400">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <StarIcon key={i} className="h-5 w-5" />
+                    <StarIcon key={i} className="h-4 w-4 sm:h-5 sm:w-5" />
                   ))}
                 </div>
               </div>
@@ -715,7 +719,7 @@ function TestimonialAndReviews() {
         </div>
 
         {/* Customer review panel */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 ring-1 ring-brand/15 sm:p-10">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-brand-soft via-white to-brand-soft p-5 sm:p-10 ring-1 ring-brand/15">
           <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-slate-200/60 blur-3xl" />
           <div className="relative">
             <div className="flex items-start justify-between">
@@ -723,12 +727,12 @@ function TestimonialAndReviews() {
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark">
                   Reviews
                 </span>
-                <h3 className="mt-3 text-2xl font-black leading-tight text-slate-900">
+                <h3 className="mt-2 sm:mt-3 text-xl sm:text-2xl font-black leading-tight text-slate-900">
                   Loved by thousands
                 </h3>
               </div>
               <div className="text-right">
-                <div className="display-font text-5xl font-black text-brand-dark">4.9</div>
+                <div className="display-font text-4xl sm:text-5xl font-black text-brand-dark">4.9</div>
                 <div className="flex items-center justify-end gap-0.5 text-amber-400">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <StarIcon key={i} className="h-3.5 w-3.5" />
@@ -741,7 +745,7 @@ function TestimonialAndReviews() {
             </div>
 
             {/* Rating bars */}
-            <div className="mt-5 space-y-1.5">
+            <div className="mt-4 sm:mt-5 space-y-1.5">
               {[
                 { s: 5, p: 82 },
                 { s: 4, p: 12 },
@@ -764,9 +768,9 @@ function TestimonialAndReviews() {
             </div>
 
             {/* Latest review */}
-            <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-slate-100">
+            <div className="mt-5 sm:mt-6 rounded-2xl bg-white p-4 sm:p-5 ring-1 ring-slate-100">
               <div className="flex items-center gap-3">
-                <span className="h-11 w-11 overflow-hidden rounded-full ring-2 ring-brand/15">
+                <span className="h-10 w-10 sm:h-11 sm:w-11 overflow-hidden rounded-full ring-2 ring-brand/15 shrink-0">
                   <Image
                     src="/images/customer.png"
                     alt="Afsana Rahman"
@@ -783,7 +787,7 @@ function TestimonialAndReviews() {
                   </div>
                 </div>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-relaxed text-slate-700">
                 &ldquo;Best quality products and super fast delivery! OralCareBD is my trusted online store for all oral care needs.&rdquo;
               </p>
             </div>
@@ -854,18 +858,18 @@ function InstagramGrid() {
 
 function Newsletter() {
   return (
-    <section className="relative mt-10 overflow-hidden rounded-2xl bg-brand-soft p-6 sm:p-8">
+    <section className="relative mt-8 sm:mt-10 overflow-hidden rounded-2xl bg-brand-soft p-5 sm:p-8">
       <div className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 sm:block">
         <Image src="/images/plant.png" alt="" width={85} height={125} className="h-28 w-auto" />
       </div>
-      <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">
-            <MailIcon className="h-5 w-5" />
+      <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <span className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">
+            <MailIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </span>
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Join Our Smile Community!</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">Join Our Smile Community!</h3>
+            <p className="mt-0.5 text-xs sm:text-sm text-slate-600">
               Subscribe to get exclusive offers, dental tips and latest product updates.
             </p>
           </div>
@@ -873,18 +877,18 @@ function Newsletter() {
         <form action="#" className="flex w-full max-w-md rounded-full bg-white p-1 ring-1 ring-brand/15">
           <input
             type="email"
-            placeholder="Enter your email address"
-            className="min-w-0 flex-1 bg-transparent px-5 text-sm outline-none placeholder:text-slate-400"
+            placeholder="Enter email address"
+            className="min-w-0 flex-1 bg-transparent px-3 sm:px-5 text-xs sm:text-sm outline-none placeholder:text-slate-400"
           />
           <button
             type="submit"
-            className="rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark"
+            className="rounded-full bg-brand px-4 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-brand-dark shrink-0"
           >
             Subscribe
           </button>
         </form>
       </div>
-      <p className="mt-3 text-center text-xs text-slate-500 lg:text-left">
+      <p className="mt-3 text-center text-[11px] sm:text-xs text-slate-500 lg:text-left">
         We respect your privacy. Unsubscribe anytime.
       </p>
     </section>

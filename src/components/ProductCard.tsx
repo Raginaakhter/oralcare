@@ -42,11 +42,11 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         )}
 
-        <div className="absolute right-4 top-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2">
+        <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-2 sm:group-hover:translate-x-0 transition-all duration-300">
           <button
             onClick={() => toggleWishlist(product)}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-            className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md ring-1 transition ${
+            className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full shadow-md ring-1 transition ${
               inWishlist
                 ? "bg-rose-50 text-rose-500 ring-rose-200"
                 : "bg-white text-slate-500 ring-slate-100 hover:bg-rose-50 hover:text-rose-500"
@@ -59,7 +59,7 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             onClick={() => setQuickViewOpen(true)}
             aria-label="Quick view"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-brand-soft hover:text-brand-dark"
+            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-md ring-1 ring-slate-100 transition hover:bg-brand-soft hover:text-brand-dark"
           >
             <SparkIcon className="h-4 w-4" />
           </button>
@@ -75,7 +75,7 @@ export function ProductCard({ product }: { product: Product }) {
               alt={name}
               fill
               sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
-              className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+              className="object-contain p-3 sm:p-5 transition-transform duration-500 group-hover:scale-105"
             />
           </div>
         </Link>
@@ -85,35 +85,35 @@ export function ProductCard({ product }: { product: Product }) {
             {brand}
           </div>
           <Link href={href}>
-            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-slate-900 hover:text-brand-dark">
+            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-xs sm:text-sm font-bold leading-snug text-slate-900 hover:text-brand-dark">
               {name}
             </h3>
           </Link>
-          <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+          <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-500">
             <Stars value={rating} />
-            <span className="text-[11px]">({reviews.toLocaleString()})</span>
+            <span className="text-[10px] sm:text-[11px]">({reviews.toLocaleString()})</span>
           </div>
-          <div className="mt-3 border-t border-slate-100 pt-3">
-            <div className="text-lg font-black text-slate-900">{price}</div>
+          <div className="mt-2.5 sm:mt-3 border-t border-slate-100 pt-2.5 sm:pt-3">
+            <div className="text-base sm:text-lg font-black text-slate-900">{price}</div>
           </div>
 
           {/* Action buttons */}
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="mt-3 flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-2">
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={isAdding}
-              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-3 py-2 text-[11px] font-bold text-brand-dark transition hover:bg-brand-soft active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-brand bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold text-brand-dark transition hover:bg-brand-soft active:scale-95"
             >
-              <CartIcon className="h-3.5 w-3.5" />
-              {isAdding ? "Adding..." : "Add to Cart"}
+              <CartIcon className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{isAdding ? "Adding..." : "Add to Cart"}</span>
             </button>
             <button
               type="button"
               onClick={handleBuyNow}
-              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-3 py-2 text-[11px] font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-brand px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-95"
             >
-              Buy Now
+              <span className="truncate">Buy Now</span>
             </button>
           </div>
         </div>

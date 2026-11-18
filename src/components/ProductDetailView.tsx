@@ -143,29 +143,29 @@ export function ProductDetailView({
             <SparkIcon className="h-3 w-3" />
             {product.brand}
           </span>
-          <h1 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">
+          <h1 className="mt-3 text-2xl sm:text-4xl font-extrabold text-slate-900 break-words">
             {product.name}
           </h1>
 
-          <div className="mt-3 flex items-center gap-3">
+          <div className="mt-2.5 sm:mt-3 flex items-center gap-2 sm:gap-3">
             <Stars value={product.rating} />
-            <span className="text-sm text-slate-500">
+            <span className="text-xs sm:text-sm text-slate-500">
               {product.rating} · ({reviewsList.length + product.reviews} reviews)
             </span>
           </div>
 
-          <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-4xl font-extrabold text-slate-900">
+          <div className="mt-4 sm:mt-6 flex items-baseline gap-3">
+            <span className="text-3xl sm:text-4xl font-extrabold text-slate-900">
               {product.price}
             </span>
-            <span className="text-sm text-slate-500">incl. VAT & Import Tax</span>
+            <span className="text-xs sm:text-sm text-slate-500">incl. VAT & Import Tax</span>
           </div>
 
-          <p className="mt-5 text-slate-600 leading-relaxed">
+          <p className="mt-4 sm:mt-5 text-sm sm:text-base text-slate-600 leading-relaxed">
             {product.description}
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
+          <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700 ring-1 ring-emerald-200">
               <CheckBadgeIcon className="h-3.5 w-3.5" />
               In Stock — Dhaka Warehouse
@@ -174,20 +174,20 @@ export function ProductDetailView({
           </div>
 
           {/* Quantity + Add to Cart + Wishlist */}
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <div className="inline-flex items-center rounded-full border border-slate-200 bg-white">
+          <div className="mt-5 sm:mt-6 flex items-center gap-2 sm:gap-3">
+            <div className="inline-flex shrink-0 items-center rounded-full border border-slate-200 bg-white">
               <button
                 type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="h-11 w-11 rounded-l-full text-lg text-slate-500 hover:bg-slate-50"
+                className="h-10 w-9 sm:h-11 sm:w-11 rounded-l-full text-base sm:text-lg text-slate-500 hover:bg-slate-50"
               >
                 -
               </button>
-              <span className="w-10 text-center text-sm font-semibold">{qty}</span>
+              <span className="w-8 sm:w-10 text-center text-xs sm:text-sm font-semibold">{qty}</span>
               <button
                 type="button"
                 onClick={() => setQty((q) => q + 1)}
-                className="h-11 w-11 rounded-r-full text-lg text-slate-500 hover:bg-slate-50"
+                className="h-10 w-9 sm:h-11 sm:w-11 rounded-r-full text-base sm:text-lg text-slate-500 hover:bg-slate-50"
               >
                 +
               </button>
@@ -196,24 +196,24 @@ export function ProductDetailView({
             <button
               type="button"
               onClick={() => addToCart(product, qty, true)}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-brand-dark transition active:scale-95"
+              className="inline-flex flex-1 min-w-0 items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-brand px-3 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-brand-dark transition active:scale-95"
             >
-              <CartIcon className="h-4 w-4" />
-              Add to Cart
+              <CartIcon className="h-4 w-4 shrink-0" />
+              <span className="truncate">Add to Cart</span>
             </button>
 
             <button
               type="button"
               onClick={() => toggleWishlist(product)}
               aria-label="Add to wishlist"
-              className={`flex h-11 w-11 items-center justify-center rounded-full ring-1 transition ${
+              className={`flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full ring-1 transition ${
                 inWishlist
                   ? "bg-rose-50 text-rose-500 ring-rose-200"
                   : "bg-white text-brand-dark ring-slate-200 hover:bg-brand-soft"
               }`}
             >
               <HeartIcon
-                className={`h-5 w-5 ${inWishlist ? "fill-current text-rose-500" : ""}`}
+                className={`h-4 w-4 sm:h-5 sm:w-5 ${inWishlist ? "fill-current text-rose-500" : ""}`}
               />
             </button>
           </div>
@@ -222,7 +222,7 @@ export function ProductDetailView({
           <button
             type="button"
             onClick={() => buyNow(product, qty)}
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-dark shadow-md"
+            className="mt-2.5 sm:mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white transition hover:bg-brand-dark shadow-md"
           >
             Buy Now <ArrowRightIcon className="h-4 w-4" />
           </button>
@@ -261,11 +261,11 @@ export function ProductDetailView({
       </section>
 
       {/* Tabs Section */}
-      <section className="mt-16 rounded-3xl bg-white p-6 ring-1 ring-slate-100 sm:p-8">
-        <div className="flex gap-6 border-b border-slate-100 pb-3">
+      <section className="mt-12 sm:mt-16 rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-8 ring-1 ring-slate-100">
+        <div className="flex gap-4 sm:gap-6 border-b border-slate-100 pb-3 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab("desc")}
-            className={`pb-3 text-sm font-bold transition ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition shrink-0 whitespace-nowrap ${
               activeTab === "desc"
                 ? "border-b-2 border-brand text-brand-dark"
                 : "text-slate-500 hover:text-slate-900"
@@ -275,7 +275,7 @@ export function ProductDetailView({
           </button>
           <button
             onClick={() => setActiveTab("specs")}
-            className={`pb-3 text-sm font-bold transition ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition shrink-0 whitespace-nowrap ${
               activeTab === "specs"
                 ? "border-b-2 border-brand text-brand-dark"
                 : "text-slate-500 hover:text-slate-900"
@@ -285,7 +285,7 @@ export function ProductDetailView({
           </button>
           <button
             onClick={() => setActiveTab("reviews")}
-            className={`pb-3 text-sm font-bold transition ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition shrink-0 whitespace-nowrap ${
               activeTab === "reviews"
                 ? "border-b-2 border-brand text-brand-dark"
                 : "text-slate-500 hover:text-slate-900"

@@ -40,7 +40,7 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   return (
     <section className="relative w-full overflow-hidden">
       {/* Slide stack — responsive fixed heights, no viewport-calc surprises */}
-      <div className="relative h-[460px] w-full sm:h-[500px] md:h-[540px] lg:h-[580px] xl:h-[620px]">
+      <div className="relative min-h-[440px] h-[480px] w-full sm:h-[520px] md:h-[540px] lg:h-[580px] xl:h-[620px]">
         {/* Image layer — all stacked, only active visible (smooth crossfade) */}
         {slides.map((slide, i) => {
           const active = i === index;
@@ -68,37 +68,37 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         })}
 
         {/* Gradient overlay — darker bottom-left for text; keeps top clean */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-900/80 via-slate-900/30 via-45% to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-900/90 via-slate-900/40 via-50% to-transparent" />
 
         {/* Content layer — only ACTIVE slide's content rendered */}
         <div
           key={index}
-          className="relative mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-5 pb-20 sm:px-8 sm:pb-24 lg:px-16"
+          className="relative mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 pb-16 sm:px-8 sm:pb-24 lg:px-16"
         >
           <div
-            className={`flex max-w-xl animate-fade-up flex-col gap-3 sm:gap-4 md:max-w-2xl md:gap-5 ${alignCls}`}
+            className={`flex max-w-xl animate-fade-up flex-col gap-2.5 sm:gap-4 md:max-w-2xl md:gap-5 ${alignCls}`}
           >
-            <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white backdrop-blur-md ring-1 ring-white/20 sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.2em]">
+            <span className="inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white backdrop-blur-md ring-1 ring-white/20 sm:px-4 sm:py-1.5 sm:text-[11px]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
               {current.tag}
             </span>
 
-            <h1 className="text-3xl font-black leading-[1.05] tracking-tight text-white drop-shadow-lg sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem]">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem] font-black leading-[1.1] tracking-tight text-white drop-shadow-lg break-words">
               {current.title}
             </h1>
 
-            <p className="max-w-md text-sm text-white/90 drop-shadow sm:max-w-lg sm:text-base md:text-lg">
+            <p className="max-w-md text-xs sm:text-base md:text-lg text-white/90 drop-shadow line-clamp-3 sm:line-clamp-none">
               {current.description}
             </p>
 
             <div className="mt-1 flex flex-wrap items-center gap-2 sm:mt-2 sm:gap-3">
               <Link
                 href={current.cta.href}
-                className="group inline-flex items-center gap-2 rounded-full bg-brand px-5 py-3 text-xs font-bold text-white shadow-xl shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-dark sm:px-6 sm:py-3.5 sm:text-sm"
+                className="group inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-brand px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-bold text-white shadow-xl shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-dark"
               >
                 {current.cta.label}
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 transition group-hover:translate-x-1 sm:h-6 sm:w-6">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-3 w-3">
+                <span className="flex h-4 w-4 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white/20 transition group-hover:translate-x-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-2.5 w-2.5 sm:h-3 sm:w-3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
                   </svg>
                 </span>
@@ -106,7 +106,7 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               {current.secondary && (
                 <Link
                   href={current.secondary.href}
-                  className="rounded-full bg-white/10 px-5 py-3 text-xs font-bold text-white ring-1 ring-white/30 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/20 sm:px-6 sm:py-3.5 sm:text-sm"
+                  className="rounded-full bg-white/10 px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-bold text-white ring-1 ring-white/30 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/20"
                 >
                   {current.secondary.label}
                 </Link>
@@ -129,38 +129,38 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           </div>
 
           {/* Dots */}
-          <div className="pointer-events-auto flex gap-2">
+          <div className="pointer-events-auto flex gap-1.5 sm:gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => go(i)}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-1.5 sm:h-2 rounded-full transition-all ${
                   i === index
-                    ? "w-8 bg-white sm:w-10"
-                    : "w-2 bg-white/50 hover:bg-white/80"
+                    ? "w-6 sm:w-10 bg-white"
+                    : "w-1.5 sm:w-2 bg-white/50 hover:bg-white/80"
                 }`}
               />
             ))}
           </div>
 
           {/* Arrows */}
-          <div className="pointer-events-auto flex gap-2">
+          <div className="pointer-events-auto flex gap-1.5 sm:gap-2">
             <button
               aria-label="Previous slide"
               onClick={() => go(index - 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/25 sm:h-11 sm:w-11"
+              className="flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/25"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5 sm:h-4 sm:w-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
               </svg>
             </button>
             <button
               aria-label="Next slide"
               onClick={() => go(index + 1)}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-brand hover:text-white sm:h-11 sm:w-11"
+              className="flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-brand hover:text-white"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5 sm:h-4 sm:w-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
               </svg>
             </button>

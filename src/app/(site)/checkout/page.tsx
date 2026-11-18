@@ -707,14 +707,14 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200 sm:p-8 shadow-sm">
-      <div className="mb-5 flex items-center gap-3">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-xs font-black text-white">
+    <div className="rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-8 ring-1 ring-slate-200 shadow-sm">
+      <div className="mb-4 sm:mb-5 flex items-center gap-2.5 sm:gap-3">
+        <span className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-brand text-xs font-black text-white shrink-0">
           {number}
         </span>
-        <h2 className="text-base font-extrabold text-slate-900">{title}</h2>
+        <h2 className="text-sm sm:text-base font-extrabold text-slate-900">{title}</h2>
       </div>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-3.5 sm:space-y-4">{children}</div>
     </div>
   );
 }
@@ -735,7 +735,7 @@ function PaymentCard({
   return (
     <label
       onClick={onChange}
-      className={`relative flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${
+      className={`relative flex cursor-pointer items-start gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition ${
         checked
           ? "border-brand bg-brand-soft/70 shadow-sm"
           : "border-slate-200 bg-white hover:border-slate-300"
@@ -745,10 +745,10 @@ function PaymentCard({
         type="radio"
         checked={checked}
         onChange={onChange}
-        className="mt-0.5 h-4 w-4 accent-brand"
+        className="mt-0.5 h-4 w-4 accent-brand shrink-0"
       />
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-xs font-bold text-slate-900">{label}</span>
           {badge && (
             <span className="rounded-full bg-brand px-1.5 py-0.2 text-[9px] font-black text-white">
@@ -756,7 +756,7 @@ function PaymentCard({
             </span>
           )}
         </div>
-        <div className="mt-0.5 text-[11px] text-slate-500">{sub}</div>
+        <div className="mt-0.5 text-[11px] text-slate-500 leading-tight">{sub}</div>
       </div>
     </label>
   );

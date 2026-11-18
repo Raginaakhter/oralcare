@@ -57,8 +57,9 @@ export default async function ShopPage({
         ]}
       />
 
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
-        <aside className="space-y-6">
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-6 sm:py-10 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block space-y-6">
           {/* Search */}
           <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-100">
             <h3 className="mb-3 text-sm font-bold text-slate-900">Search</h3>
@@ -152,12 +153,34 @@ export default async function ShopPage({
           </div>
         </aside>
 
-        <section>
-          <div className="mb-5 flex items-center justify-between rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-            <div className="text-sm text-slate-500">
+        <section className="min-w-0">
+          {/* Mobile Category Filter Pills */}
+          <div className="mb-4 flex gap-2 overflow-x-auto no-scrollbar pb-1 lg:hidden">
+            {categoryFilters.map((c) => {
+              const active = (c.slug || "") === (activeCat || "");
+              const href = c.slug ? `/shop?category=${c.slug}` : "/shop";
+              return (
+                <Link
+                  key={c.slug || "all"}
+                  href={href}
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition whitespace-nowrap ${
+                    active
+                      ? "bg-brand text-white shadow-sm"
+                      : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  {c.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Top Sort / Counter Bar */}
+          <div className="mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl bg-white p-3.5 sm:p-4 ring-1 ring-slate-100">
+            <div className="text-xs sm:text-sm text-slate-500">
               Showing <span className="font-semibold text-slate-800">{list.length}</span> of {products.length} products
             </div>
-            <select className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 focus:border-brand focus:outline-none">
+            <select className="w-full sm:w-auto rounded-full border border-slate-200 bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:border-brand focus:outline-none">
               <option>Default sorting</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
@@ -180,7 +203,7 @@ export default async function ShopPage({
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
               {list.map((p) => (
                 <ProductCard key={p.slug} product={p} />
               ))}
