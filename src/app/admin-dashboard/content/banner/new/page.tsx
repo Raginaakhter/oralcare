@@ -1,20 +1,18 @@
 import { AdminHeader } from "../../../AdminHeader";
 import { SlideForm } from "../SlideForm";
 
-export const metadata = { title: "Add Slide — Admin — OralCareBD" };
+export const metadata = { title: "New Banner — Admin" };
 
-export default function NewSlidePage() {
+export default function NewBannerPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <AdminHeader
         breadcrumbs={[
           { label: "Dashboard", href: "/admin-dashboard" },
-          { label: "Content" },
-          { label: "Banner", href: "/admin-dashboard/content/banner" },
-          { label: "Add Slide" },
+          { label: "Banners", href: "/admin-dashboard/content/banner" },
+          { label: "New" },
         ]}
-        title="Add New Slide"
-        description="Create a new slide for the homepage hero carousel."
+        title="Add Banner"
       />
       <SlideForm mode="create" />
     </div>

@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { SmartImage } from "@/components/SmartImage";
 
 export type HeroSlide = {
   img: string;
+  /** Optional portrait image used below the `sm` breakpoint. */
+  mobileImg?: string;
   alt: string;
+  textColor?: string;
+  overlayColor?: string;
+  /** 0–1; when set, replaces the default gradient with a flat tint. */
+  overlayOpacity?: number;
   tag: string;
   title: React.ReactNode;
   description: string;
@@ -22,9 +28,12 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const total = slides.length;
 
   useEffect(() => {
+    if (total < 2) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % total), 6500);
     return () => clearInterval(id);
   }, [total]);
+
+  if (!total) return null;
 
   const go = (next: number) => setIndex(((next % total) + total) % total);
 
@@ -52,23 +61,45 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 active ? "opacity-100" : "opacity-0"
               }`}
             >
-              <Image
+              <SmartImage
                 src={slide.img}
                 alt={slide.alt}
                 fill
-                priority={i === 0}
+                preload={i === 0}
+                loading={i === 0 ? "eager" : "lazy"}
                 sizes="100vw"
                 style={{ objectPosition: slide.objectPosition ?? "center" }}
                 className={`object-cover transition-transform duration-[7000ms] ease-out ${
                   active ? "scale-105" : "scale-100"
-                }`}
+                } ${slide.mobileImg ? "hidden sm:block" : ""}`}
               />
+              {slide.mobileImg && (
+                <SmartImage
+                  src={slide.mobileImg}
+                  alt={slide.alt}
+                  fill
+                  preload={i === 0}
+                loading={i === 0 ? "eager" : "lazy"}
+                  sizes="100vw"
+                  className="object-cover sm:hidden"
+                />
+              )}
             </div>
           );
         })}
 
-        {/* Gradient overlay — darker bottom-left for text; keeps top clean */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-900/90 via-slate-900/40 via-50% to-transparent" />
+        {/* Overlay — CMS tint when configured, otherwise the default text gradient */}
+        {current.overlayOpacity ? (
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundColor: current.overlayColor || "#0f172a",
+              opacity: current.overlayOpacity,
+            }}
+          />
+        ) : (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-900/90 via-slate-900/40 via-50% to-transparent" />
+        )}
 
         {/* Content layer — only ACTIVE slide's content rendered */}
         <div
@@ -76,7 +107,10 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           className="relative mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 pb-16 sm:px-8 sm:pb-24 lg:px-16"
         >
           <div
-            className={`flex max-w-xl animate-fade-up flex-col gap-2.5 sm:gap-4 md:max-w-2xl md:gap-5 ${alignCls}`}
+            className={`flex max-w-xl animate-fade-up flex-col gap-2.5 sm:gap-4 md:max-w-2xl md:gap-5 ${alignCls} ${
+              align === "center" ? "mx-auto" : align === "right" ? "ml-auto" : ""
+            }`}
+            style={current.textColor ? { color: current.textColor } : undefined}
           >
             <span className="inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white backdrop-blur-md ring-1 ring-white/20 sm:px-4 sm:py-1.5 sm:text-[11px]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />

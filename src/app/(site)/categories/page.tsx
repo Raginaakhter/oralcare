@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { PageHero } from "@/components/SiteShell";
-import { categories } from "@/lib/site-data";
-import { products } from "@/lib/products";
+import { SmartImage } from "@/components/SmartImage";
+import { categories as fallbackArt } from "@/lib/site-data";
+import { getCategories, getProducts } from "@/lib/api/server";
 import Link from "next/link";
 import { ArrowRightIcon, SparkIcon } from "@/components/icons";
 
@@ -10,38 +10,30 @@ export const metadata = {
   description: "Explore all oral care categories — toothpaste, whitening, mouthwash, toothbrushes and more.",
 };
 
-const bigCards = [
-  {
-    slug: "teeth-whitening",
-    title: "Teeth Whitening",
-    desc: "Professional whitening kits, purple pastes and charcoal formulas for a brighter smile.",
-    img: "/images/products/p01.png",
-    bg: "from-brand-soft via-brand-soft to-white",
-  },
-  {
-    slug: "toothpaste",
-    title: "Toothpaste",
-    desc: "Daily sensitivity care, whitening and gum-health pastes from trusted brands.",
-    img: "/images/products/p04.png",
-    bg: "from-brand-soft via-blue-50 to-white",
-  },
-  {
-    slug: "floss-mouthwash",
-    title: "Floss & Mouthwash",
-    desc: "Dentist-formulated rinses and flosses for all-day freshness.",
-    img: "/images/products/p11.png",
-    bg: "from-brand-soft via-white to-brand-soft",
-  },
-  {
-    slug: "toothbrushes",
-    title: "Toothbrushes",
-    desc: "Manual and electric brushes for every mouth and every smile.",
-    img: "/images/products/p02.png",
-    bg: "from-brand-soft via-white to-brand-soft",
-  },
+const cardStyles = [
+  { img: "/images/products/p01.png", bg: "from-brand-soft via-brand-soft to-white" },
+  { img: "/images/products/p04.png", bg: "from-brand-soft via-blue-50 to-white" },
+  { img: "/images/products/p11.png", bg: "from-brand-soft via-white to-brand-soft" },
+  { img: "/images/products/p02.png", bg: "from-brand-soft via-white to-brand-soft" },
 ];
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const list = await getCategories();
+  // Product count per category = the paginated `total` from GET /products?category=…
+  const counts = await Promise.all(list.map((c) => getProducts({ category: c._id, limit: 1 })));
+  const bigCards = list.map((c, i) => ({
+    slug: c.slug,
+    title: c.name,
+    desc: c.description || "Authentic, dentist-approved products.",
+    img: c.image || cardStyles[i % cardStyles.length].img,
+    bg: cardStyles[i % cardStyles.length].bg,
+    count: counts[i].total,
+  }));
+  const round = list.map((c, i) => {
+    const art = fallbackArt[i % fallbackArt.length];
+    return { label: c.name, img: c.image || art.img, bg: art.bg, ring: art.ring, href: `/shop?category=${c.slug}` };
+  });
+
   return (
     <>
       <PageHero
@@ -54,10 +46,15 @@ export default function CategoriesPage() {
       />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {bigCards.length === 0 && (
+          <p className="rounded-2xl bg-white p-10 text-center text-sm text-slate-500 ring-1 ring-slate-100">
+            Categories will appear here soon.
+          </p>
+        )}
         {/* Feature cards */}
         <div className="grid gap-5 md:grid-cols-2">
           {bigCards.map((c) => {
-            const count = products.filter((p) => p.category === c.slug).length;
+            const count = c.count;
             return (
               <Link
                 key={c.slug}
@@ -77,7 +74,7 @@ export default function CategoriesPage() {
                   </span>
                 </div>
                 <div className="relative h-32 w-32 shrink-0 sm:h-40 sm:w-40">
-                  <Image
+                  <SmartImage
                     src={c.img}
                     alt={c.title}
                     fill
@@ -95,7 +92,7 @@ export default function CategoriesPage() {
         <div className="mt-14">
           <h2 className="mb-6 text-xl font-extrabold text-slate-900">Quick Browse</h2>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-7">
-            {categories.map((c, i) => (
+            {round.map((c, i) => (
               <Link
                 key={c.label}
                 href={c.href}
@@ -104,7 +101,7 @@ export default function CategoriesPage() {
                 <span
                   className={`flex h-24 w-24 items-center justify-center overflow-hidden rounded-full ${c.bg} ring-2 ${c.ring} transition duration-500 group-hover:-translate-y-1 group-hover:shadow-lg`}
                 >
-                  <Image
+                  <SmartImage
                     src={c.img}
                     alt={c.label}
                     width={96}

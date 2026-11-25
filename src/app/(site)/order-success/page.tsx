@@ -1,110 +1,183 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
-import Image from "next/image";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useStore, formatPriceBDT, parsePriceNumber, Order } from "@/context/StoreContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useStore } from "@/context/StoreContext";
+import { errorMessage, ordersApi, paymentsApi, type Order } from "@/lib/api";
+import { formatDateTime } from "@/lib/format";
+import { LAST_ORDER_KEY } from "@/lib/storage-keys";
 import {
-  ArrowRightIcon,
-  CheckBadgeIcon,
-  TruckIcon,
-  MailIcon,
-  PhoneIcon,
-} from "@/components/icons";
+  AddressBlock,
+  ErrorBox,
+  OrderItemsList,
+  OrderStatusBadge,
+  OrderTotals,
+  PaymentStatusBadge,
+  Spinner,
+} from "@/components/orders";
+import { ArrowRightIcon, TruckIcon, MailIcon } from "@/components/icons";
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <OrderSuccessContent />
+    </Suspense>
+  );
+}
 
 function OrderSuccessContent() {
-  const searchParams = useSearchParams();
-  const orderIdParam = searchParams.get("id");
-  const { orders, getOrderById } = useStore();
+  const params = useSearchParams();
+  const router = useRouter();
+  const { status } = useAuth();
+  const { showToast } = useStore();
+  const paymentFailed = params.get("payment") === "failed";
 
   const [order, setOrder] = useState<Order | null>(null);
+  const [error, setError] = useState("");
+  const [retrying, setRetrying] = useState(false);
 
   useEffect(() => {
-    if (orderIdParam) {
-      const found = getOrderById(orderIdParam);
-      if (found) {
-        setOrder(found);
-        return;
+    if (status === "loading") return;
+    if (status === "guest") {
+      router.replace("/signin?next=/my-orders");
+      return;
+    }
+    let id = params.get("id");
+    if (!id) {
+      try {
+        id = sessionStorage.getItem(LAST_ORDER_KEY);
+      } catch {
+        id = null;
       }
     }
-    // Fallback to most recent order
-    if (orders.length > 0) {
-      setOrder(orders[0]);
+    if (!id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- id may only exist in sessionStorage
+      setError("We couldn't find that order.");
+      return;
     }
-  }, [orderIdParam, orders, getOrderById]);
+    ordersApi
+      .get(id)
+      .then(setOrder)
+      .catch((err) => setError(errorMessage(err, "Order not found")));
+  }, [status, params, router]);
 
-  if (!order) {
+  // After returning from the gateway the callback may land a moment later — poll the status briefly.
+  useEffect(() => {
+    if (!order || order.paymentMethod !== "online" || order.paymentStatus !== "pending") return;
+    let tries = 0;
+    const id = setInterval(async () => {
+      tries += 1;
+      try {
+        const s = await paymentsApi.status(order._id);
+        if (s.paymentStatus !== "pending" || tries >= 10) {
+          clearInterval(id);
+          setOrder((o) => (o ? { ...o, paymentStatus: s.paymentStatus } : o));
+        }
+      } catch {
+        clearInterval(id);
+      }
+    }, 3000);
+    return () => clearInterval(id);
+  }, [order]);
+
+  const retryPayment = async () => {
+    if (!order) return;
+    setRetrying(true);
+    try {
+      const pay = await paymentsApi.initialize(order._id);
+      if (pay.data.provider === "mock") {
+        router.push(`/payment/mock?tx=${encodeURIComponent(pay.data.transactionId)}&order=${order._id}`);
+      } else {
+        window.location.href = pay.data.redirectUrl;
+      }
+    } catch (err) {
+      showToast(errorMessage(err, "Could not start payment"), "error");
+      setRetrying(false);
+    }
+  };
+
+  if (error) {
     return (
-      <main className="mx-auto w-full max-w-4xl px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-slate-800">Order not found</h1>
-        <Link
-          href="/shop"
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-xs font-bold text-white"
-        >
-          Return to Shop
+      <main className="mx-auto w-full max-w-2xl px-4 py-16">
+        <ErrorBox message={error} />
+        <Link href="/my-orders" className="mt-4 inline-flex rounded-full bg-brand px-6 py-2.5 text-xs font-bold text-white">
+          Go to My Orders
         </Link>
       </main>
     );
   }
+  if (!order) return <Spinner label="Loading your order…" />;
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const needsPayment =
+    order.paymentMethod === "online" && ["unpaid", "pending", "failed"].includes(order.paymentStatus) && order.status === "pending";
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* Confirmation Hero */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-soft via-white to-brand-soft p-8 text-center ring-1 ring-brand/20 sm:p-12 shadow-sm">
         <div className="pointer-events-none absolute -top-10 -right-10 h-56 w-56 animate-blob rounded-full bg-brand/15 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-10 -left-10 h-56 w-56 animate-blob rounded-full bg-brand/10 blur-3xl" />
-
         <div className="relative">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-brand text-white shadow-xl shadow-brand/40">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={3}
-              className="h-10 w-10"
-            >
-              <path d="m5 12 5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div
+            className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full text-white shadow-xl ${
+              paymentFailed ? "bg-amber-500 shadow-amber-500/40" : "bg-brand shadow-brand/40"
+            }`}
+          >
+            {paymentFailed ? (
+              <span className="text-4xl font-black">!</span>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} className="h-10 w-10">
+                <path d="m5 12 5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
           </div>
 
           <h1 className="mt-6 text-3xl font-black text-slate-900 sm:text-4xl">
-            Order Confirmed!
+            {paymentFailed ? "Payment Not Completed" : "Order Placed!"}
           </h1>
           <p className="mx-auto mt-3 max-w-md text-sm text-slate-600">
-            Thank you, <strong>{order.customer.name}</strong>! We&apos;ve received your order and our Dhaka fulfillment team is preparing it for dispatch.
+            {paymentFailed ? (
+              <>Your order is saved but unpaid. You can retry the payment below.</>
+            ) : (
+              <>
+                Thank you, <strong>{order.customerName}</strong>! We&apos;ve received your order and will confirm it shortly.
+              </>
+            )}
           </p>
 
-          {/* Order ID Pill */}
           <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 shadow-sm ring-1 ring-slate-200">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Order ID
-            </span>
-            <span className="font-mono text-sm font-black text-slate-900">
-              #{order.id}
-            </span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Order</span>
+            <span className="font-mono text-sm font-black text-slate-900">#{order.orderNumber}</span>
           </div>
 
-          {/* Action buttons */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            <OrderStatusBadge status={order.status} />
+            <PaymentStatusBadge status={order.paymentStatus} />
+          </div>
+
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            {needsPayment && (
+              <button
+                onClick={retryPayment}
+                disabled={retrying}
+                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-xs font-bold text-white shadow-lg hover:bg-amber-600 disabled:opacity-60"
+              >
+                {retrying ? "Starting payment…" : "Pay Now"}
+              </button>
+            )}
             <Link
-              href={`/my-orders/${order.id}`}
+              href={`/my-orders/${order._id}`}
               className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-xs font-bold text-white shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:bg-brand-dark"
             >
               View Order Details
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-700 hover:border-brand hover:text-brand-dark"
+            <Link
+              href={`/track-order?order=${order.orderNumber}`}
+              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-700 hover:border-brand hover:text-brand-dark"
             >
-              Print / Save Invoice
-            </button>
+              Track Order
+            </Link>
             <Link
               href="/shop"
               className="rounded-full border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-700 hover:border-brand hover:text-brand-dark"
@@ -115,206 +188,42 @@ function OrderSuccessContent() {
         </div>
       </div>
 
-      {/* Order Details Grid */}
       <div className="mt-8 grid gap-6 md:grid-cols-[1.4fr_1fr]">
-        {/* Left: Purchased items & Breakdown */}
-        <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="text-sm font-black text-slate-900">
-              Purchased Items ({order.items.length})
-            </h2>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 capitalize">
-              Status: {order.status}
-            </span>
+        <section className="rounded-3xl bg-white p-6 ring-1 ring-slate-100 shadow-sm">
+          <h2 className="mb-4 text-base font-black text-slate-900">Items</h2>
+          <OrderItemsList items={order.items} />
+          <div className="mt-5 border-t border-slate-100 pt-4">
+            <OrderTotals order={order} />
           </div>
+        </section>
 
-          <div className="mt-4 divide-y divide-slate-100">
-            {order.items.map((item) => {
-              const unitPrice = parsePriceNumber(item.product.price);
-              return (
-                <div key={item.product.slug} className="flex items-center gap-4 py-3">
-                  <span className="relative flex h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-brand-soft">
-                    <Image
-                      src={item.product.img}
-                      alt=""
-                      fill
-                      sizes="56px"
-                      className="object-contain p-1.5"
-                    />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="line-clamp-1 text-xs font-bold text-slate-900">
-                      {item.product.name}
-                    </div>
-                    <div className="mt-0.5 text-[11px] text-slate-500">
-                      {item.product.brand} · Qty: {item.qty} × {item.product.price}
-                    </div>
-                  </div>
-                  <div className="text-xs font-black text-slate-900">
-                    {formatPriceBDT(unitPrice * item.qty)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Pricing totals */}
-          <dl className="mt-4 space-y-2 border-t border-slate-100 pt-4 text-xs">
-            <div className="flex justify-between">
-              <dt className="text-slate-500">Subtotal</dt>
-              <dd className="font-semibold text-slate-900">
-                {formatPriceBDT(order.subtotal)}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-slate-500">Shipping</dt>
-              <dd
-                className={`font-semibold ${
-                  order.shippingFee === 0 ? "text-emerald-600" : "text-slate-900"
-                }`}
-              >
-                {order.shippingFee === 0 ? "FREE" : formatPriceBDT(order.shippingFee)}
-              </dd>
-            </div>
-            {order.discount > 0 && (
-              <div className="flex justify-between">
-                <dt className="text-slate-500">Discount</dt>
-                <dd className="font-semibold text-emerald-600">
-                  - {formatPriceBDT(order.discount)}
-                </dd>
-              </div>
-            )}
-            <div className="flex justify-between border-t border-slate-100 pt-3 text-sm">
-              <dt className="font-black text-slate-900">Total Paid / Payable</dt>
-              <dd className="font-black text-brand-dark">
-                {formatPriceBDT(order.total)}
-              </dd>
-            </div>
-          </dl>
-
-          {/* Customer Delivery info */}
-          <div className="mt-6 border-t border-slate-100 pt-4">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">
-              Delivery Details
-            </h3>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              <strong>{order.customer.name}</strong><br />
-              {order.customer.address}, {order.customer.city}, {order.customer.division} {order.customer.postcode}<br />
-              Phone: {order.customer.phone}<br />
-              {order.customer.email && `Email: ${order.customer.email}`}
-            </p>
-          </div>
-        </div>
-
-        {/* Right: Payment details & What's Next */}
-        <div className="space-y-4">
-          <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200 shadow-sm">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">
-              Payment Summary
-            </h3>
-            <div className="rounded-2xl bg-slate-50 p-4 space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Method</span>
-                <span className="font-bold text-slate-900 uppercase">
-                  {order.paymentMethod}
-                </span>
-              </div>
-              {order.paymentDetails?.trxId && (
-                <div className="flex justify-between">
-                  <span className="text-slate-500">TrxID</span>
-                  <span className="font-mono font-bold text-brand-dark">
-                    {order.paymentDetails.trxId}
-                  </span>
-                </div>
-              )}
-              {order.courierTracking && (
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Courier Tracking</span>
-                  <span className="font-mono font-bold text-slate-900">
-                    {order.courierTracking}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <h3 className="mt-5 text-sm font-black text-slate-900">What&apos;s Next?</h3>
-            <ol className="mt-4 space-y-3">
-              <li className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white text-xs">
-                  <MailIcon className="h-3.5 w-3.5" />
-                </span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Confirmation Sent</div>
-                  <div className="text-[11px] text-slate-500">
-                    An SMS confirmation has been triggered for your phone.
-                  </div>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 text-xs">
-                  <CheckBadgeIcon className="h-3.5 w-3.5" />
-                </span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Packing & Verification</div>
-                  <div className="text-[11px] text-slate-500">
-                    Our team inspects batch codes & shelf-life before dispatch.
-                  </div>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 text-xs">
-                  <TruckIcon className="h-3.5 w-3.5" />
-                </span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Fast Courier Delivery</div>
-                  <div className="text-[11px] text-slate-500">
-                    Dhaka: 24-48 hrs · Other Divisions: 2-4 days.
-                  </div>
-                </div>
-              </li>
-            </ol>
-          </div>
-
-          {/* Help box */}
-          <div className="rounded-3xl bg-brand-soft p-6 ring-1 ring-brand/20">
-            <h3 className="text-xs font-black text-slate-900">Need Immediate Help?</h3>
-            <p className="mt-1 text-[11px] text-slate-600">
-              Our dental care advisors are available 9 AM - 9 PM daily.
-            </p>
-            <div className="mt-3 space-y-1.5 text-xs">
-              <a
-                href="https://wa.me/61451807841"
-                className="inline-flex items-center gap-1.5 font-bold text-brand-dark hover:underline"
-              >
-                <PhoneIcon className="h-3.5 w-3.5" />
-                +61 451 807 841
-              </a>
-              <br />
-              <a
-                href="mailto:smile@oralcarebd.com"
-                className="inline-flex items-center gap-1.5 font-bold text-brand-dark hover:underline"
-              >
-                <MailIcon className="h-3.5 w-3.5" />
-                smile@oralcarebd.com
-              </a>
+        <section className="space-y-5 rounded-3xl bg-white p-6 ring-1 ring-slate-100 shadow-sm">
+          <AddressBlock title="Delivering to" address={order.shippingAddress} />
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Delivery</div>
+            <div className="mt-1 flex items-center gap-2 text-sm text-slate-700">
+              <TruckIcon className="h-4 w-4 text-brand" />
+              {order.shippingMethod.name} · {order.shippingMethod.estimatedDays.min}-{order.shippingMethod.estimatedDays.max} days
             </div>
           </div>
-        </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Payment</div>
+            <div className="mt-1 text-sm text-slate-700">
+              {order.paymentMethod === "cod" ? "Cash on Delivery" : "Online payment"}
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Placed</div>
+            <div className="mt-1 text-sm text-slate-700">{formatDateTime(order.placedAt)}</div>
+          </div>
+          {order.customerEmail && (
+            <div className="flex items-start gap-2 rounded-2xl bg-brand-soft p-3 text-xs text-slate-700">
+              <MailIcon className="mt-0.5 h-4 w-4 text-brand-dark" />
+              Updates will be sent to <strong>{order.customerEmail}</strong>.
+            </div>
+          )}
+        </section>
       </div>
     </main>
-  );
-}
-
-export default function OrderSuccessPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="p-16 text-center text-xs font-bold text-slate-500">
-          Loading order confirmation...
-        </div>
-      }
-    >
-      <OrderSuccessContent />
-    </Suspense>
   );
 }

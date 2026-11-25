@@ -56,10 +56,16 @@ export function AdminButton({
   children,
   variant = "secondary",
   icon,
+  onClick,
+  disabled,
+  href,
 }: {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "ghost";
   icon?: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  href?: string;
 }) {
   const base =
     "inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition";
@@ -69,10 +75,17 @@ export function AdminButton({
     ghost: `${base} text-slate-600 hover:bg-slate-100`,
   };
   return (
-    <button type="button" className={styles[variant]}>
-      {icon}
-      {children}
-    </button>
+    href ? (
+      <Link href={href} className={styles[variant]}>
+        {icon}
+        {children}
+      </Link>
+    ) : (
+      <button type="button" onClick={onClick} disabled={disabled} className={`${styles[variant]} disabled:opacity-50`}>
+        {icon}
+        {children}
+      </button>
+    )
   );
 }
 

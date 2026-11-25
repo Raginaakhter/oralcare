@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import type { Permission } from "@/lib/api";
 import {
   CartIcon,
   UserIcon,
@@ -14,6 +16,8 @@ type NavItem = {
   label: string;
   href: string;
   icon: React.ReactNode;
+  /** Permission the matching backend routes require; hidden without it. */
+  perm?: Permission;
   badge?: string;
 };
 
@@ -22,43 +26,67 @@ const nav: { group: string; items: NavItem[] }[] = [
     group: "Overview",
     items: [
       { label: "Dashboard", href: "/admin-dashboard", icon: <DashboardIcon /> },
-      { label: "Analytics", href: "/admin-dashboard/analytics", icon: <BarIcon /> },
+      { label: "Analytics", href: "/admin-dashboard/analytics", icon: <BarIcon />, perm: "orders:read" },
     ],
   },
   {
     group: "Catalog",
     items: [
-      { label: "Products", href: "/admin-dashboard/products", icon: <TagIcon className="h-4 w-4" />, badge: "124" },
-      { label: "Categories", href: "/admin-dashboard/categories", icon: <GridIcon /> },
-      { label: "Inventory", href: "/admin-dashboard/inventory", icon: <BoxIcon /> },
+      { label: "Products", href: "/admin-dashboard/products", icon: <TagIcon className="h-4 w-4" />, perm: "catalog:manage" },
+      { label: "Categories", href: "/admin-dashboard/categories", icon: <GridIcon />, perm: "catalog:manage" },
+      { label: "Brands", href: "/admin-dashboard/brands", icon: <StarAltIcon />, perm: "catalog:manage" },
+      { label: "Inventory", href: "/admin-dashboard/inventory", icon: <BoxIcon />, perm: "catalog:manage" },
     ],
   },
   {
     group: "Sales",
     items: [
-      { label: "Orders", href: "/admin-dashboard/orders", icon: <CartIcon className="h-4 w-4" />, badge: "12" },
-      { label: "Customers", href: "/admin-dashboard/customers", icon: <UserIcon className="h-4 w-4" /> },
+      { label: "Orders", href: "/admin-dashboard/orders", icon: <CartIcon className="h-4 w-4" />, perm: "orders:read" },
+      { label: "Returns & Refunds", href: "/admin-dashboard/returns", icon: <BoxIcon />, perm: "returns:manage" },
+      { label: "Customers", href: "/admin-dashboard/customers", icon: <UserIcon className="h-4 w-4" />, perm: "customers:read" },
       { label: "Shipping", href: "/admin-dashboard/shipping", icon: <TruckIcon className="h-4 w-4" /> },
     ],
   },
   {
     group: "Marketing",
     items: [
-      { label: "Promotions", href: "/admin-dashboard/promotions", icon: <SparkIcon className="h-4 w-4" /> },
-      { label: "Reviews", href: "/admin-dashboard/reviews", icon: <StarAltIcon /> },
+      { label: "Coupons", href: "/admin-dashboard/promotions", icon: <SparkIcon className="h-4 w-4" />, perm: "coupons:manage" },
+      { label: "Reviews", href: "/admin-dashboard/reviews", icon: <StarAltIcon />, perm: "reviews:manage" },
+      { label: "Newsletter", href: "/admin-dashboard/newsletter", icon: <LayoutIcon />, perm: "content:manage" },
     ],
   },
   {
     group: "Content",
     items: [
-      { label: "Banner / Hero", href: "/admin-dashboard/content/banner", icon: <ImageIcon /> },
-      { label: "Footer", href: "/admin-dashboard/content/footer", icon: <LayoutIcon /> },
+      { label: "Banners", href: "/admin-dashboard/content/banner", icon: <ImageIcon />, perm: "content:manage" },
+      { label: "Deal of the Day", href: "/admin-dashboard/content/deals", icon: <SparkIcon className="h-4 w-4" />, perm: "content:manage" },
+      { label: "Shop the Look", href: "/admin-dashboard/content/looks", icon: <GridIcon />, perm: "content:manage" },
+      { label: "Blog", href: "/admin-dashboard/content/blog", icon: <LayoutIcon />, perm: "content:manage" },
+      { label: "Testimonials", href: "/admin-dashboard/content/testimonials", icon: <StarAltIcon />, perm: "content:manage" },
+      { label: "Instagram", href: "/admin-dashboard/content/instagram", icon: <ImageIcon />, perm: "content:manage" },
+      { label: "Footer", href: "/admin-dashboard/content/footer", icon: <LayoutIcon />, perm: "content:manage" },
+    ],
+  },
+  {
+    group: "Administration",
+    items: [
+      { label: "Staff", href: "/admin-dashboard/staff", icon: <UserIcon className="h-4 w-4" />, perm: "staff:manage" },
+      { label: "Roles & Permissions", href: "/admin-dashboard/roles", icon: <BoxIcon />, perm: "staff:manage" },
     ],
   },
 ];
 
+/** Reads the current path; render inside <Suspense> (path is runtime data on dynamic routes). */
 export function AdminNav() {
-  const pathname = usePathname();
+  return <AdminNavList pathname={usePathname()} />;
+}
+
+/** Plain nav list; with an empty pathname it doubles as the Suspense fallback. */
+export function AdminNavList({ pathname }: { pathname: string }) {
+  const { can } = useAuth();
+  const groups = nav
+    .map((g) => ({ ...g, items: g.items.filter((i) => !i.perm || can(i.perm)) }))
+    .filter((g) => g.items.length > 0);
 
   const isActive = (href: string) => {
     if (href === "/admin-dashboard") return pathname === href;
@@ -67,7 +95,7 @@ export function AdminNav() {
 
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-5">
-      {nav.map((group) => (
+      {groups.map((group) => (
         <div key={group.group} className="mb-5">
           <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
             {group.group}

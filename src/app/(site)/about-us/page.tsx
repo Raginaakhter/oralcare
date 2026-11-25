@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/SiteShell";
+import { getBrands, getCategories, getProducts, getReviewSummary } from "@/lib/api/server";
 import {
   ShieldIcon,
   TruckIcon,
@@ -43,14 +44,22 @@ const values = [
   },
 ];
 
-const stats = [
-  { v: "10K+", l: "Happy Customers" },
-  { v: "100+", l: "Products" },
-  { v: "8", l: "Trusted Brands" },
-  { v: "4.9", l: "Average Rating" },
-];
-
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Live numbers only: product total, brand count and (once reviews exist) the store rating.
+  const [products, brands, categories, rating] = await Promise.all([
+    getProducts({ limit: 1 }),
+    getBrands(),
+    getCategories(),
+    getReviewSummary(),
+  ]);
+  const stats = [
+    { v: String(products.total), l: "Products" },
+    { v: String(brands.length), l: "Trusted Brands" },
+    { v: String(categories.length), l: "Categories" },
+    ...(rating && rating.totalReviews > 0
+      ? [{ v: rating.averageRating.toFixed(1), l: `Average Rating (${rating.totalReviews} reviews)` }]
+      : []),
+  ];
   return (
     <>
       <PageHero

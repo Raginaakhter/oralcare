@@ -1,7 +1,7 @@
 import { AdminHeader } from "../../AdminHeader";
 import { ProductForm } from "../ProductForm";
 
-export const metadata = { title: "Add Product — Admin — OralCareBD" };
+export const metadata = { title: "New Product — Admin" };
 
 export default function NewProductPage() {
   return (
@@ -10,10 +10,10 @@ export default function NewProductPage() {
         breadcrumbs={[
           { label: "Dashboard", href: "/admin-dashboard" },
           { label: "Products", href: "/admin-dashboard/products" },
-          { label: "Add Product" },
+          { label: "New" },
         ]}
-        title="Add New Product"
-        description="Create a new product entry for your catalog."
+        title="Add Product"
+        description="Create a new product in your catalog."
       />
       <ProductForm mode="create" />
     </div>

@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { categories, site } from "@/lib/site-data";
+import { SmartImage } from "@/components/SmartImage";
+import type { SiteContact } from "@/components/SiteShell";
 import {
   MenuIcon,
   XIcon,
@@ -16,7 +17,16 @@ import {
   GridIcon,
 } from "@/components/icons";
 
-export function MobileMenuDrawer() {
+/** A category link in the menu (from GET /categories). */
+export interface MenuCategory {
+  label: string;
+  href: string;
+  img: string;
+  bg: string;
+  ring: string;
+}
+
+export function MobileMenuDrawer({ categories, contact }: { categories: MenuCategory[]; contact: SiteContact }) {
   const [isOpen, setIsOpen] = useState(false);
 
   // Prevent background scroll when open
@@ -203,7 +213,7 @@ export function MobileMenuDrawer() {
                   className={`flex items-center gap-2 rounded-xl ${c.bg} p-2 text-xs font-bold text-slate-900 ring-1 ${c.ring} hover:shadow-sm`}
                 >
                   <span className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white">
-                    <Image
+                    <SmartImage
                       src={c.img}
                       alt={c.label}
                       width={28}
@@ -223,14 +233,14 @@ export function MobileMenuDrawer() {
           <div className="text-[11px] font-semibold text-slate-500 mb-2">Need Help?</div>
           <div className="flex items-center justify-between gap-2">
             <a
-              href={site.phoneHref}
+              href={contact.whatsappHref}
               className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700"
             >
               <WhatsappIcon className="h-3.5 w-3.5" />
               WhatsApp
             </a>
             <a
-              href={`tel:${site.phone.replace(/[^0-9+]/g, "")}`}
+              href={contact.telHref}
               className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-brand-dark"
             >
               <PhoneIcon className="h-3.5 w-3.5" />

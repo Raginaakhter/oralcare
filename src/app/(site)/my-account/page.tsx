@@ -1,405 +1,724 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { PageHero } from "@/components/SiteShell";
-import { useStore, formatPriceBDT } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
+import { useStore } from "@/context/StoreContext";
 import {
-  ArrowRightIcon,
-  ShieldIcon,
-  CheckBadgeIcon,
-  HeartIcon,
-  CartIcon,
-  UserIcon,
-  TruckIcon,
-  PhoneIcon,
-  MailIcon,
-  PinIcon,
-} from "@/components/icons";
+  REFUND_METHODS,
+  reviewsApi,
+  type Review,
+  authApi,
+  errorMessage,
+  notificationsApi,
+  ordersApi,
+  returnsApi,
+  type OrderReturn,
+  type RefundMethod,
+} from "@/lib/api";
+import { formatDate, formatDateTime, formatPriceBDT, humanize, initials } from "@/lib/format";
+import { useAsync } from "@/lib/hooks";
+import { ErrorBox, OrderStatusBadge, Pill, RETURN_STATUS_TONE, Spinner } from "@/components/orders";
 
-export default function AccountPage() {
-  const { orders, wishlist, cartCount, showToast } = useStore();
-  const [activeTab, setActiveTab] = useState<"overview" | "profile" | "addresses" | "security">("overview");
+const TABS = [
+  { key: "overview", label: "Overview" },
+  { key: "returns", label: "Returns" },
+  { key: "reviews", label: "Reviews" },
+  { key: "notifications", label: "Notifications" },
+  { key: "security", label: "Security" },
+] as const;
+type TabKey = (typeof TABS)[number]["key"];
 
-  // Profile editable fields
-  const [name, setName] = useState("Afsana Rahman");
-  const [phone, setPhone] = useState("01712 345678");
-  const [email, setEmail] = useState("afsana@example.com");
-  const [address, setAddress] = useState("House 24, Road 7, Block B, Dhanmondi, Dhaka 1205");
-  const [isSaved, setIsSaved] = useState(false);
-
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaved(true);
-    showToast("Profile details updated successfully!", "success");
-    setTimeout(() => setIsSaved(false), 3000);
-  };
-
-  const recentOrder = orders[0];
-
+export default function MyAccountPage() {
   return (
     <>
       <PageHero
         title="My Account"
-        subtitle="Manage your profile, track shipments, and view your saved items."
+        subtitle="Your profile, orders, returns and notifications."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "My Account" }]}
       />
+      <Suspense fallback={<Spinner />}>
+        <Account />
+      </Suspense>
+    </>
+  );
+}
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* User Profile Summary Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-brand-blue-dark p-6 sm:p-8 text-white shadow-xl">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-brand/20 blur-3xl" />
-          <div className="relative flex flex-wrap items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-dark text-white font-black text-xl shadow-lg ring-4 ring-white/10">
-                {name.charAt(0)}
-              </span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-black">{name}</h2>
-                  <span className="rounded-full bg-brand/30 px-2 py-0.5 text-[10px] font-bold text-brand ring-1 ring-brand/50">
-                    Gold Member
-                  </span>
-                </div>
-                <div className="mt-1 text-xs text-white/70">
-                  {phone} · {email}
-                </div>
-              </div>
-            </div>
+function Account() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const { user, status } = useAuth();
+  const tabParam = params.get("tab") as TabKey | null;
+  const tab: TabKey = TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : "overview";
 
-            {/* Quick Stat Pills */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-2xl bg-white/10 px-4 py-2.5 backdrop-blur-md">
-                <div className="text-[10px] uppercase font-bold text-white/60">
-                  Total Orders
-                </div>
-                <div className="text-base font-black text-white">{orders.length}</div>
-              </div>
-              <div className="rounded-2xl bg-white/10 px-4 py-2.5 backdrop-blur-md">
-                <div className="text-[10px] uppercase font-bold text-white/60">
-                  Wishlist
-                </div>
-                <div className="text-base font-black text-white">{wishlist.length}</div>
-              </div>
-              <div className="rounded-2xl bg-white/10 px-4 py-2.5 backdrop-blur-md">
-                <div className="text-[10px] uppercase font-bold text-white/60">
-                  Smile Points
-                </div>
-                <div className="text-base font-black text-brand">480 pts</div>
-              </div>
-            </div>
+  useEffect(() => {
+    if (status === "guest") router.replace("/signin?next=/my-account");
+  }, [status, router]);
+
+  if (status !== "authenticated" || !user) return <Spinner label="Loading your account…" />;
+
+  return (
+    <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">
+      <aside className="space-y-4">
+        <div className="rounded-3xl bg-white p-5 text-center ring-1 ring-slate-100">
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-xl font-black text-white">
+            {initials(user.fullName)}
+          </span>
+          <div className="mt-3 font-black text-slate-900">{user.fullName}</div>
+          <div className="text-xs text-slate-500">{user.email}</div>
+          <div className="mt-2">
+            {user.isEmailVerified ? (
+              <Pill tone="green">Email verified</Pill>
+            ) : (
+              <Link href="/verify-email">
+                <Pill tone="amber">Verify your email</Pill>
+              </Link>
+            )}
           </div>
+          {user.permissions.includes("dashboard:access") && (
+            <Link
+              href="/admin-dashboard"
+              className="mt-3 inline-block rounded-full bg-slate-900 px-4 py-1.5 text-[11px] font-bold text-white"
+            >
+              Open Admin Dashboard
+            </Link>
+          )}
         </div>
-
-        {/* Dashboard Navigation Tabs */}
-        <div className="mt-8 flex gap-2 border-b border-slate-200 overflow-x-auto pb-2">
-          {[
-            { id: "overview", label: "Dashboard & Orders" },
-            { id: "profile", label: "Personal Information" },
-            { id: "addresses", label: "Address Book" },
-            { id: "security", label: "Password & Security" },
-          ].map((tab) => (
+        <nav className="flex gap-2 overflow-x-auto no-scrollbar lg:flex-col">
+          {TABS.map((t) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`rounded-full px-5 py-2 text-xs font-bold transition whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-slate-900 text-white shadow-sm"
-                  : "bg-white text-slate-600 hover:bg-slate-100 ring-1 ring-slate-200"
+              key={t.key}
+              onClick={() => router.replace(`${pathname}?tab=${t.key}`)}
+              className={`shrink-0 rounded-xl px-4 py-2.5 text-left text-sm font-bold transition ${
+                tab === t.key ? "bg-brand-soft text-brand-dark ring-1 ring-brand/20" : "bg-white text-slate-600 ring-1 ring-slate-100 hover:bg-slate-50"
               }`}
             >
-              {tab.label}
+              {t.label}
             </button>
           ))}
-        </div>
+          <Link href="/my-orders" className="shrink-0 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-600 ring-1 ring-slate-100 hover:bg-slate-50">
+            My Orders →
+          </Link>
+          <Link href="/wishlist" className="shrink-0 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-600 ring-1 ring-slate-100 hover:bg-slate-50">
+            Wishlist →
+          </Link>
+        </nav>
+      </aside>
 
-        {/* Tab 1: Dashboard & Orders */}
-        {activeTab === "overview" && (
-          <div className="mt-8 space-y-8">
-            {/* Recent Order Banner */}
-            {recentOrder && (
-              <div className="overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-slate-200 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <section className="min-w-0">
+        {tab === "overview" && <Overview />}
+        {tab === "returns" && <Returns />}
+        {tab === "reviews" && <MyReviews />}
+        {tab === "notifications" && <Notifications />}
+        {tab === "security" && <Security />}
+      </section>
+    </main>
+  );
+}
+
+function Card({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-100 shadow-sm">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-base font-black text-slate-900">{title}</h2>
+        {action}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Overview() {
+  const { user } = useAuth();
+  const me = useAsync(() => authApi.me(), []);
+  const stats = useAsync(() => ordersApi.myStats(), []);
+  const recent = useAsync(() => ordersApi.myOrders({ limit: 5 }), []);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Orders" value={stats.data ? String(stats.data.totalOrders) : "—"} />
+        <Stat label="Total spent" value={stats.data ? formatPriceBDT(stats.data.totalSpent) : "—"} />
+        <Stat label="Delivered" value={stats.data ? String(stats.data.byStatus.delivered ?? 0) : "—"} />
+        <Stat label="Member since" value={formatDate(me.data?.createdAt ?? user?.createdAt)} />
+      </div>
+
+      <Card title="Profile">
+        <dl className="grid gap-4 text-sm sm:grid-cols-2">
+          <Info label="Full name" value={me.data?.fullName ?? user?.fullName} />
+          <Info label="Email" value={me.data?.email ?? user?.email} />
+          <Info label="Account type" value={humanize(me.data?.role ?? user?.role)} />
+          <Info label="Last updated" value={formatDateTime(me.data?.updatedAt)} />
+        </dl>
+      </Card>
+
+      <Card
+        title="Recent Orders"
+        action={
+          <Link href="/my-orders" className="text-xs font-bold text-brand-dark hover:underline">
+            View all
+          </Link>
+        }
+      >
+        {recent.loading ? (
+          <Spinner />
+        ) : recent.error ? (
+          <ErrorBox message={recent.error} onRetry={recent.reload} />
+        ) : !recent.data?.items.length ? (
+          <p className="text-sm text-slate-500">
+            No orders yet.{" "}
+            <Link href="/shop" className="font-bold text-brand-dark">
+              Start shopping
+            </Link>
+          </p>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {recent.data.items.map((o) => (
+              <li key={o._id}>
+                <Link href={`/my-orders/${o._id}`} className="flex items-center justify-between gap-3 py-3 hover:bg-slate-50">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Most Recent Order
-                    </span>
-                    <h3 className="text-sm font-black text-slate-900">
-                      #{recentOrder.id} · {recentOrder.date}
-                    </h3>
+                    <div className="font-mono text-sm font-bold text-slate-900">#{o.orderNumber}</div>
+                    <div className="text-[11px] text-slate-500">{formatDate(o.placedAt)}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 capitalize">
-                      {recentOrder.status}
-                    </span>
-                    <Link
-                      href={`/track-order?id=${recentOrder.id}`}
-                      className="rounded-full bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-brand-dark"
-                    >
-                      Track Order
-                    </Link>
+                  <OrderStatusBadge status={o.status} />
+                  <div className="text-sm font-black text-slate-900">{formatPriceBDT(o.grandTotal)}</div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+function Returns() {
+  const { showToast } = useStore();
+  const [page, setPage] = useState(1);
+  const list = useAsync(() => returnsApi.mine({ page, limit: 10 }), [page]);
+  const [refundFor, setRefundFor] = useState<OrderReturn | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  /** Re-read one return (GET /returns/:id) and swap it into the list. */
+  const refreshOne = async (id: string) => {
+    try {
+      const fresh = await returnsApi.get(id);
+      list.setData((d) => (d ? { ...d, items: d.items.map((x) => (x._id === id ? fresh : x)) } : d));
+    } catch {
+      void list.reload();
+    }
+  };
+
+  const cancel = async (r: OrderReturn) => {
+    setBusy(r._id);
+    try {
+      await returnsApi.cancel(r._id);
+      showToast(`Return ${r.returnNumber} cancelled`, "info");
+      await refreshOne(r._id);
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <Card title="My Returns">
+      {list.loading ? (
+        <Spinner />
+      ) : list.error ? (
+        <ErrorBox message={list.error} onRetry={list.reload} />
+      ) : !list.data?.items.length ? (
+        <p className="text-sm text-slate-500">
+          No return requests. You can request a return from a delivered order on the{" "}
+          <Link href="/my-orders" className="font-bold text-brand-dark">
+            My Orders
+          </Link>{" "}
+          page.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {list.data.items.map((r) => (
+            <div key={r._id} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="font-mono text-sm font-black text-slate-900">{r.returnNumber}</div>
+                  <div className="text-[11px] text-slate-500">
+                    Order #{r.orderNumber} · {formatDate(r.createdAt)}
                   </div>
                 </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex -space-x-2">
-                      {recentOrder.items.slice(0, 3).map((item) => (
-                        <span
-                          key={item.product.slug}
-                          className="relative flex h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-brand-soft ring-2 ring-white"
-                        >
-                          <Image
-                            src={item.product.img}
-                            alt=""
-                            fill
-                            sizes="48px"
-                            className="object-contain p-1"
-                          />
-                        </span>
-                      ))}
-                    </div>
-                    <div className="text-xs text-slate-600">
-                      <strong>{recentOrder.items.length} items</strong> · Total:{" "}
-                      <strong className="text-brand-dark">
-                        {formatPriceBDT(recentOrder.total)}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/my-orders/${recentOrder.id}`}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-brand-dark hover:underline"
+                <Pill tone={RETURN_STATUS_TONE[r.status]}>{humanize(r.status)}</Pill>
+              </div>
+              <ul className="mt-2 text-xs text-slate-600">
+                {r.items.map((it) => (
+                  <li key={it.orderItemId}>
+                    {it.quantity} × {it.productName} — {formatPriceBDT(it.refundAmount)}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 text-xs text-slate-600">
+                Reason: <strong>{humanize(r.reason)}</strong>
+                {r.description ? ` — ${r.description}` : ""}
+              </div>
+              {r.adminNote && <div className="mt-1 text-xs text-slate-600">Note from us: {r.adminNote}</div>}
+              <div className="mt-2 text-xs font-bold text-slate-900">Refund amount: {formatPriceBDT(r.refundAmount)}</div>
+              {r.refundPreference && (
+                <div className="text-[11px] text-slate-500">
+                  Refund to {humanize(r.refundPreference.method)}
+                  {r.refundPreference.accountDetails ? ` (${r.refundPreference.accountDetails})` : ""}
+                </div>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {r.status === "requested" && (
+                  <button
+                    onClick={() => cancel(r)}
+                    disabled={busy === r._id}
+                    className="rounded-full border border-rose-200 bg-white px-4 py-1.5 text-xs font-bold text-rose-600 disabled:opacity-50"
                   >
-                    View Order Details <ArrowRightIcon className="h-3 w-3" />
-                  </Link>
-                </div>
+                    Cancel return
+                  </button>
+                )}
+                {!r.refundRequested && ["requested", "approved", "received"].includes(r.status) && (
+                  <button
+                    onClick={() => setRefundFor(r)}
+                    className="rounded-full bg-brand px-4 py-1.5 text-xs font-bold text-white hover:bg-brand-dark"
+                  >
+                    Request refund
+                  </button>
+                )}
               </div>
-            )}
-
-            {/* Quick Actions Grid */}
-            <div className="grid gap-5 sm:grid-cols-3">
-              <Link
-                href="/my-orders"
-                className="group flex flex-col justify-between rounded-3xl bg-white p-6 ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg shadow-sm"
-              >
-                <div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-dark">
-                    <TruckIcon className="h-5 w-5" />
-                  </span>
-                  <h4 className="mt-4 text-base font-bold text-slate-900">
-                    Order History
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-500">
-                    View previous receipts, tracking codes, and reorder products.
-                  </p>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-brand-dark">
-                  View All Orders <ArrowRightIcon className="h-3 w-3" />
-                </span>
-              </Link>
-
-              <Link
-                href="/wishlist"
-                className="group flex flex-col justify-between rounded-3xl bg-white p-6 ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg shadow-sm"
-              >
-                <div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
-                    <HeartIcon className="h-5 w-5" />
-                  </span>
-                  <h4 className="mt-4 text-base font-bold text-slate-900">
-                    Saved Wishlist
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {wishlist.length} item{wishlist.length === 1 ? "" : "s"} saved for your next order.
-                  </p>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-rose-600">
-                  Manage Wishlist <ArrowRightIcon className="h-3 w-3" />
-                </span>
-              </Link>
-
-              <Link
-                href="/cart"
-                className="group flex flex-col justify-between rounded-3xl bg-white p-6 ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg shadow-sm"
-              >
-                <div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-50 text-sky-600">
-                    <CartIcon className="h-5 w-5" />
-                  </span>
-                  <h4 className="mt-4 text-base font-bold text-slate-900">
-                    Active Cart
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {cartCount} item{cartCount === 1 ? "" : "s"} currently in your shopping bag.
-                  </p>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-sky-600">
-                  Open Cart <ArrowRightIcon className="h-3 w-3" />
-                </span>
-              </Link>
+              {refundFor?._id === r._id && (
+                <RefundRequestForm
+                  ret={r}
+                  onClose={() => setRefundFor(null)}
+                  onDone={() => {
+                    setRefundFor(null);
+                    void refreshOne(r._id);
+                  }}
+                />
+              )}
             </div>
-          </div>
-        )}
-
-        {/* Tab 2: Personal Information */}
-        {activeTab === "profile" && (
-          <div className="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-slate-200 shadow-sm max-w-2xl">
-            <h3 className="text-base font-black text-slate-900 mb-1">
-              Personal Information
-            </h3>
-            <p className="text-xs text-slate-500 mb-6">
-              Update your contact details for smooth courier notifications.
-            </p>
-
-            {isSaved && (
-              <div className="mb-4 rounded-xl bg-emerald-50 p-3 text-xs font-bold text-emerald-800">
-                ✓ Changes saved successfully!
-              </div>
-            )}
-
-            <form onSubmit={handleSaveProfile} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-11 w-full rounded-full border border-slate-200 px-4 text-sm outline-none focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Mobile Phone Number
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="h-11 w-full rounded-full border border-slate-200 px-4 text-sm outline-none focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 w-full rounded-full border border-slate-200 px-4 text-sm outline-none focus:border-brand"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="mt-2 rounded-full bg-brand px-6 py-3 text-xs font-bold text-white hover:bg-brand-dark transition shadow-md"
-              >
-                Save Changes
+          ))}
+          {list.data.totalPages > 1 && (
+            <div className="flex justify-center gap-2 text-xs font-bold">
+              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40">
+                Prev
               </button>
-            </form>
-          </div>
-        )}
-
-        {/* Tab 3: Address Book */}
-        {activeTab === "addresses" && (
-          <div className="mt-8 space-y-6 max-w-2xl">
-            <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-soft text-brand-dark">
-                    <PinIcon className="h-4 w-4" />
-                  </span>
-                  <h4 className="text-sm font-bold text-slate-900">
-                    Primary Delivery Address
-                  </h4>
-                </div>
-                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700">
-                  Default
-                </span>
-              </div>
-              <p className="mt-3 text-xs text-slate-700 leading-relaxed">
-                <strong>{name}</strong><br />
-                {address}<br />
-                Phone: {phone}
-              </p>
-              <div className="mt-4 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => showToast("Edit address opened", "info")}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-700 hover:border-brand"
-                >
-                  Edit Address
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-3xl bg-slate-50 p-6 text-center ring-1 ring-dashed ring-slate-200">
               <button
-                type="button"
-                onClick={() => showToast("Add new address form", "info")}
-                className="inline-flex items-center gap-2 text-xs font-bold text-brand-dark hover:underline"
+                disabled={page >= list.data.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40"
               >
-                + Add Another Delivery Address
+                Next
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
 
-        {/* Tab 4: Security */}
-        {activeTab === "security" && (
-          <div className="mt-8 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-slate-200 shadow-sm max-w-md">
-            <h3 className="text-base font-black text-slate-900 mb-1">
-              Change Password
-            </h3>
-            <p className="text-xs text-slate-500 mb-5">
-              Keep your OralCareBD account secure.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                showToast("Password updated successfully!", "success");
+function RefundRequestForm({ ret, onClose, onDone }: { ret: OrderReturn; onClose: () => void; onDone: () => void }) {
+  const { showToast } = useStore();
+  const [method, setMethod] = useState<RefundMethod>("bkash");
+  const [accountDetails, setAccountDetails] = useState("");
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await returnsApi.requestRefund(ret._id, {
+        method,
+        ...(accountDetails.trim() ? { accountDetails: accountDetails.trim() } : {}),
+        ...(note.trim() ? { note: note.trim() } : {}),
+      });
+      showToast("Refund requested", "success");
+      onDone();
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mt-3 grid gap-2 rounded-xl bg-white p-3 ring-1 ring-brand/20 sm:grid-cols-2">
+      <select
+        value={method}
+        onChange={(e) => setMethod(e.target.value as RefundMethod)}
+        className="h-10 rounded-lg border border-slate-200 px-2 text-sm"
+        aria-label="Refund method"
+      >
+        {REFUND_METHODS.map((m) => (
+          <option key={m.value} value={m.value}>
+            {m.label}
+          </option>
+        ))}
+      </select>
+      <input
+        value={accountDetails}
+        onChange={(e) => setAccountDetails(e.target.value)}
+        placeholder="Account / wallet number"
+        className="h-10 rounded-lg border border-slate-200 px-3 text-sm"
+      />
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Note (optional)"
+        className="h-10 rounded-lg border border-slate-200 px-3 text-sm sm:col-span-2"
+      />
+      <div className="flex gap-2 sm:col-span-2">
+        <button disabled={saving} className="rounded-full bg-brand px-4 py-1.5 text-xs font-bold text-white disabled:opacity-50">
+          {saving ? "Sending…" : "Submit refund request"}
+        </button>
+        <button type="button" onClick={onClose} className="rounded-full px-4 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-slate-200">
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function MyReviews() {
+  const { showToast } = useStore();
+  const [page, setPage] = useState(1);
+  const list = useAsync(() => reviewsApi.mine({ page, limit: 10 }), [page]);
+  const [editing, setEditing] = useState<Review | null>(null);
+
+  const remove = async (r: Review) => {
+    try {
+      await reviewsApi.remove(r._id);
+      showToast("Review deleted", "info");
+      void list.reload();
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    }
+  };
+
+  return (
+    <Card title="My Reviews">
+      {list.loading ? (
+        <Spinner />
+      ) : list.error ? (
+        <ErrorBox message={list.error} onRetry={list.reload} />
+      ) : !list.data?.items.length ? (
+        <p className="text-sm text-slate-500">
+          You haven&apos;t reviewed anything yet. Open a product you bought and use the Reviews tab.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {list.data.items.map((r) => {
+            const product = typeof r.product === "object" ? r.product : null;
+            return (
+              <div key={r._id} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    {product ? (
+                      <Link href={`/product/${product.slug}`} className="text-sm font-bold text-slate-900 hover:text-brand-dark">
+                        {product.productName}
+                      </Link>
+                    ) : (
+                      <span className="text-sm font-bold text-slate-900">Product</span>
+                    )}
+                    <div className="text-[11px] text-slate-500">
+                      {"★".repeat(r.rating)}
+                      {"☆".repeat(5 - r.rating)} · {formatDate(r.createdAt)}
+                    </div>
+                  </div>
+                  <Pill tone={r.status === "approved" ? "green" : r.status === "rejected" ? "red" : "amber"}>
+                    {r.status === "pending" ? "Awaiting moderation" : humanize(r.status)}
+                  </Pill>
+                </div>
+                {r.title && <div className="mt-2 text-sm font-semibold text-slate-800">{r.title}</div>}
+                <p className="mt-1 text-xs text-slate-600">{r.comment}</p>
+                {r.adminReply && <p className="mt-2 rounded-xl bg-white p-2 text-[11px] text-slate-600">Reply: {r.adminReply}</p>}
+                {editing?._id === r._id ? (
+                  <EditReview
+                    review={r}
+                    onClose={() => setEditing(null)}
+                    onSaved={() => {
+                      setEditing(null);
+                      void list.reload();
+                    }}
+                  />
+                ) : (
+                  <div className="mt-3 flex gap-2">
+                    <button onClick={() => setEditing(r)} className="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-slate-700 ring-1 ring-slate-200">
+                      Edit
+                    </button>
+                    <button onClick={() => remove(r)} className="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-rose-600 ring-1 ring-rose-200">
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {list.data.totalPages > 1 && (
+            <div className="flex justify-center gap-2 text-xs font-bold">
+              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40">
+                Prev
+              </button>
+              <button
+                disabled={page >= list.data.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function EditReview({ review, onClose, onSaved }: { review: Review; onClose: () => void; onSaved: () => void }) {
+  const { showToast } = useStore();
+  const [rating, setRating] = useState(review.rating);
+  const [title, setTitle] = useState(review.title ?? "");
+  const [comment, setComment] = useState(review.comment);
+  const [saving, setSaving] = useState(false);
+
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const env = await reviewsApi.update(review._id, { rating, title: title.trim(), comment: comment.trim() });
+      showToast(env.message ?? "Review updated", "success");
+      onSaved();
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={save} className="mt-3 space-y-2 rounded-xl bg-white p-3 ring-1 ring-brand/20">
+      <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="h-9 rounded-lg border border-slate-200 px-2 text-sm" aria-label="Rating">
+        {[5, 4, 3, 2, 1].map((n) => (
+          <option key={n} value={n}>
+            {n} star{n > 1 ? "s" : ""}
+          </option>
+        ))}
+      </select>
+      <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={150} placeholder="Title" className="h-9 w-full rounded-lg border border-slate-200 px-3 text-sm" />
+      <textarea required minLength={5} rows={3} value={comment} onChange={(e) => setComment(e.target.value)} className="w-full rounded-lg border border-slate-200 p-2 text-sm" />
+      <p className="text-[11px] text-slate-500">Edited reviews are checked again before they reappear.</p>
+      <div className="flex gap-2">
+        <button disabled={saving} className="rounded-full bg-brand px-4 py-1.5 text-xs font-bold text-white disabled:opacity-50">
+          {saving ? "Saving…" : "Save"}
+        </button>
+        <button type="button" onClick={onClose} className="rounded-full px-4 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-slate-200">
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function Notifications() {
+  const { showToast } = useStore();
+  const [page, setPage] = useState(1);
+  const [unreadOnly, setUnreadOnly] = useState(false);
+  const list = useAsync(() => notificationsApi.list({ page, limit: 20, unreadOnly: unreadOnly || undefined }), [page, unreadOnly]);
+
+  const markRead = async (id: string) => {
+    try {
+      const n = await notificationsApi.markRead(id);
+      list.setData((d) =>
+        d ? { ...d, items: d.items.map((x) => (x._id === id ? n : x)), unreadCount: Math.max(0, d.unreadCount - 1) } : d
+      );
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    }
+  };
+
+  const markAll = async () => {
+    try {
+      const env = await notificationsApi.markAllRead();
+      showToast(env.message ?? "All marked as read", "success");
+      void list.reload();
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    }
+  };
+
+  return (
+    <Card
+      title={`Notifications${list.data?.unreadCount ? ` (${list.data.unreadCount} unread)` : ""}`}
+      action={
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+            <input
+              type="checkbox"
+              checked={unreadOnly}
+              onChange={(e) => {
+                setUnreadOnly(e.target.checked);
+                setPage(1);
               }}
-              className="space-y-3"
+              className="accent-brand"
+            />
+            Unread only
+          </label>
+          <button onClick={markAll} className="text-xs font-bold text-brand-dark hover:underline">
+            Mark all read
+          </button>
+        </div>
+      }
+    >
+      {list.loading ? (
+        <Spinner />
+      ) : list.error ? (
+        <ErrorBox message={list.error} onRetry={list.reload} />
+      ) : !list.data?.items.length ? (
+        <p className="text-sm text-slate-500">You&apos;re all caught up.</p>
+      ) : (
+        <ul className="space-y-2">
+          {list.data.items.map((n) => (
+            <li
+              key={n._id}
+              className={`rounded-2xl p-4 ring-1 ${n.isRead ? "bg-white ring-slate-100" : "bg-brand-soft ring-brand/20"}`}
             >
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="h-10 w-full rounded-full border border-slate-200 px-4 text-xs outline-none focus:border-brand"
-                />
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-slate-900">{n.title}</div>
+                  <div className="text-xs text-slate-600">{n.message}</div>
+                  <div className="mt-1 text-[11px] text-slate-400">{formatDateTime(n.createdAt)}</div>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  {n.order && (
+                    <Link href={`/my-orders/${n.order}`} className="text-[11px] font-bold text-brand-dark hover:underline">
+                      View order
+                    </Link>
+                  )}
+                  {!n.isRead && (
+                    <button onClick={() => markRead(n._id)} className="text-[11px] font-bold text-slate-500 hover:text-slate-900">
+                      Mark read
+                    </button>
+                  )}
+                </div>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="At least 8 characters"
-                  className="h-10 w-full rounded-full border border-slate-200 px-4 text-xs outline-none focus:border-brand"
-                />
-              </div>
-              <button
-                type="submit"
-                className="mt-2 rounded-full bg-slate-900 px-6 py-2.5 text-xs font-bold text-white hover:bg-brand-dark"
-              >
-                Update Password
-              </button>
-            </form>
-          </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      {list.data && list.data.totalPages > 1 && (
+        <div className="mt-4 flex justify-center gap-2 text-xs font-bold">
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40">
+            Prev
+          </button>
+          <button
+            disabled={page >= list.data.totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="rounded-full px-3 py-1.5 ring-1 ring-slate-200 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function Security() {
+  const router = useRouter();
+  const { user, logout, logoutAll } = useAuth();
+  const { showToast } = useStore();
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const run = async (key: string, fn: () => Promise<void>, msg: string) => {
+    setBusy(key);
+    try {
+      await fn();
+      showToast(msg, "info");
+      router.push("/");
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+      setBusy(null);
+    }
+  };
+
+  const resend = async () => {
+    if (!user) return;
+    setBusy("verify");
+    try {
+      const env = await authApi.resendVerification(user.email);
+      showToast(env.message ?? "Verification email sent", "success");
+    } catch (err) {
+      showToast(errorMessage(err), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <Card title="Security">
+      <div className="space-y-4">
+        {!user?.isEmailVerified && (
+          <Row title="Verify your email" desc="Confirm your email address to secure your account.">
+            <button onClick={resend} disabled={busy === "verify"} className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-white disabled:opacity-50">
+              Resend link
+            </button>
+          </Row>
         )}
-      </main>
-    </>
+        <Row title="Sign out" desc="Sign out of this browser.">
+          <button
+            onClick={() => run("logout", logout, "Signed out")}
+            disabled={!!busy}
+            className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 disabled:opacity-50"
+          >
+            Sign out
+          </button>
+        </Row>
+        <Row title="Sign out everywhere" desc="Ends every session on all your devices.">
+          <button
+            onClick={() => run("all", logoutAll, "Signed out from all devices")}
+            disabled={!!busy}
+            className="rounded-full border border-rose-200 px-4 py-2 text-xs font-bold text-rose-600 disabled:opacity-50"
+          >
+            Sign out all devices
+          </button>
+        </Row>
+      </div>
+    </Card>
+  );
+}
+
+function Row({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
+      <div>
+        <div className="text-sm font-bold text-slate-900">{title}</div>
+        <div className="text-xs text-slate-500">{desc}</div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
+      <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">{label}</div>
+      <div className="mt-1 text-lg font-black text-slate-900">{value}</div>
+    </div>
+  );
+}
+
+function Info({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <dt className="text-[10px] font-black uppercase tracking-wider text-slate-400">{label}</dt>
+      <dd className="mt-0.5 font-semibold text-slate-900">{value || "—"}</dd>
+    </div>
   );
 }

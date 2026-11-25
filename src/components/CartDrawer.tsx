@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import {
-  useStore,
-  formatPriceBDT,
-  parsePriceNumber,
-} from "@/context/StoreContext";
+import { useStore, formatPriceBDT } from "@/context/StoreContext";
+import { SmartImage } from "@/components/SmartImage";
+import { useShippingMethods } from "@/lib/hooks";
 import {
   CartIcon,
   ArrowRightIcon,
@@ -27,13 +24,15 @@ export function CartDrawer() {
     cartCount,
     toasts,
     removeToast,
+    cartLoading,
   } = useStore();
+  const shipping = useShippingMethods();
 
-  const freeShippingThreshold = 1500;
-  const progressPercent = Math.min(
-    100,
-    Math.round((cartSubtotal / freeShippingThreshold) * 100)
-  );
+  // Only show the free-delivery meter when the backend has a threshold configured.
+  const freeShippingThreshold = shipping?.freeShippingThreshold ?? 0;
+  const progressPercent = freeShippingThreshold
+    ? Math.min(100, Math.round((cartSubtotal / freeShippingThreshold) * 100))
+    : 0;
   const remainingForFree = Math.max(0, freeShippingThreshold - cartSubtotal);
 
   // Lock body scroll when drawer is open
@@ -135,6 +134,7 @@ export function CartDrawer() {
         </div>
 
         {/* Free Shipping Meter */}
+        {freeShippingThreshold > 0 && (
         <div className="bg-slate-50 px-6 py-3 border-b border-slate-100">
           <div className="flex items-center justify-between text-xs font-semibold">
             <span className="flex items-center gap-1.5 text-slate-700">
@@ -162,9 +162,10 @@ export function CartDrawer() {
             />
           </div>
         </div>
+        )}
 
         {/* Cart Item List */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className={`flex-1 overflow-y-auto px-6 py-4 transition-opacity ${cartLoading ? "opacity-60" : ""}`}>
           {cart.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft text-brand-dark">
@@ -187,21 +188,17 @@ export function CartDrawer() {
           ) : (
             <div className="divide-y divide-slate-100 space-y-4">
               {cart.map((item) => {
-                const itemPrice = parsePriceNumber(item.product.price);
-                const lineTotal = itemPrice * item.qty;
+                const href = item.slug ? `/product/${item.slug}` : "/shop";
                 return (
-                  <div
-                    key={item.product.slug}
-                    className="flex gap-4 pt-4 first:pt-0"
-                  >
+                  <div key={item.key} className="flex gap-4 pt-4 first:pt-0">
                     <Link
-                      href={item.product.href}
+                      href={href}
                       onClick={() => setIsCartOpen(false)}
                       className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-soft"
                     >
-                      <Image
-                        src={item.product.img}
-                        alt={item.product.name}
+                      <SmartImage
+                        src={item.thumbnail}
+                        alt={item.productName}
                         fill
                         sizes="80px"
                         className="object-contain p-2"
@@ -209,46 +206,53 @@ export function CartDrawer() {
                     </Link>
                     <div className="flex flex-1 flex-col justify-between min-w-0">
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-brand-dark">
-                          {item.product.brand}
-                        </div>
+                        {item.brandName && (
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-brand-dark">
+                            {item.brandName}
+                          </div>
+                        )}
                         <Link
-                          href={item.product.href}
+                          href={href}
                           onClick={() => setIsCartOpen(false)}
                           className="line-clamp-2 text-xs font-bold text-slate-900 hover:text-brand-dark"
                         >
-                          {item.product.name}
+                          {item.productName}
                         </Link>
+                        {item.variationAttributes && (
+                          <div className="text-[11px] capitalize text-slate-500">
+                            {Object.values(item.variationAttributes).join(" / ")}
+                          </div>
+                        )}
                         <div className="mt-0.5 text-xs font-black text-slate-900">
-                          {formatPriceBDT(lineTotal)}
-                          {item.qty > 1 && (
+                          {formatPriceBDT(item.lineTotal)}
+                          {item.quantity > 1 && (
                             <span className="ml-1 text-[11px] font-normal text-slate-500">
-                              ({item.product.price} each)
+                              ({formatPriceBDT(item.unitPrice)} each)
                             </span>
                           )}
                         </div>
+                        {item.issue && (
+                          <div className="mt-1 text-[11px] font-semibold text-rose-600">{item.issue}</div>
+                        )}
                       </div>
 
                       {/* Qty & Remove */}
                       <div className="mt-2 flex items-center justify-between">
                         <div className="inline-flex items-center rounded-full border border-slate-200 bg-white">
                           <button
-                            onClick={() =>
-                              updateCartQty(item.product.slug, item.qty - 1)
-                            }
+                            onClick={() => updateCartQty(item.key, item.quantity - 1)}
                             className="h-7 w-7 rounded-l-full text-slate-500 hover:bg-slate-50 text-xs"
                             aria-label="Decrease quantity"
                           >
                             -
                           </button>
                           <span className="w-7 text-center text-xs font-bold text-slate-800">
-                            {item.qty}
+                            {item.quantity}
                           </span>
                           <button
-                            onClick={() =>
-                              updateCartQty(item.product.slug, item.qty + 1)
-                            }
-                            className="h-7 w-7 rounded-r-full text-slate-500 hover:bg-slate-50 text-xs"
+                            onClick={() => updateCartQty(item.key, item.quantity + 1)}
+                            disabled={item.availableStock > 0 && item.quantity >= item.availableStock}
+                            className="h-7 w-7 rounded-r-full text-slate-500 hover:bg-slate-50 text-xs disabled:opacity-40"
                             aria-label="Increase quantity"
                           >
                             +
@@ -256,7 +260,7 @@ export function CartDrawer() {
                         </div>
 
                         <button
-                          onClick={() => removeFromCart(item.product.slug)}
+                          onClick={() => removeFromCart(item.key)}
                           className="text-[11px] font-semibold text-rose-500 hover:underline"
                         >
                           Remove

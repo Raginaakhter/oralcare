@@ -1,153 +1,93 @@
-import Link from "next/link";
-import {
-  AdminHeader,
-  AdminButton,
-  StatusPill,
-  PlusIcon,
-  DownloadIcon,
-  SearchIcon,
-  EyeIcon,
-  EditIcon,
-} from "../AdminHeader";
-import { DeleteButton } from "../DeleteButton";
-import { customers, statusTone } from "./data";
+"use client";
 
-export const metadata = { title: "Customers — Admin — OralCareBD" };
+import { useState } from "react";
+import Link from "next/link";
+import { customersApi } from "@/lib/api";
+import { formatDate, initials } from "@/lib/format";
+import { useAsync } from "@/lib/hooks";
+import { useAuth } from "@/context/AuthContext";
+import { AdminHeader, StatusPill, SearchIcon } from "../AdminHeader";
+import { EmptyRow, Loader, Pagination, inputCls } from "../AdminShell";
 
 export default function CustomersPage() {
+  const { can } = useAuth();
+  const [search, setSearch] = useState("");
+  const [applied, setApplied] = useState("");
+  const [page, setPage] = useState(1);
+  const list = useAsync(() => customersApi.list({ search: applied || undefined, page, limit: 25 }), [applied, page]);
+
+  if (!can("customers:read")) return <p className="rounded-2xl bg-amber-50 p-5 text-sm font-semibold text-amber-800">You need the “View customer accounts” permission.</p>;
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <AdminHeader
         breadcrumbs={[{ label: "Dashboard", href: "/admin-dashboard" }, { label: "Customers" }]}
         title="Customers"
-        description={`${customers.length} customers · ${customers.filter(c => c.status === "vip").length} VIP members.`}
-        actions={
-          <>
-            <AdminButton icon={<DownloadIcon />}>Export</AdminButton>
-            <Link
-              href="/admin-dashboard/customers/new"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-brand-dark"
-            >
-              <PlusIcon />
-              Add Customer
-            </Link>
-          </>
-        }
+        description={list.data ? `${list.data.total} registered customer accounts.` : "Registered customer accounts."}
       />
-
-      {/* Metrics */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Total Customers" value={customers.length.toString()} sub="all time" />
-        <MetricCard label="VIP Customers" value={customers.filter(c => c.status === "vip").length.toString()} sub="high value" />
-        <MetricCard label="New This Month" value="42" sub="+18% vs last month" />
-        <MetricCard label="Avg. Lifetime Value" value="৳20,480" sub="per customer" />
-      </div>
-
-      {/* Search */}
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-slate-200/70">
-        <div className="relative flex-1 min-w-[200px]">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setApplied(search.trim());
+          setPage(1);
+        }}
+        className="mb-4 rounded-2xl bg-white p-3 ring-1 ring-slate-200/70"
+      >
+        <div className="relative">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             <SearchIcon />
           </span>
-          <input
-            type="search"
-            placeholder="Search by name, email, phone..."
-            className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none focus:border-brand focus:bg-white"
-          />
+          <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name or email" className={`${inputCls} pl-10`} />
         </div>
-        <select className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none">
-          <option>All Statuses</option>
-          <option>VIP</option>
-          <option>Active</option>
-          <option>New</option>
-          <option>Inactive</option>
-        </select>
-        <select className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none">
-          <option>All Cities</option>
-          <option>Dhaka</option>
-          <option>Chattogram</option>
-          <option>Sylhet</option>
-        </select>
-      </div>
-
-      {/* Table */}
+      </form>
       <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[920px]">
-            <thead>
-              <tr className="bg-slate-50 text-left text-[10px] font-black uppercase tracking-wider text-slate-500">
-                <th className="px-6 py-3">Customer</th>
-                <th className="px-6 py-3">Contact</th>
-                <th className="px-6 py-3">Location</th>
-                <th className="px-6 py-3">Orders</th>
-                <th className="px-6 py-3">Lifetime Spent</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {customers.map((c) => (
-                <tr key={c.id} className="transition hover:bg-slate-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br ${c.color} text-sm font-black text-white shadow`}
-                      >
-                        {c.name.split(" ").map((n) => n[0]).join("")}
-                      </span>
-                      <div className="leading-tight">
-                        <div className="font-bold text-slate-900">{c.name}</div>
-                        <div className="text-xs text-slate-500">Joined {c.joined}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="leading-tight">
-                      <div className="text-slate-700">{c.email}</div>
-                      <div className="text-xs text-slate-500">{c.phone}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-700">{c.location}</td>
-                  <td className="px-6 py-4 font-bold text-slate-900">{c.orders}</td>
-                  <td className="px-6 py-4 font-black text-brand-dark">{c.spent}</td>
-                  <td className="px-6 py-4">
-                    <StatusPill tone={statusTone[c.status]}>{c.status}</StatusPill>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/admin-dashboard/customers/${c.id}`}
-                        aria-label="View"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                      >
-                        <EyeIcon />
-                      </Link>
-                      <Link
-                        href={`/admin-dashboard/customers/${c.id}/edit`}
-                        aria-label="Edit"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                      >
-                        <EditIcon />
-                      </Link>
-                      <DeleteButton itemLabel={c.name} />
-                    </div>
-                  </td>
+        {list.loading ? (
+          <Loader />
+        ) : list.error ? (
+          <p className="p-6 text-sm font-semibold text-rose-700">{list.error}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="bg-slate-50 text-left text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <th className="px-6 py-3">Customer</th>
+                  <th className="px-6 py-3">Email status</th>
+                  <th className="px-6 py-3">Joined</th>
+                  <th className="px-6 py-3" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {(list.data?.items ?? []).map((c) => (
+                  <tr key={c._id} className="hover:bg-slate-50">
+                    <td className="px-6 py-3">
+                      <Link href={`/admin-dashboard/customers/${c._id}`} className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-soft text-xs font-black text-brand-dark">{initials(c.fullName)}</span>
+                        <span>
+                          <span className="block font-bold text-slate-900">{c.fullName}</span>
+                          <span className="block text-xs text-slate-500">{c.email}</span>
+                        </span>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-3">
+                      <StatusPill tone={c.isEmailVerified ? "success" : "warning"}>{c.isEmailVerified ? "Verified" : "Unverified"}</StatusPill>
+                    </td>
+                    <td className="px-6 py-3 text-xs text-slate-500">{formatDate(c.createdAt)}</td>
+                    <td className="px-6 py-3 text-right">
+                      <Link href={`/admin-dashboard/customers/${c._id}`} className="text-xs font-bold text-brand-dark hover:underline">
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+                {!list.data?.items.length && <EmptyRow colSpan={4}>No customers found.</EmptyRow>}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {list.data && list.data.totalPages > 1 && (
+          <Pagination page={list.data.page} totalPages={list.data.totalPages} total={list.data.total} onChange={setPage} />
+        )}
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200/70">
-      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</div>
-      <div className="mt-2 text-2xl font-black text-slate-900">{value}</div>
-      <div className="mt-1 text-xs text-slate-500">{sub}</div>
     </div>
   );
 }

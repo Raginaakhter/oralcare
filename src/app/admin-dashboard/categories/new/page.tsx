@@ -1,7 +1,7 @@
 import { AdminHeader } from "../../AdminHeader";
 import { CategoryForm } from "../CategoryForm";
 
-export const metadata = { title: "Add Category — Admin — OralCareBD" };
+export const metadata = { title: "New Category — Admin" };
 
 export default function NewCategoryPage() {
   return (
@@ -10,10 +10,9 @@ export default function NewCategoryPage() {
         breadcrumbs={[
           { label: "Dashboard", href: "/admin-dashboard" },
           { label: "Categories", href: "/admin-dashboard/categories" },
-          { label: "Add Category" },
+          { label: "New" },
         ]}
-        title="Add New Category"
-        description="Create a category to organise your products."
+        title="Add Category"
       />
       <CategoryForm mode="create" />
     </div>

@@ -1,258 +1,182 @@
-import Image from "next/image";
-import {
-  AdminHeader,
-  AdminButton,
-  StatusPill,
-  DownloadIcon,
-} from "../AdminHeader";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { adminReviewsApi, type Review, type ReviewStatus } from "@/lib/api";
+import { formatDateTime, humanize } from "@/lib/format";
+import { useAsync } from "@/lib/hooks";
 import { Stars } from "@/components/Stars";
-import { products } from "@/lib/products";
+import { AdminHeader, StatusPill, SearchIcon } from "../AdminHeader";
+import { DeleteButton } from "../DeleteButton";
+import { Loader, Pagination, btn, inputCls, useAdminAction } from "../AdminShell";
 
-export const metadata = { title: "Reviews — Admin — OralCareBD" };
-
-type ReviewStatus = "published" | "pending" | "flagged";
-
-const reviews: {
-  author: string;
-  avatarColor: string;
-  rating: number;
-  title: string;
-  body: string;
-  product: (typeof products)[number];
-  verified: boolean;
-  helpful: number;
-  status: ReviewStatus;
-  date: string;
-}[] = [
-  { author: "Afsana Rahman", avatarColor: "from-rose-400 to-pink-500", rating: 5, title: "Game-changing whitening results!", body: "Used this for 2 weeks and the difference is visible. My dentist even complimented me. The LED accelerator is powerful and no sensitivity at all.", product: products[0], verified: true, helpful: 24, status: "published", date: "Nov 9, 2026" },
-  { author: "Tanvir Islam", avatarColor: "from-brand to-brand-blue", rating: 4, title: "Great freshness, lasts all day", body: "The icy mint flavor is strong but not overwhelming. Lasts about 6-8 hours of fresh breath. Would buy again.", product: products[10], verified: true, helpful: 12, status: "published", date: "Nov 8, 2026" },
-  { author: "Nusrat Jahan", avatarColor: "from-brand to-brand", rating: 5, title: "Purple toothpaste is magic", body: "I was skeptical about purple toothpaste but it really does neutralise yellow tones. Instant brighter smile after one use!", product: products[2], verified: true, helpful: 18, status: "published", date: "Nov 7, 2026" },
-  { author: "Anonymous User", avatarColor: "from-slate-400 to-slate-600", rating: 1, title: "Not what I expected at all!!!", body: "Completely useless product do not buy spam spam click here for free stuff visit my-sketchy-site.com for discount lmao", product: products[4], verified: false, helpful: 0, status: "flagged", date: "Nov 7, 2026" },
-  { author: "Rafiq Ahmed", avatarColor: "from-amber-400 to-orange-500", rating: 4, title: "Solid everyday whitening", body: "Not dramatic results but gentle enough for daily use. My teeth feel cleaner and look a shade brighter after a month.", product: products[3], verified: true, helpful: 8, status: "pending", date: "Nov 6, 2026" },
-  { author: "Sabrina Akter", avatarColor: "from-violet-400 to-fuchsia-500", rating: 5, title: "Perfect for sensitive teeth", body: "Sensodyne has been a lifesaver. No more wincing when I eat ice cream. The daily care formula is gentle and effective.", product: products[13], verified: true, helpful: 31, status: "published", date: "Nov 5, 2026" },
-  { author: "Mehedi Hasan", avatarColor: "from-indigo-400 to-brand", rating: 3, title: "Decent but overpriced", body: "The product works as advertised but feels a bit expensive for the amount you get. Would consider cheaper alternatives.", product: products[8], verified: true, helpful: 4, status: "pending", date: "Nov 4, 2026" },
+const TABS: { label: string; status?: ReviewStatus; featured?: boolean }[] = [
+  { label: "Pending", status: "pending" },
+  { label: "Approved", status: "approved" },
+  { label: "Rejected", status: "rejected" },
+  { label: "Featured", featured: true },
+  { label: "All" },
 ];
 
-const statusTone: Record<ReviewStatus, "success" | "warning" | "danger"> = {
-  published: "success",
-  pending: "warning",
-  flagged: "danger",
-};
-
-export default function ReviewsPage() {
-  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-  const published = reviews.filter((r) => r.status === "published").length;
-  const pending = reviews.filter((r) => r.status === "pending").length;
-  const flagged = reviews.filter((r) => r.status === "flagged").length;
-
-  // Rating distribution
-  const ratingBars = [5, 4, 3, 2, 1].map((n) => ({
-    stars: n,
-    count: reviews.filter((r) => r.rating === n).length,
-  }));
+export default function ReviewsAdminPage() {
+  const [tab, setTab] = useState(0);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [applied, setApplied] = useState("");
+  const t = TABS[tab];
+  const list = useAsync(
+    () => adminReviewsApi.list({ status: t.status, isFeatured: t.featured, search: applied || undefined, page, limit: 20 }),
+    [tab, page, applied]
+  );
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
+    <div className="mx-auto w-full max-w-6xl">
       <AdminHeader
         breadcrumbs={[{ label: "Dashboard", href: "/admin-dashboard" }, { label: "Reviews" }]}
-        title="Customer Reviews"
-        description={`${reviews.length} reviews · ${pending} awaiting moderation.`}
-        actions={<AdminButton icon={<DownloadIcon />}>Export</AdminButton>}
+        title="Product Reviews"
+        description="Verified buyers' reviews go live automatically; everyone else's wait here for approval. Featured reviews appear on the homepage."
       />
 
-      {/* Summary */}
-      <div className="mb-6 grid gap-4 lg:grid-cols-[1fr_2fr]">
-        {/* Average rating */}
-        <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200/70">
-          <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Overall Rating
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-5xl font-black text-slate-900">{avg.toFixed(1)}</span>
-            <span className="text-sm text-slate-500">/ 5.0</span>
-          </div>
-          <div className="mt-2">
-            <Stars value={avg} />
-          </div>
-          <div className="mt-2 text-xs text-slate-500">
-            Based on {reviews.length} customer reviews
-          </div>
-          <div className="mt-5 space-y-2">
-            {ratingBars.map((b) => (
-              <div key={b.stars} className="flex items-center gap-3 text-xs">
-                <span className="flex w-12 items-center gap-1 text-slate-600">
-                  {b.stars}
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400">
-                    <path d="m12 2 3 7 7 .5-5.5 4.5 2 7L12 17l-6.5 4 2-7L2 9.5 9 9l3-7Z" />
-                  </svg>
-                </span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
-                  <div
-                    className="h-full rounded-full bg-amber-400"
-                    style={{ width: `${(b.count / reviews.length) * 100}%` }}
-                  />
-                </div>
-                <span className="w-6 text-right font-bold text-slate-700">{b.count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Status KPIs */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <StatusKpi label="Published" value={published} accent="emerald" />
-          <StatusKpi label="Pending" value={pending} accent="amber" />
-          <StatusKpi label="Flagged" value={flagged} accent="rose" />
-          <div className="sm:col-span-3 rounded-2xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft p-5 ring-1 ring-brand/15">
-            <div className="text-xs font-semibold uppercase tracking-wider text-brand-dark">
-              Moderation Guideline
-            </div>
-            <p className="mt-2 text-sm text-slate-700">
-              Review new submissions within 24 hours. Flag inappropriate content (spam, external links, personal attacks) immediately.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter tabs */}
-      <div className="mb-4 flex gap-1 overflow-x-auto rounded-2xl bg-white p-1.5 ring-1 ring-slate-200/70">
-        {[
-          { label: "All", count: reviews.length, active: true },
-          { label: "Pending", count: pending },
-          { label: "Published", count: published },
-          { label: "Flagged", count: flagged },
-        ].map((t) => (
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {TABS.map((x, i) => (
           <button
-            key={t.label}
-            className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
-              t.active
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
+            key={x.label}
+            onClick={() => {
+              setTab(i);
+              setPage(1);
+            }}
+            className={`rounded-full px-3.5 py-1.5 text-xs font-bold ${tab === i ? "bg-slate-900 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200"}`}
           >
-            {t.label}
-            <span
-              className={`rounded-full px-1.5 py-0.5 text-[10px] ${
-                t.active ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-              }`}
-            >
-              {t.count}
-            </span>
+            {x.label}
           </button>
         ))}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setApplied(search.trim());
+            setPage(1);
+          }}
+          className="relative ml-auto min-w-[220px]"
+        >
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <SearchIcon />
+          </span>
+          <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search text or name…" className={`${inputCls} pl-10`} />
+        </form>
       </div>
 
-      {/* Reviews list */}
-      <div className="space-y-4">
-        {reviews.map((r, i) => (
-          <div
-            key={i}
-            className="rounded-2xl bg-white p-6 ring-1 ring-slate-200/70 transition hover:shadow-lg hover:shadow-slate-100"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <span
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${r.avatarColor} text-sm font-black text-white shadow`}
-                >
-                  {r.author.split(" ").map((n) => n[0]).join("")}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold text-slate-900">{r.author}</span>
-                    {r.verified && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-bold text-brand-dark">
-                        ✓ Verified Buyer
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-                    <Stars value={r.rating} />
-                    <span>·</span>
-                    <span>{r.date}</span>
-                    <span>·</span>
-                    <span>{r.helpful} found helpful</span>
-                  </div>
-                </div>
-              </div>
-              <StatusPill tone={statusTone[r.status]}>{r.status}</StatusPill>
-            </div>
-
-            <h3 className="mt-4 text-base font-bold text-slate-900">{r.title}</h3>
-            <p className="mt-1 text-sm text-slate-600">{r.body}</p>
-
-            {/* Product reference + actions */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-4">
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100">
-                  <Image src={r.product.img} alt="" fill sizes="40px" className="object-contain p-1" />
-                </span>
-                <div className="leading-tight">
-                  <div className="text-xs font-semibold text-slate-500">Reviewed product</div>
-                  <div className="line-clamp-1 max-w-[280px] text-xs font-bold text-slate-900">
-                    {r.product.name}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {r.status === "pending" && (
-                  <>
-                    <button className="rounded-lg bg-brand px-3 py-1.5 text-[11px] font-bold text-white hover:bg-brand-dark">
-                      Approve
-                    </button>
-                    <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-rose-300 hover:text-rose-600">
-                      Reject
-                    </button>
-                  </>
-                )}
-                {r.status === "flagged" && (
-                  <>
-                    <button className="rounded-lg bg-rose-500 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-rose-600">
-                      Delete
-                    </button>
-                    <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-slate-300 hover:text-brand-dark">
-                      Restore
-                    </button>
-                  </>
-                )}
-                {r.status === "published" && (
-                  <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-rose-300 hover:text-rose-600">
-                    Unpublish
-                  </button>
-                )}
-                <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:border-brand hover:text-brand-dark">
-                  Reply
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {list.loading ? (
+        <Loader />
+      ) : list.error ? (
+        <p className="rounded-2xl bg-rose-50 p-4 text-sm font-semibold text-rose-700">{list.error}</p>
+      ) : !list.data?.items.length ? (
+        <p className="rounded-2xl bg-white p-10 text-center text-sm text-slate-500 ring-1 ring-slate-200/70">Nothing here.</p>
+      ) : (
+        <div className="space-y-3">
+          {list.data.items.map((r) => (
+            <ReviewRow key={r._id} review={r} onChanged={() => void list.reload()} />
+          ))}
+        </div>
+      )}
+      {list.data && list.data.totalPages > 1 && (
+        <div className="mt-4 overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70">
+          <Pagination page={list.data.page} totalPages={list.data.totalPages} total={list.data.total} onChange={setPage} />
+        </div>
+      )}
     </div>
   );
 }
 
-function StatusKpi({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent: "emerald" | "amber" | "rose";
-}) {
-  const color = {
-    emerald: "text-brand-dark bg-brand-soft",
-    amber: "text-amber-600 bg-amber-50",
-    rose: "text-rose-600 bg-rose-50",
-  }[accent];
+function ReviewRow({ review, onChanged }: { review: Review; onChanged: () => void }) {
+  const [r, setR] = useState(review);
+  const run = useAdminAction();
+  const [reply, setReply] = useState(r.adminReply ?? "");
+  const [replying, setReplying] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const product = typeof r.product === "object" ? r.product : null;
+  const user = r.user && typeof r.user === "object" ? r.user : null;
+
+  const moderate = async (body: Parameters<typeof adminReviewsApi.moderate>[1], msg: string) => {
+    setBusy(true);
+    const ok = await run(() => adminReviewsApi.moderate(r._id, body), msg);
+    if (ok) {
+      setReplying(false);
+      // Re-read this review (GET /admin/reviews/:id); reload the list only when it leaves this tab.
+      const fresh = await run(() => adminReviewsApi.get(r._id));
+      if (fresh) setR(fresh);
+      if (body.status && body.status !== review.status) onChanged();
+    }
+    setBusy(false);
+  };
+
   return (
     <div className="rounded-2xl bg-white p-5 ring-1 ring-slate-200/70">
-      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</div>
-      <div className="mt-2 flex items-center gap-2">
-        <span className="text-3xl font-black text-slate-900">{value}</span>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${color}`}>
-          reviews
-        </span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <Stars value={r.rating} />
+            {r.title && <span className="text-sm font-bold text-slate-900">{r.title}</span>}
+          </div>
+          <div className="mt-1 text-xs text-slate-500">
+            {r.userName}
+            {user ? ` (${user.email})` : ""} · {formatDateTime(r.createdAt)}
+            {product && (
+              <>
+                {" "}
+                · on{" "}
+                <Link href={`/product/${product.slug}`} target="_blank" className="font-semibold text-brand-dark hover:underline">
+                  {product.productName}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <StatusPill tone={r.status === "approved" ? "success" : r.status === "rejected" ? "danger" : "warning"}>{humanize(r.status)}</StatusPill>
+          {r.isVerifiedPurchase && <StatusPill tone="info">Verified buyer</StatusPill>}
+          {r.isFeatured && <StatusPill tone="accent">Featured</StatusPill>}
+        </div>
+      </div>
+      <p className="mt-3 text-sm text-slate-700">{r.comment}</p>
+      {r.adminReply && !replying && <p className="mt-2 rounded-xl bg-slate-50 p-3 text-xs text-slate-600">Your reply: {r.adminReply}</p>}
+
+      {replying && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <input value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Public reply…" className={`${inputCls} flex-1`} />
+          <button disabled={busy} onClick={() => moderate({ adminReply: reply.trim() || null }, "Reply saved")} className={btn.brand}>
+            Save reply
+          </button>
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {r.status !== "approved" && (
+          <button disabled={busy} onClick={() => moderate({ status: "approved" }, "Review approved")} className={btn.brand}>
+            Approve
+          </button>
+        )}
+        {r.status !== "rejected" && (
+          <button disabled={busy} onClick={() => moderate({ status: "rejected", isFeatured: false }, "Review rejected")} className={btn.danger}>
+            Reject
+          </button>
+        )}
+        {r.status === "approved" && (
+          <button disabled={busy} onClick={() => moderate({ isFeatured: !r.isFeatured }, r.isFeatured ? "Removed from homepage" : "Featured on homepage")} className={btn.secondary}>
+            {r.isFeatured ? "Unfeature" : "Feature on homepage"}
+          </button>
+        )}
+        <button onClick={() => setReplying((v) => !v)} className={btn.secondary}>
+          {r.adminReply ? "Edit reply" : "Reply"}
+        </button>
+        <DeleteButton
+          variant="button"
+          itemLabel={`${r.userName}'s review`}
+          onConfirm={async () => {
+            const ok = await run(() => adminReviewsApi.remove(r._id), "Review deleted");
+            if (ok) onChanged();
+            return !!ok;
+          }}
+        />
       </div>
     </div>
   );

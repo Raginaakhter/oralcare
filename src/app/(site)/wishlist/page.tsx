@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/SiteShell";
-import { useStore } from "@/context/StoreContext";
+import { SmartImage } from "@/components/SmartImage";
+import { useStore, formatPriceBDT } from "@/context/StoreContext";
+import { brandName, productHref, productImage, stockLabel } from "@/lib/products";
 import {
   ArrowRightIcon,
   CartIcon,
   HeartIcon,
 } from "@/components/icons";
-import { Stars } from "@/components/Stars";
 
 export default function WishlistPage() {
   const {
@@ -92,7 +92,7 @@ export default function WishlistPage() {
                 <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
                   <tr>
                     <th className="px-6 py-4 text-left">Product</th>
-                    <th className="px-6 py-4 text-left">Rating</th>
+                    <th className="px-6 py-4 text-left">SKU</th>
                     <th className="px-6 py-4 text-left">Price</th>
                     <th className="px-6 py-4 text-left">Status</th>
                     <th className="px-6 py-4 text-right">Action</th>
@@ -104,12 +104,12 @@ export default function WishlistPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <Link
-                            href={p.href}
+                            href={productHref(p)}
                             className="relative h-16 w-16 overflow-hidden rounded-xl bg-brand-soft"
                           >
-                            <Image
-                              src={p.img}
-                              alt={p.name}
+                            <SmartImage
+                              src={productImage(p)}
+                              alt={p.productName}
                               fill
                               sizes="64px"
                               className="object-contain p-1"
@@ -117,30 +117,25 @@ export default function WishlistPage() {
                           </Link>
                           <div>
                             <div className="text-[10px] font-bold uppercase text-brand-dark">
-                              {p.brand}
+                              {brandName(p)}
                             </div>
                             <Link
-                              href={p.href}
+                              href={productHref(p)}
                               className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-dark"
                             >
-                              {p.name}
+                              {p.productName}
                             </Link>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                          <Stars value={p.rating} />
-                          <span>({p.reviews})</span>
-                        </div>
+                        <div className="text-xs text-slate-500">{p.sku}</div>
                       </td>
                       <td className="px-6 py-4 text-sm font-extrabold text-slate-900">
-                        {p.price}
+                        {formatPriceBDT(p.effectivePrice)}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200">
-                          In Stock
-                        </span>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 ${stockLabel(p).tone === "out" ? "bg-rose-50 text-rose-700 ring-rose-200" : "bg-emerald-50 text-emerald-700 ring-emerald-200"}`}>{stockLabel(p).label}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
@@ -172,12 +167,12 @@ export default function WishlistPage() {
                 {wishlist.map((p) => (
                   <div key={p.slug} className="flex items-center gap-4 p-4">
                     <Link
-                      href={p.href}
+                      href={productHref(p)}
                       className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-brand-soft"
                     >
-                      <Image
-                        src={p.img}
-                        alt={p.name}
+                      <SmartImage
+                        src={productImage(p)}
+                        alt={p.productName}
                         fill
                         sizes="80px"
                         className="object-contain p-2"
@@ -185,15 +180,15 @@ export default function WishlistPage() {
                     </Link>
                     <div className="flex-1 min-w-0">
                       <div className="text-[10px] font-bold uppercase text-brand-dark">
-                        {p.brand}
+                        {brandName(p)}
                       </div>
                       <Link
-                        href={p.href}
+                        href={productHref(p)}
                         className="line-clamp-2 text-xs font-bold text-slate-900"
                       >
-                        {p.name}
+                        {p.productName}
                       </Link>
-                      <div className="mt-1 text-xs font-black text-slate-900">{p.price}</div>
+                      <div className="mt-1 text-xs font-black text-slate-900">{formatPriceBDT(p.effectivePrice)}</div>
                       <div className="mt-2 flex items-center gap-2">
                         <button
                           type="button"

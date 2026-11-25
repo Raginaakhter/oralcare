@@ -2,49 +2,56 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
-  useCallback,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import type { Product } from "@/lib/products";
-import { products } from "@/lib/products";
+import { useAuth } from "@/context/AuthContext";
+import { cartApi, errorMessage, type Cart, type CartSummary, type LineItemInput } from "@/lib/api";
+import {
+  brandName,
+  productImage,
+  variationPrice,
+  type Product,
+  type ProductVariation,
+} from "@/lib/products";
+import { formatPriceBDT } from "@/lib/format";
 
-export type CartItem = {
-  product: Product;
-  qty: number;
-};
+export { formatPriceBDT };
 
-export type Order = {
-  id: string;
-  date: string;
-  customer: {
-    name: string;
-    phone: string;
-    email?: string;
-    address: string;
-    city: string;
-    division: string;
-    postcode?: string;
-    notes?: string;
-  };
-  deliveryArea: "inside_dhaka" | "outside_dhaka";
-  shippingFee: number;
-  paymentMethod: "bkash" | "nagad" | "card" | "cod";
-  paymentDetails?: {
-    senderPhone?: string;
-    trxId?: string;
-  };
-  items: CartItem[];
-  subtotal: number;
-  discount: number;
-  couponCode?: string;
-  total: number;
-  status: "processing" | "shipped" | "delivered" | "cancelled";
-  courierTracking?: string;
-};
+/**
+ * One cart row. Shape follows the backend's priced cart line so signed-in
+ * (server) and guest (local) carts render the same way.
+ */
+export interface CartLine {
+  /** Stable key: server itemId, or productId:variationId for guests. */
+  key: string;
+  itemId?: string;
+  productId: string;
+  variationId: string | null;
+  quantity: number;
+  productName: string;
+  slug: string;
+  sku?: string;
+  thumbnail?: string;
+  brandName?: string;
+  variationAttributes?: Record<string, string>;
+  unitPrice: number;
+  regularPrice: number;
+  lineTotal: number;
+  availableStock: number;
+  /** Server-reported problem (out of stock, unavailable…). */
+  issue?: string;
+}
+
+/** Item handed from "Buy Now" to the checkout page. */
+export interface BuyNowItem extends LineItemInput {
+  line: CartLine;
+}
 
 export type Toast = {
   id: number;
@@ -53,24 +60,31 @@ export type Toast = {
 };
 
 interface StoreContextType {
-  cart: CartItem[];
+  cart: CartLine[];
+  cartSummary: CartSummary | null;
+  cartLoading: boolean;
   wishlist: Product[];
-  orders: Order[];
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
-  addToCart: (product: Product, qty?: number, openDrawer?: boolean) => void;
-  removeFromCart: (slug: string) => void;
-  updateCartQty: (slug: string, qty: number) => void;
-  clearCart: () => void;
+  addToCart: (
+    product: Product,
+    qty?: number,
+    openDrawer?: boolean,
+    variation?: ProductVariation | null
+  ) => Promise<void>;
+  removeFromCart: (key: string) => Promise<void>;
+  updateCartQty: (key: string, qty: number) => Promise<void>;
+  clearCart: (silent?: boolean) => Promise<void>;
+  refreshCart: () => Promise<void>;
+  /** Replace the local cart state with a server cart (e.g. after reorder). */
+  applyServerCart: (cart: Cart) => void;
   toggleWishlist: (product: Product) => void;
   isInWishlist: (slug: string) => boolean;
   removeFromWishlist: (slug: string) => void;
   clearWishlist: () => void;
-  buyNow: (product: Product, qty?: number) => void;
-  placeOrder: (
-    orderData: Omit<Order, "id" | "date" | "status" | "courierTracking">
-  ) => Order;
-  getOrderById: (id: string) => Order | undefined;
+  buyNow: (product: Product, qty?: number, variation?: ProductVariation | null) => void;
+  getBuyNowItem: () => BuyNowItem | null;
+  clearBuyNowItem: () => void;
   cartCount: number;
   cartSubtotal: number;
   wishlistCount: number;
@@ -81,175 +95,100 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | null>(null);
 
-export function parsePriceNumber(priceStr: string): number {
-  if (!priceStr) return 0;
-  const num = parseFloat(priceStr.replace(/[^\d.]/g, ""));
-  return isNaN(num) ? 0 : num;
+const GUEST_CART_KEY = "oralcare_cart_v2";
+const WISHLIST_KEY = "oralcare_wishlist_v2";
+const BUY_NOW_KEY = "oralcare_buy_now";
+
+function readJSON<T>(storage: "local" | "session", key: string, fallback: T): T {
+  try {
+    const s = storage === "local" ? window.localStorage : window.sessionStorage;
+    const raw = s.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
-export function formatPriceBDT(amount: number): string {
-  return `৳${Math.round(amount).toLocaleString("en-US")}`;
+function writeJSON(storage: "local" | "session", key: string, value: unknown) {
+  try {
+    const s = storage === "local" ? window.localStorage : window.sessionStorage;
+    if (value === null) s.removeItem(key);
+    else s.setItem(key, JSON.stringify(value));
+  } catch {
+    // storage unavailable — state still lives in memory
+  }
 }
 
-const initialCartSeed: CartItem[] = [
-  { product: products[0], qty: 1 },
-  { product: products[10], qty: 2 },
-];
+function guestKey(productId: string, variationId: string | null) {
+  return `${productId}:${variationId ?? ""}`;
+}
 
-const initialWishlistSeed: Product[] = [
-  products[2],
-  products[8],
-  products[14],
-];
+function lineFromProduct(
+  product: Product,
+  quantity: number,
+  variation?: ProductVariation | null
+): CartLine {
+  const unitPrice = variationPrice(product, variation);
+  return {
+    key: guestKey(product._id, variation?._id ?? null),
+    productId: product._id,
+    variationId: variation?._id ?? null,
+    quantity,
+    productName: product.productName,
+    slug: product.slug,
+    sku: variation?.sku ?? product.sku,
+    thumbnail: variation?.image || productImage(product),
+    brandName: brandName(product) || undefined,
+    variationAttributes: variation?.attributes,
+    unitPrice,
+    regularPrice: typeof variation?.price === "number" ? variation.price : product.regularPrice,
+    lineTotal: unitPrice * quantity,
+    availableStock: variation ? variation.stockQuantity ?? 0 : product.stockQuantity,
+  };
+}
 
-const initialOrdersSeed: Order[] = [
-  {
-    id: "ORD-10285",
-    date: "Nov 18, 2026",
-    customer: {
-      name: "Afsana Rahman",
-      phone: "01712 345678",
-      email: "afsana@example.com",
-      address: "House 24, Road 7, Dhanmondi",
-      city: "Dhaka",
-      division: "Dhaka",
-      postcode: "1205",
-      notes: "Please call before delivery.",
-    },
-    deliveryArea: "inside_dhaka",
-    shippingFee: 0,
-    paymentMethod: "bkash",
-    paymentDetails: {
-      senderPhone: "01712345678",
-      trxId: "TRX7X8C9D0",
-    },
-    items: [
-      { product: products[0], qty: 1 },
-      { product: products[10], qty: 2 },
-    ],
-    subtotal: 10447,
-    discount: 1045,
-    couponCode: "SMILE10",
-    total: 9402,
-    status: "processing",
-    courierTracking: "SA-2026-10285",
-  },
-  {
-    id: "ORD-10251",
-    date: "Oct 22, 2026",
-    customer: {
-      name: "Afsana Rahman",
-      phone: "01712 345678",
-      email: "afsana@example.com",
-      address: "House 24, Road 7, Dhanmondi",
-      city: "Dhaka",
-      division: "Dhaka",
-      postcode: "1205",
-    },
-    deliveryArea: "inside_dhaka",
-    shippingFee: 60,
-    paymentMethod: "cod",
-    items: [{ product: products[2], qty: 2 }],
-    subtotal: 2298,
-    discount: 0,
-    total: 2358,
-    status: "delivered",
-    courierTracking: "SA-2026-10251",
-  },
-  {
-    id: "ORD-10198",
-    date: "Oct 05, 2026",
-    customer: {
-      name: "Afsana Rahman",
-      phone: "01712 345678",
-      address: "Road 12, Banani",
-      city: "Dhaka",
-      division: "Dhaka",
-    },
-    deliveryArea: "inside_dhaka",
-    shippingFee: 60,
-    paymentMethod: "bkash",
-    paymentDetails: {
-      trxId: "BK992811A",
-    },
-    items: [{ product: products[13], qty: 1 }],
-    subtotal: 1099,
-    discount: 0,
-    total: 1159,
-    status: "delivered",
-    courierTracking: "SA-2026-10198",
-  },
-];
+function linesFromServer(cart: Cart): CartLine[] {
+  return cart.items.map((it) => {
+    const l = it.line;
+    return {
+      key: it.itemId,
+      itemId: it.itemId,
+      productId: it.productId,
+      variationId: it.variationId,
+      quantity: it.quantity,
+      productName: l?.productName ?? "Unavailable product",
+      slug: l?.slug ?? "",
+      sku: l?.sku,
+      thumbnail: l?.thumbnail,
+      variationAttributes: l?.variationAttributes,
+      unitPrice: l?.unitPrice ?? 0,
+      regularPrice: l?.regularPrice ?? 0,
+      lineTotal: l?.lineTotal ?? 0,
+      availableStock: l?.availableStock ?? 0,
+      issue: it.issue?.message,
+    };
+  });
+}
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { status } = useAuth();
+  const isServer = status === "authenticated";
 
-  const [cart, setCart] = useState<CartItem[]>(initialCartSeed);
-  const [wishlist, setWishlist] = useState<Product[]>(initialWishlistSeed);
-  const [orders, setOrders] = useState<Order[]>(initialOrdersSeed);
+  const [cart, setCart] = useState<CartLine[]>([]);
+  const [cartSummary, setCartSummary] = useState<CartSummary | null>(null);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedCart = localStorage.getItem("oralcare_cart");
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
-      }
-      const savedWishlist = localStorage.getItem("oralcare_wishlist");
-      if (savedWishlist) {
-        setWishlist(JSON.parse(savedWishlist));
-      }
-      const savedOrders = localStorage.getItem("oralcare_orders");
-      if (savedOrders) {
-        setOrders(JSON.parse(savedOrders));
-      }
-    } catch {
-      // ignore
-    } finally {
-      setIsHydrated(true);
-    }
-  }, []);
-
-  // Sync cart to localStorage
-  useEffect(() => {
-    if (!isHydrated) return;
-    try {
-      localStorage.setItem("oralcare_cart", JSON.stringify(cart));
-    } catch {
-      // ignore
-    }
-  }, [cart, isHydrated]);
-
-  // Sync wishlist to localStorage
-  useEffect(() => {
-    if (!isHydrated) return;
-    try {
-      localStorage.setItem("oralcare_wishlist", JSON.stringify(wishlist));
-    } catch {
-      // ignore
-    }
-  }, [wishlist, isHydrated]);
-
-  // Sync orders to localStorage
-  useEffect(() => {
-    if (!isHydrated) return;
-    try {
-      localStorage.setItem("oralcare_orders", JSON.stringify(orders));
-    } catch {
-      // ignore
-    }
-  }, [orders, isHydrated]);
+  const [hydrated, setHydrated] = useState(false);
+  const mergedRef = useRef(false);
 
   const showToast = useCallback(
     (message: string, type: "success" | "info" | "error" = "success") => {
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev, { id, message, type }]);
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 3500);
+      setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
     },
     []
   );
@@ -258,81 +197,189 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToCart = useCallback(
-    (product: Product, qty = 1, openDrawer = true) => {
-      setCart((prev) => {
-        const existingIndex = prev.findIndex(
-          (item) => item.product.slug === product.slug
-        );
-        if (existingIndex > -1) {
-          const updated = [...prev];
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            qty: updated[existingIndex].qty + qty,
-          };
-          return updated;
-        }
-        return [{ product, qty }, ...prev];
-      });
+  const applyServerCart = useCallback((c: Cart) => {
+    setCart(linesFromServer(c));
+    setCartSummary(c.summary);
+  }, []);
 
-      showToast(`Added "${product.name}" to cart!`, "success");
-      if (openDrawer) {
-        setIsCartOpen(true);
+  // Wishlist (local only — the backend has no wishlist endpoint).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids SSR mismatch)
+    setWishlist(readJSON<Product[]>("local", WISHLIST_KEY, []));
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) writeJSON("local", WISHLIST_KEY, wishlist);
+  }, [wishlist, hydrated]);
+
+  const refreshCart = useCallback(async () => {
+    if (status !== "authenticated") return;
+    setCartLoading(true);
+    try {
+      applyServerCart(await cartApi.get());
+    } catch (err) {
+      showToast(errorMessage(err, "Could not load your cart"), "error");
+    } finally {
+      setCartLoading(false);
+    }
+  }, [status, applyServerCart, showToast]);
+
+  // Load the right cart whenever auth state settles; on sign-in, push the guest cart up first.
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "guest") {
+      mergedRef.current = false;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- guest cart lives in localStorage
+      setCart(readJSON<CartLine[]>("local", GUEST_CART_KEY, []));
+      setCartSummary(null);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setCartLoading(true);
+      try {
+        const guestLines = readJSON<CartLine[]>("local", GUEST_CART_KEY, []);
+        if (!mergedRef.current && guestLines.length) {
+          mergedRef.current = true;
+          for (const l of guestLines) {
+            try {
+              await cartApi.add({
+                productId: l.productId,
+                variationId: l.variationId,
+                quantity: l.quantity,
+              });
+            } catch {
+              // skip items that can no longer be added (out of stock etc.)
+            }
+          }
+          writeJSON("local", GUEST_CART_KEY, null);
+        }
+        mergedRef.current = true;
+        const c = await cartApi.get();
+        if (!cancelled) applyServerCart(c);
+      } catch (err) {
+        if (!cancelled) showToast(errorMessage(err, "Could not load your cart"), "error");
+      } finally {
+        if (!cancelled) setCartLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [status, applyServerCart, showToast]);
+
+  const saveGuest = useCallback((next: CartLine[]) => {
+    setCart(next);
+    writeJSON("local", GUEST_CART_KEY, next);
+  }, []);
+
+  const addToCart = useCallback(
+    async (product: Product, qty = 1, openDrawer = true, variation?: ProductVariation | null) => {
+      if (product.productType === "variable" && !variation) {
+        showToast(`Choose an option for "${product.productName}" first`, "info");
+        router.push(`/product/${product.slug}`);
+        return;
+      }
+      try {
+        if (isServer) {
+          const env = await cartApi.add({
+            productId: product._id,
+            variationId: variation?._id ?? null,
+            quantity: qty,
+          });
+          applyServerCart(env.data);
+        } else {
+          const key = guestKey(product._id, variation?._id ?? null);
+          const existing = cart.find((l) => l.key === key);
+          const next = existing
+            ? cart.map((l) =>
+                l.key === key
+                  ? { ...l, quantity: l.quantity + qty, lineTotal: l.unitPrice * (l.quantity + qty) }
+                  : l
+              )
+            : [lineFromProduct(product, qty, variation), ...cart];
+          saveGuest(next);
+        }
+        showToast(`Added "${product.productName}" to cart!`, "success");
+        if (openDrawer) setIsCartOpen(true);
+      } catch (err) {
+        showToast(errorMessage(err, "Could not add to cart"), "error");
       }
     },
-    [showToast]
+    [isServer, cart, applyServerCart, saveGuest, showToast, router]
   );
 
   const removeFromCart = useCallback(
-    (slug: string) => {
-      setCart((prev) => {
-        const item = prev.find((i) => i.product.slug === slug);
-        if (item) {
-          showToast(`Removed "${item.product.name}" from cart`, "info");
+    async (key: string) => {
+      const line = cart.find((l) => l.key === key);
+      try {
+        if (isServer && line?.itemId) {
+          const env = await cartApi.remove(line.itemId);
+          applyServerCart(env.data);
+        } else {
+          saveGuest(cart.filter((l) => l.key !== key));
         }
-        return prev.filter((i) => i.product.slug !== slug);
-      });
+        if (line) showToast(`Removed "${line.productName}" from cart`, "info");
+      } catch (err) {
+        showToast(errorMessage(err, "Could not remove item"), "error");
+      }
     },
-    [showToast]
+    [isServer, cart, applyServerCart, saveGuest, showToast]
   );
 
-  const updateCartQty = useCallback((slug: string, qty: number) => {
-    if (qty <= 0) {
-      setCart((prev) => prev.filter((i) => i.product.slug !== slug));
-      return;
-    }
-    setCart((prev) =>
-      prev.map((item) =>
-        item.product.slug === slug ? { ...item, qty } : item
-      )
-    );
-  }, []);
+  const updateCartQty = useCallback(
+    async (key: string, qty: number) => {
+      if (qty <= 0) return removeFromCart(key);
+      const line = cart.find((l) => l.key === key);
+      if (!line) return;
+      try {
+        if (isServer && line.itemId) {
+          const env = await cartApi.update(line.itemId, qty);
+          applyServerCart(env.data);
+        } else {
+          saveGuest(
+            cart.map((l) => (l.key === key ? { ...l, quantity: qty, lineTotal: l.unitPrice * qty } : l))
+          );
+        }
+      } catch (err) {
+        showToast(errorMessage(err, "Could not update quantity"), "error");
+      }
+    },
+    [isServer, cart, applyServerCart, saveGuest, showToast, removeFromCart]
+  );
 
-  const clearCart = useCallback(() => {
-    setCart([]);
-    showToast("Cart cleared", "info");
-  }, [showToast]);
+  const clearCart = useCallback(
+    async (silent = false) => {
+      try {
+        if (isServer) await cartApi.clear();
+        saveGuest([]);
+        setCartSummary(null);
+        if (!silent) showToast("Cart cleared", "info");
+      } catch (err) {
+        showToast(errorMessage(err, "Could not clear cart"), "error");
+      }
+    },
+    [isServer, saveGuest, showToast]
+  );
 
   const toggleWishlist = useCallback(
     (product: Product) => {
       setWishlist((prev) => {
-        const exists = prev.some((p) => p.slug === product.slug);
-        if (exists) {
-          showToast(`Removed "${product.name}" from wishlist`, "info");
+        if (prev.some((p) => p.slug === product.slug)) {
+          showToast(`Removed "${product.productName}" from wishlist`, "info");
           return prev.filter((p) => p.slug !== product.slug);
-        } else {
-          showToast(`Added "${product.name}" to wishlist`, "success");
-          return [product, ...prev];
         }
+        showToast(`Added "${product.productName}" to wishlist`, "success");
+        return [product, ...prev];
       });
     },
     [showToast]
   );
 
-  const isInWishlist = useCallback(
-    (slug: string) => wishlist.some((p) => p.slug === slug),
-    [wishlist]
-  );
+  const isInWishlist = useCallback((slug: string) => wishlist.some((p) => p.slug === slug), [wishlist]);
 
   const removeFromWishlist = useCallback(
     (slug: string) => {
@@ -348,111 +395,70 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [showToast]);
 
   const buyNow = useCallback(
-    (product: Product, qty = 1) => {
-      setCart((prev) => {
-        const existingIndex = prev.findIndex(
-          (item) => item.product.slug === product.slug
-        );
-        if (existingIndex > -1) {
-          const updated = [...prev];
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            qty: Math.max(updated[existingIndex].qty, qty),
-          };
-          return updated;
-        }
-        return [{ product, qty }, ...prev];
-      });
-      setIsCartOpen(false);
-      router.push("/checkout");
-    },
-    [router]
-  );
-
-  const placeOrder = useCallback(
-    (orderData: Omit<Order, "id" | "date" | "status" | "courierTracking">): Order => {
-      const id = `ORD-${Math.floor(10000 + Math.random() * 90000)}`;
-      const now = new Date();
-      const date = now.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-      const newOrder: Order = {
-        ...orderData,
-        id,
-        date,
-        status: "processing",
-        courierTracking: `SA-2026-${id.split("-")[1]}`,
+    (product: Product, qty = 1, variation?: ProductVariation | null) => {
+      if (product.productType === "variable" && !variation) {
+        showToast(`Choose an option for "${product.productName}" first`, "info");
+        router.push(`/product/${product.slug}`);
+        return;
+      }
+      const item: BuyNowItem = {
+        productId: product._id,
+        variationId: variation?._id ?? null,
+        quantity: qty,
+        line: lineFromProduct(product, qty, variation),
       };
-
-      setOrders((prev) => [newOrder, ...prev]);
-      setCart([]);
+      writeJSON("session", BUY_NOW_KEY, item);
       setIsCartOpen(false);
-      showToast(`Order #${id} placed successfully!`, "success");
-      return newOrder;
+      router.push("/checkout?mode=buy-now");
     },
-    [showToast]
+    [router, showToast]
   );
 
-  const getOrderById = useCallback(
-    (id: string) => orders.find((o) => o.id.toLowerCase() === id.toLowerCase()),
-    [orders]
-  );
+  const getBuyNowItem = useCallback(() => readJSON<BuyNowItem | null>("session", BUY_NOW_KEY, null), []);
+  const clearBuyNowItem = useCallback(() => writeJSON("session", BUY_NOW_KEY, null), []);
 
   const cartCount = useMemo(
-    () => cart.reduce((sum, item) => sum + item.qty, 0),
-    [cart]
+    () => cartSummary?.totalQuantity ?? cart.reduce((s, l) => s + l.quantity, 0),
+    [cart, cartSummary]
   );
-
   const cartSubtotal = useMemo(
-    () =>
-      cart.reduce(
-        (sum, item) =>
-          sum + parsePriceNumber(item.product.price) * item.qty,
-        0
-      ),
-    [cart]
+    () => cartSummary?.subtotal ?? cart.reduce((s, l) => s + l.lineTotal, 0),
+    [cart, cartSummary]
   );
 
-  const wishlistCount = wishlist.length;
+  const value: StoreContextType = {
+    cart,
+    cartSummary,
+    cartLoading,
+    wishlist,
+    isCartOpen,
+    setIsCartOpen,
+    addToCart,
+    removeFromCart,
+    updateCartQty,
+    clearCart,
+    refreshCart,
+    applyServerCart,
+    toggleWishlist,
+    isInWishlist,
+    removeFromWishlist,
+    clearWishlist,
+    buyNow,
+    getBuyNowItem,
+    clearBuyNowItem,
+    cartCount,
+    cartSubtotal,
+    wishlistCount: wishlist.length,
+    toasts,
+    showToast,
+    removeToast,
+  };
 
-  return (
-    <StoreContext.Provider
-      value={{
-        cart,
-        wishlist,
-        orders,
-        isCartOpen,
-        setIsCartOpen,
-        addToCart,
-        removeFromCart,
-        updateCartQty,
-        clearCart,
-        toggleWishlist,
-        isInWishlist,
-        removeFromWishlist,
-        clearWishlist,
-        buyNow,
-        placeOrder,
-        getOrderById,
-        cartCount,
-        cartSubtotal,
-        wishlistCount,
-        toasts,
-        showToast,
-        removeToast,
-      }}
-    >
-      {children}
-    </StoreContext.Provider>
-  );
+  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
 
 export function useStore() {
   const context = useContext(StoreContext);
-  if (!context) {
-    throw new Error("useStore must be used within a StoreProvider");
-  }
+  if (!context) throw new Error("useStore must be used within a StoreProvider");
   return context;
 }

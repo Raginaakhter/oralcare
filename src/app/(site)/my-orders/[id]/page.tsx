@@ -1,19 +1,14 @@
-import { OrderDetailClient } from "@/components/OrderDetailClient";
+import { Suspense } from "react";
+import { OrderDetailFromParams } from "@/components/OrderDetailClient";
+import { Spinner } from "@/components/orders";
 
-export async function generateStaticParams() {
-  return [
-    { id: "ORD-10285" },
-    { id: "ORD-10251" },
-    { id: "ORD-10198" },
-    { id: "ORD-10156" },
-  ];
-}
+export const metadata = { title: "Order Details - OralCareBD" };
 
-export default async function OrderDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  return <OrderDetailClient id={id} />;
+// Order pages are private and per-user; params resolve inside Suspense at request time.
+export default function OrderDetailPage({ params }: PageProps<"/my-orders/[id]">) {
+  return (
+    <Suspense fallback={<Spinner label="Loading order…" />}>
+      <OrderDetailFromParams params={params} />
+    </Suspense>
+  );
 }

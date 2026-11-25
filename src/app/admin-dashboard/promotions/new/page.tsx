@@ -1,7 +1,7 @@
 import { AdminHeader } from "../../AdminHeader";
 import { PromotionForm } from "../PromotionForm";
 
-export const metadata = { title: "Create Promotion — Admin — OralCareBD" };
+export const metadata = { title: "New Coupon — Admin" };
 
 export default function NewPromotionPage() {
   return (
@@ -9,11 +9,10 @@ export default function NewPromotionPage() {
       <AdminHeader
         breadcrumbs={[
           { label: "Dashboard", href: "/admin-dashboard" },
-          { label: "Promotions", href: "/admin-dashboard/promotions" },
-          { label: "Create Promotion" },
+          { label: "Coupons", href: "/admin-dashboard/promotions" },
+          { label: "New" },
         ]}
-        title="Create New Promotion"
-        description="Set up a coupon code or campaign."
+        title="New Coupon"
       />
       <PromotionForm mode="create" />
     </div>
