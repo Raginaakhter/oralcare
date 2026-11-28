@@ -13,10 +13,43 @@ function toLocalInput(iso?: string | null) {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
 
+/**
+ * Recommended image sizes per placement, matching how the storefront renders them:
+ * the hero is full-width and 400–520px tall (object-cover); promo cards show a
+ * ~144×128 product cut-out (object-contain).
+ */
+const IMAGE_SIZES: Record<
+  BannerPlacement,
+  { desktop: { w: number; h: number }; mobile: { w: number; h: number }; background: { w: number; h: number }; hints: Record<"desktop" | "mobile" | "background", string> }
+> = {
+  hero: {
+    desktop: { w: 1920, h: 600 },
+    mobile: { w: 800, h: 800 },
+    background: { w: 1920, h: 600 },
+    hints: {
+      desktop: "Wide landscape (16 : 5). The banner takes the image's own shape and always shows the whole image — 1920 × 600 gives a short banner; a 16 : 9 image (1920 × 1080) makes it much taller. Keep the left side calm: the text sits there. JPG/WebP under 500 KB.",
+      mobile: "Optional. Shown on phones instead of the desktop image; the text appears below it. The whole image is always shown.",
+      background: "Used only when there's no desktop image. Same size as the desktop image.",
+    },
+  },
+  promo: {
+    desktop: { w: 400, h: 400 },
+    mobile: { w: 400, h: 400 },
+    background: { w: 400, h: 400 },
+    hints: {
+      desktop: "Square product cut-out on a white or transparent background (PNG/WebP). Shown at about 144 × 128 on the card.",
+      mobile: "Used only when there's no desktop image.",
+      background: "Not used by promo cards.",
+    },
+  },
+};
+
 export function SlideForm({ banner, mode }: { banner?: Banner; mode: "create" | "edit" }) {
   const router = useRouter();
   const run = useAdminAction();
   const [pending, setPending] = useState(false);
+  const [placement, setPlacement] = useState<BannerPlacement>(banner?.placement ?? "hero");
+  const sizes = IMAGE_SIZES[placement] ?? IMAGE_SIZES.hero;
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,7 +100,14 @@ export function SlideForm({ banner, mode }: { banner?: Banner; mode: "create" | 
   };
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+    <form
+      onSubmit={onSubmit}
+      onChange={(e) => {
+        const t = e.target;
+        if (t instanceof HTMLSelectElement && t.name === "placement") setPlacement(t.value as BannerPlacement);
+      }}
+      className="grid gap-6 xl:grid-cols-[1.6fr_1fr]"
+    >
       <div className="space-y-6">
         <FormCard title="Content">
           <Field label="Title" name="title" required defaultValue={banner?.title} />
@@ -84,9 +124,30 @@ export function SlideForm({ banner, mode }: { banner?: Banner; mode: "create" | 
         </FormCard>
 
         <FormCard title="Images">
-          <ImageUploadField kind="banner" label="Desktop image" name="desktopImage" defaultValue={banner?.desktopImage} />
-          <ImageUploadField kind="banner" label="Mobile image" name="mobileImage" defaultValue={banner?.mobileImage} />
-          <ImageUploadField kind="banner" label="Background image" name="backgroundImage" defaultValue={banner?.backgroundImage} />
+          <ImageUploadField
+            kind="banner"
+            label="Desktop image"
+            name="desktopImage"
+            defaultValue={banner?.desktopImage}
+            size={sizes.desktop}
+            hint={sizes.hints.desktop}
+          />
+          <ImageUploadField
+            kind="banner"
+            label="Mobile image"
+            name="mobileImage"
+            defaultValue={banner?.mobileImage}
+            size={sizes.mobile}
+            hint={sizes.hints.mobile}
+          />
+          <ImageUploadField
+            kind="banner"
+            label="Background image"
+            name="backgroundImage"
+            defaultValue={banner?.backgroundImage}
+            size={sizes.background}
+            hint={sizes.hints.background}
+          />
           <Field label="Image alt text" name="imageAlt" defaultValue={banner?.imageAlt} />
         </FormCard>
       </div>

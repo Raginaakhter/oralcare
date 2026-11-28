@@ -3,13 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #1f2937;
-  /* Two-tone palette: deep steel-teal + white */
-  --brand: #3d5c6e;
-  --brand-dark: #2a4252;
-  --brand-soft: #e6ecef;
-  --brand-blue: #3d5c6e;
-  --brand-blue-dark: #2a4252;
-  --brand-blue-soft: #e6ecef;
+  /* Fresh, colourful palette: mint-teal primary + indigo secondary (pink/amber accents via Tailwind) */
+  --brand: #0d9488;
+  --brand-dark: #0f766e;
+  --brand-soft: #dcf5f1;
+  --brand-blue: #4f46e5;
+  --brand-blue-dark: #3730a3;
+  --brand-blue-soft: #e5e9ff;
 }
 
 @theme inline {
@@ -122,11 +122,11 @@ body {
 .shimmer-text {
   background: linear-gradient(
     90deg,
-    #2a4252 0%,
-    #3d5c6e 25%,
-    #5d7d90 50%,
-    #3d5c6e 75%,
-    #2a4252 100%
+    #0d9488 0%,
+    #0891b2 25%,
+    #4f46e5 50%,
+    #0891b2 75%,
+    #0d9488 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -163,13 +163,14 @@ body {
   mix-blend-mode: overlay;
 }
 
-/* Brand gradient text (previously rainbow — now two-tone) */
+/* Colourful brand gradient text: teal → indigo → fuchsia */
 .rainbow-text {
   background: linear-gradient(
     90deg,
-    #2a4252 0%,
-    #3d5c6e 50%,
-    #2a4252 100%
+    #0d9488 0%,
+    #4f46e5 35%,
+    #c026d3 65%,
+    #0d9488 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;

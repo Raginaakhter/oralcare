@@ -307,7 +307,7 @@ export const inputCls =
 
 export const btn = {
   primary:
-    "inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-brand-dark disabled:opacity-50",
+    "inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand to-brand-blue px-4 py-2 text-xs font-bold text-white shadow-lg shadow-brand-blue/25 transition hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-50",
   secondary:
     "inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-brand hover:text-brand-dark disabled:opacity-50",
   danger:

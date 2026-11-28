@@ -4,13 +4,13 @@
 
 /** Colour treatments (and a default icon) cycled across categories in the strip/menus. */
 export const categories = [
-  { img: "/images/cat-toothbrush.png", bg: "bg-[#c9dde4]", border: "border-[#c9dde4]", ring: "ring-brand/60" },
-  { img: "/images/cat-toothpaste.png", bg: "bg-slate-200", border: "border-slate-200", ring: "ring-slate-400" },
-  { img: "/images/cat-whitening.png", bg: "bg-[#c9dde4]", border: "border-[#c9dde4]", ring: "ring-brand/60" },
-  { img: "/images/cat-mouthwash.png", bg: "bg-slate-200", border: "border-slate-200", ring: "ring-slate-400" },
-  { img: "/images/cat-electric-brush.png", bg: "bg-[#c9dde4]", border: "border-[#c9dde4]", ring: "ring-brand/60" },
-  { img: "/images/cat-floss.png", bg: "bg-slate-200", border: "border-slate-200", ring: "ring-slate-400" },
-  { img: "/images/cat-kids.png", bg: "bg-[#c9dde4]", border: "border-[#c9dde4]", ring: "ring-brand/60" },
+  { img: "/images/cat-toothbrush.png", bg: "bg-teal-100", border: "border-teal-200", ring: "ring-teal-400" },
+  { img: "/images/cat-toothpaste.png", bg: "bg-sky-100", border: "border-sky-200", ring: "ring-sky-400" },
+  { img: "/images/cat-whitening.png", bg: "bg-violet-100", border: "border-violet-200", ring: "ring-violet-400" },
+  { img: "/images/cat-mouthwash.png", bg: "bg-pink-100", border: "border-pink-200", ring: "ring-pink-400" },
+  { img: "/images/cat-electric-brush.png", bg: "bg-amber-100", border: "border-amber-200", ring: "ring-amber-400" },
+  { img: "/images/cat-floss.png", bg: "bg-emerald-100", border: "border-emerald-200", ring: "ring-emerald-400" },
+  { img: "/images/cat-kids.png", bg: "bg-indigo-100", border: "border-indigo-200", ring: "ring-indigo-400" },
 ];
 
 /**

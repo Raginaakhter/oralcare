@@ -208,9 +208,9 @@ function DealOfTheDay({ deal }: { deal: ActiveDeal }) {
 
 function PromoBanners({ banners }: { banners: Banner[] }) {
   const tints = [
-    "from-brand-soft via-white to-brand-soft",
-    "from-brand-blue-soft via-white to-brand-soft",
-    "from-brand-soft via-brand-soft/40 to-white",
+    "from-teal-100 via-cyan-50 to-white",
+    "from-violet-100 via-indigo-50 to-white",
+    "from-pink-100 via-rose-50 to-amber-50",
   ];
   return (
     <section className={`mt-12 grid gap-5 ${banners.length >= 3 ? "lg:grid-cols-3" : banners.length === 2 ? "lg:grid-cols-2" : ""}`}>
@@ -296,8 +296,8 @@ function SectionHeading({
     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
       <div className="max-w-2xl">
         {eyebrow && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-brand-dark">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-soft to-brand-blue-soft px-2.5 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-brand-blue-dark ring-1 ring-brand-blue/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-brand to-fuchsia-500" />
             {eyebrow}
           </span>
         )}
@@ -307,7 +307,7 @@ function SectionHeading({
       {cta && (
         <Link
           href={cta.href}
-          className="group inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-full bg-slate-900 px-4 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark"
+          className="group inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-full bg-gradient-to-r from-brand via-brand-blue to-fuchsia-600 px-4 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition hover:-translate-y-0.5 hover:brightness-110"
         >
           {cta.label}
           <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition group-hover:translate-x-1" />
@@ -474,7 +474,11 @@ function HealthTips({ posts }: { posts: BlogPostSummary[] }) {
               className="group relative overflow-hidden rounded-3xl bg-white ring-1 ring-slate-100 transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand/15"
             >
               <span className="absolute left-5 top-5 z-10 display-font text-6xl font-black text-white/70 mix-blend-overlay">0{i + 1}</span>
-              <div className="relative h-56 overflow-hidden bg-[#c9dde4]">
+              <div
+                className={`relative h-56 overflow-hidden bg-gradient-to-br ${
+                  ["from-teal-100 to-cyan-50", "from-violet-100 to-pink-50", "from-amber-100 to-rose-50"][i % 3]
+                }`}
+              >
                 <div className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 animate-blob rounded-full bg-brand/20 blur-3xl" />
                 {t.coverImage && (
                   <SmartImage
@@ -706,7 +710,7 @@ function InstagramGrid({ posts, profileUrl }: { posts: InstagramPost[]; profileU
 
 function Newsletter({ settings }: { settings: { newsletterTitle?: string; newsletterDescription?: string } | null }) {
   return (
-    <section className="relative mt-8 sm:mt-10 overflow-hidden rounded-2xl bg-brand-soft p-5 sm:p-8">
+    <section className="relative mt-8 sm:mt-10 overflow-hidden rounded-2xl bg-gradient-to-r from-teal-100 via-sky-50 to-violet-100 p-5 sm:p-8 ring-1 ring-teal-100">
       <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="flex items-start gap-3 sm:gap-4">
           <span className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand ring-1 ring-brand/15">

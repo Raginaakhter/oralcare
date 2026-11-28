@@ -70,7 +70,7 @@ export function AdminButton({
   const base =
     "inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition";
   const styles = {
-    primary: `${base} bg-slate-900 text-white shadow-lg shadow-slate-900/20 hover:-translate-y-0.5 hover:bg-brand-dark`,
+    primary: `${base} bg-gradient-to-r from-brand to-brand-blue text-white shadow-lg shadow-brand-blue/25 hover:-translate-y-0.5 hover:brightness-110`,
     secondary: `${base} border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-brand hover:text-brand-dark`,
     ghost: `${base} text-slate-600 hover:bg-slate-100`,
   };

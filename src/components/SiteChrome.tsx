@@ -5,8 +5,6 @@
  */
 import Link from "next/link";
 import {
-  GridIcon,
-  ChevronDownIcon,
   TagIcon,
   MailIcon,
   PhoneIcon,
@@ -16,8 +14,6 @@ import {
   YoutubeIcon,
   TiktokIcon,
   WhatsappIcon,
-  SparkIcon,
-  ArrowRightIcon,
 } from "@/components/icons";
 import { categories as fallbackCategories, site } from "@/lib/site-data";
 import { getCategories, getPublicFooter, getShippingMethods } from "@/lib/api/server";
@@ -25,6 +21,7 @@ import { AnnouncementBar, Header, FloatingWhatsapp, type SiteContact } from "@/c
 import type { MenuCategory } from "@/components/MobileMenuDrawer";
 import type { FooterSettings } from "@/lib/api/types";
 import { SmartImage } from "@/components/SmartImage";
+import { CategoryMenu } from "@/components/CategoryMenu";
 import type { SocialPlatform } from "@/lib/api/types";
 
 /** Phone + WhatsApp from the CMS footer settings; bundled store details only fill gaps. */
@@ -66,7 +63,8 @@ export async function SiteWhatsapp() {
 export function MainNav() {
   return (
     <nav className="relative w-full border-b border-slate-100 bg-white">
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar px-3 py-2 sm:px-6 lg:px-8 sm:py-3">
+      {/* Scrolls sideways on small screens; visible overflow on desktop so the category menu can drop down */}
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-2 sm:gap-4 overflow-x-auto lg:overflow-visible no-scrollbar px-3 py-2 sm:px-6 lg:px-8 sm:py-3">
         {/* Shop All mega button */}
         <Link
           href="/shop"
@@ -143,93 +141,14 @@ export function MainNav() {
 
 async function CategoriesDropdown() {
   const apiCategories = await getCategories();
-  // Real categories; the bundled art only supplies colours and a default icon.
-  const categories = apiCategories.map((c, i) => {
-    const art = fallbackCategories[i % fallbackCategories.length];
-    return { label: c.name, img: c.image || art.img, bg: art.bg, ring: art.ring, href: `/shop?category=${c.slug}` };
-  });
-  return (
-    <div className="group relative shrink-0">
-      <button
-        type="button"
-        className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border border-slate-200 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-900 transition hover:border-brand hover:bg-brand-soft hover:text-brand-dark group-hover:border-brand group-hover:bg-brand-soft group-hover:text-brand-dark whitespace-nowrap"
-      >
-        <GridIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand" />
-        <span className="hidden xs:inline">Shop by </span>Category
-        <ChevronDownIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 transition group-hover:rotate-180 group-hover:text-brand-dark" />
-      </button>
-
-      {/* Mega menu panel */}
-      <div className="invisible absolute left-0 top-full z-50 mt-2 w-[min(760px,calc(100vw-24px))] translate-y-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-6 shadow-2xl shadow-brand/10 ring-1 ring-brand/15">
-          {/* Header */}
-          <div className="mb-4 sm:mb-5 flex items-end justify-between border-b border-slate-100 pb-3 sm:pb-4">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark">
-                Browse Catalog
-              </span>
-              <h3 className="mt-1 text-lg sm:text-xl font-black text-slate-900">
-                Shop by Category
-              </h3>
-            </div>
-            <Link
-              href="/categories"
-              className="inline-flex items-center gap-1 text-xs font-bold text-brand-dark hover:underline"
-            >
-              View All <ArrowRightIcon className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {/* Category grid */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 max-h-[60vh] overflow-y-auto">
-            {categories.map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className={`group/item flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl ${c.bg} p-2 sm:p-3 ring-1 ${c.ring} transition hover:-translate-y-0.5 hover:shadow-md`}
-              >
-                <span className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-white/70">
-                  <SmartImage
-                    src={c.img}
-                    alt={c.label}
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover/item:scale-110"
-                  />
-                </span>
-                <div className="leading-tight min-w-0">
-                  <div className="text-[11px] sm:text-xs font-black text-slate-900 truncate">
-                    {c.label}
-                  </div>
-                  <div className="text-[9px] sm:text-[10px] font-semibold text-brand-dark">
-                    Shop Now →
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Footer promo strip */}
-          <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-between gap-2 sm:gap-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-2.5 sm:px-5 sm:py-3 text-white">
-            <div className="flex items-center gap-2 text-xs">
-              <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-brand">
-                <SparkIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              </span>
-              <span className="text-[11px] sm:text-xs">
-                Up to <span className="font-black text-brand">25% OFF</span> on Whitening Kits
-              </span>
-            </div>
-            <Link
-              href="/shop?category=specials"
-              className="inline-flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-[10px] sm:text-[11px] font-black text-white hover:bg-brand-dark shrink-0"
-            >
-              Grab Deal <ArrowRightIcon className="h-3 w-3" />
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // Real categories; the bundled art only supplies a default icon.
+  const categories = apiCategories.map((c, i) => ({
+    label: c.name,
+    href: `/shop?category=${c.slug}`,
+    img: c.image || fallbackCategories[i % fallbackCategories.length].img,
+    description: c.description,
+  }));
+  return <CategoryMenu categories={categories} />;
 }
 //           </Link>
 //         </div>

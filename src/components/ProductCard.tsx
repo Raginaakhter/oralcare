@@ -92,7 +92,7 @@ export function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
 
-        <Link href={href} className="relative block overflow-hidden rounded-xl bg-brand-soft">
+        <Link href={href} className="relative block overflow-hidden rounded-xl bg-gradient-to-br from-brand-soft via-white to-brand-blue-soft">
           <div className="relative aspect-square">
             <SmartImage
               src={img}
@@ -150,7 +150,7 @@ export function ProductCard({ product }: { product: Product }) {
               type="button"
               onClick={() => buyNow(product, 1)}
               disabled={!canBuy}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-brand px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-brand-blue px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold text-white shadow-sm shadow-brand-blue/20 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand-blue/30 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="truncate">Buy Now</span>
             </button>

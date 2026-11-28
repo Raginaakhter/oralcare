@@ -95,9 +95,12 @@ export function AdminNavList({ pathname }: { pathname: string }) {
 
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-5">
-      {groups.map((group) => (
+      {groups.map((group) => {
+        const tone = GROUP_TONES[group.group] ?? GROUP_TONES.Overview;
+        return (
         <div key={group.group} className="mb-5">
-          <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+          <div className="mb-2 flex items-center gap-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+            <span className={`h-1.5 w-1.5 rounded-full bg-gradient-to-br ${tone.active}`} />
             {group.group}
           </div>
           <ul className="space-y-1">
@@ -109,15 +112,15 @@ export function AdminNavList({ pathname }: { pathname: string }) {
                     href={item.href}
                     className={`group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition ${
                       active
-                        ? "bg-brand-soft text-brand-dark ring-1 ring-brand/20"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        ? `bg-gradient-to-r ${tone.activeBg} font-bold text-slate-900 ring-1 ${tone.ring}`
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                      className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${
                         active
-                          ? "bg-brand text-white shadow-sm shadow-brand/30"
-                          : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-slate-900"
+                          ? `bg-gradient-to-br ${tone.active} text-white shadow-md`
+                          : `${tone.idle} group-hover:scale-110`
                       }`}
                     >
                       {item.icon}
@@ -140,10 +143,21 @@ export function AdminNavList({ pathname }: { pathname: string }) {
             })}
           </ul>
         </div>
-      ))}
+        );
+      })}
     </nav>
   );
 }
+
+/** One colour family per nav group so the sidebar reads at a glance. */
+const GROUP_TONES: Record<string, { idle: string; active: string; activeBg: string; ring: string }> = {
+  Overview: { idle: "bg-teal-50 text-teal-600", active: "from-teal-400 to-cyan-600", activeBg: "from-teal-50 to-cyan-50", ring: "ring-teal-200" },
+  Catalog: { idle: "bg-sky-50 text-sky-600", active: "from-sky-400 to-blue-600", activeBg: "from-sky-50 to-blue-50", ring: "ring-sky-200" },
+  Sales: { idle: "bg-violet-50 text-violet-600", active: "from-violet-500 to-indigo-600", activeBg: "from-violet-50 to-indigo-50", ring: "ring-violet-200" },
+  Marketing: { idle: "bg-pink-50 text-pink-600", active: "from-pink-500 to-rose-500", activeBg: "from-pink-50 to-rose-50", ring: "ring-pink-200" },
+  Content: { idle: "bg-amber-50 text-amber-600", active: "from-amber-400 to-orange-500", activeBg: "from-amber-50 to-orange-50", ring: "ring-amber-200" },
+  Administration: { idle: "bg-slate-100 text-slate-600", active: "from-slate-600 to-slate-800", activeBg: "from-slate-50 to-slate-100", ring: "ring-slate-200" },
+};
 
 /* Admin-specific icons */
 function DashboardIcon() {
